@@ -1,0 +1,614 @@
+<!DOCTYPE html>
+
+<html class="dark scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TOMBOY // FW25 RUNWAY EDITORIAL</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Space+Mono:ital,wght@0,400;0,700;1,400&amp;family=Hanken+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            canvas: "#080808",
+            "canvas-subtle": "#0f0f11",
+            "canvas-card": "#141416",
+            "neon-red": "#ff0844",
+            "neon-emerald": "#00f59b",
+            "neon-cyan": "#00e5ff",
+            secondary: "#ba002c",
+            "border-dark": "rgba(255, 255, 255, 0.08)",
+            "border-bright": "rgba(255, 255, 255, 0.22)"
+          },
+          fontFamily: {
+            "headline-xl": ["Space Grotesk", "sans-serif"],
+            "headline-lg": ["Space Grotesk", "sans-serif"],
+            "headline-md": ["Space Grotesk", "sans-serif"],
+            "display-hero": ["Space Grotesk", "sans-serif"],
+            "price-tag": ["Space Mono", "monospace"],
+            "label-caps": ["Space Mono", "monospace"],
+            body: ["Hanken Grotesk", "sans-serif"]
+          },
+          keyframes: {
+            pulseGlow: {
+              '0%, 100%': { opacity: 0.4, transform: 'scale(1)' },
+              '50%': { opacity: 0.75, transform: 'scale(1.04)' }
+            },
+            marquee: {
+              '0%': { transform: 'translateX(0%)' },
+              '100%': { transform: 'translateX(-50%)' }
+            }
+          },
+          animation: {
+            'pulse-glow': 'pulseGlow 6s ease-in-out infinite',
+            'marquee-slow': 'marquee 30s linear infinite'
+          }
+        }
+      }
+    };
+  </script>
+<style>
+    @layer base {
+      html, body {
+        background-color: #080808;
+        color: #f3f3f4;
+        margin: 0;
+        padding: 0;
+      }
+      ::-webkit-scrollbar { display: none; }
+    }
+    .grain-overlay {
+      background-image: radial-gradient(rgba(255,255,255,0.06) 1px, transparent 0);
+      background-size: 24px 24px;
+    }
+    .neon-text-glow-red {
+      text-shadow: 0 0 20px rgba(255, 8, 68, 0.6), 0 0 45px rgba(255, 8, 68, 0.3);
+    }
+    .neon-text-glow-cyan {
+      text-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
+    }
+  </style>
+</head>
+<body class="bg-canvas text-neutral-200 font-body antialiased selection:bg-neon-red selection:text-white">
+<!-- TOP DARKROOM TICKER / SYSTEM DISPATCH -->
+<div class="fixed top-0 left-0 w-full z-50 bg-[#050505]/95 backdrop-blur-xl border-b border-border-dark select-none">
+<div class="w-full px-6 h-7 flex items-center justify-between font-label-caps text-[10px] uppercase tracking-widest text-neutral-400">
+<div class="flex items-center gap-3">
+<span class="inline-block w-1.5 h-1.5 rounded-full bg-neon-red animate-ping"></span>
+<span class="text-neutral-200 font-semibold tracking-wider">RUNWAY FEED: FW25 SOUNDTRACK &amp; ARCHIVE ACTIVE</span>
+<span class="hidden md:inline-block text-neutral-600">//</span>
+<span class="hidden md:inline-block text-neutral-400">RESTRICTED CATALOG ENTRY</span>
+</div>
+<div class="flex items-center gap-6">
+<span class="hidden sm:inline-block text-neutral-500 font-price-tag">[ STREAM FPS: 60 // PARIS METROPOLE ]</span>
+<span class="text-neon-cyan hover:underline cursor-pointer">VIP ACCESS LOCKED</span>
+</div>
+</div>
+<!-- FLOATING GLASSMORPHIC NAVIGATION BAR -->
+<header class="w-full h-20 px-6 lg:px-12 flex items-center justify-between border-b border-white/[0.06]">
+<div class="flex items-center gap-10">
+<!-- TOMBOY LOGO INVERTED WHITE WITH DARKROOM CROP -->
+<a class="group flex items-center gap-3 relative py-2" href="#">
+<div class="h-9 w-28 md:w-36 overflow-hidden rounded bg-white p-1 flex items-center justify-center transition-transform duration-300 group-hover:scale-105 shadow-[0_0_25px_rgba(255,255,255,0.2)]">
+<img alt="TOMBOY LOGO" class="h-full w-full object-contain filter invert contrast-200" src="https://lh3.googleusercontent.com/aida/AEtjO1VsApCZr_OXfOP7a10cL68n9xqWnWNuQwHHwp0MSPvh_OkYiXXyHJkuO6Hado7PwiyWLyc2YDZdhy4L-t1liMcH4OUwKO-jNACeWilqG4E_asTCHXp7PrW_JnHp7dicyLg-jt5dC7i48WK6pZse9iNToyNEyUffBSqyyvaFsmrK97_mwTgg0FImOcWtTzc3JXbXmhgdqX39LbaQWVYQzBwzB21CDn-sfjXq0llOfMgYn-Sz3_B-KUP6vuY"/>
+</div>
+<span class="font-label-caps text-[9px] uppercase tracking-widest text-neon-red hidden sm:inline-block px-1.5 py-0.5 border border-neon-red/30 bg-neon-red/10">DARKROOM</span>
+</a>
+<!-- SLEEK RUNWAY NAVIGATION -->
+<nav class="hidden lg:flex items-center gap-8 font-label-caps text-[11px] uppercase tracking-[0.2em] text-neutral-400">
+<a class="hover:text-white flex items-center gap-2 group transition-colors" href="#runway-hero">
+<span class="w-1 h-1 rounded-full bg-transparent group-hover:bg-neon-red transition-all"></span>
+            RUNWAY 04
+          </a>
+<a class="hover:text-white flex items-center gap-2 group transition-colors" href="#lookbook-grid">
+<span class="w-1 h-1 rounded-full bg-transparent group-hover:bg-neon-cyan transition-all"></span>
+            THE CAPSULE
+          </a>
+<a class="hover:text-white flex items-center gap-2 group transition-colors" href="#cinematic-feature">
+<span class="w-1 h-1 rounded-full bg-transparent group-hover:bg-neon-emerald transition-all"></span>
+            CINEMATICS
+          </a>
+<a class="hover:text-white flex items-center gap-2 group transition-colors" href="#backstage-archive">
+<span class="w-1 h-1 rounded-full bg-transparent group-hover:bg-white transition-all"></span>
+            BACKSTAGE GRAILS
+          </a>
+<a class="text-neutral-300 hover:text-neon-red flex items-center gap-2 group transition-colors" href="#secret-vip">
+<span class="w-1.5 h-1.5 rounded-full bg-neon-red animate-pulse"></span>
+            SECRET PASS
+          </a>
+</nav>
+</div>
+<!-- UTILITY ICONS & CART -->
+<div class="flex items-center gap-5 font-label-caps text-[11px]">
+<button class="hidden sm:flex items-center gap-2 px-3 py-1.5 border border-white/15 bg-white/5 hover:border-white/40 text-neutral-300 transition-all font-price-tag text-[10px]">
+<span>INDEX: EUR / USD</span>
+</button>
+<button aria-label="Search Collection" class="p-2 text-neutral-400 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-[20px]">search</span>
+</button>
+<button aria-label="Soundtrack Stream" class="p-2 text-neon-cyan hover:text-white transition-colors relative">
+<span class="material-symbols-outlined text-[20px]">graphic_eq</span>
+<span class="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-neon-cyan animate-ping"></span>
+</button>
+<a class="flex items-center gap-2 px-4 py-2 bg-white text-black font-semibold font-label-caps text-[11px] tracking-wider hover:bg-neon-red hover:text-white transition-all shadow-[0_0_20px_rgba(255,255,255,0.15)]" href="#cart">
+<span>CART</span>
+<span class="font-price-tag font-bold">[ 02 ]</span>
+</a>
+</div>
+</header>
+</div>
+<main class="w-full pt-28">
+<!-- SECTION 1: HYPER-CINEMATIC RUNWAY HERO -->
+<section class="relative w-full min-h-[92vh] flex items-center justify-center overflow-hidden bg-black" id="runway-hero">
+<!-- AMBIENT NEON BLEED BACKGROUNDS -->
+<div class="absolute -top-40 -left-40 w-[650px] h-[650px] bg-neon-red/20 rounded-full blur-[140px] pointer-events-none animate-pulse-glow"></div>
+<div class="absolute -bottom-40 -right-40 w-[700px] h-[700px] bg-neon-emerald/15 rounded-full blur-[160px] pointer-events-none animate-pulse-glow" style="animation-delay: 3s;"></div>
+<!-- FULL-BLEED EDITORIAL RUNWAY PHOTOGRAPH -->
+<div class="absolute inset-0 z-0">
+<img alt="Tomboy Runway Editorial Models" class="w-full h-full object-cover object-center filter brightness-[0.78] contrast-125 saturate-[1.1] scale-[1.02] transform transition-transform duration-1000 ease-out" src="https://lh3.googleusercontent.com/aida/AEtjO1WjVMuyo4RJwZjmBCXRFQzXTyv33dg373hgUqzaCitGe1hCXSlKMnHwqczYYXHLDqtz-8u1dS8C8IzG2zhgjq1u0kAaa7u5Jtc9pO2JKNm-m5q7kl6XuncO79dLh2qwc8WMyrIXVTvPM9EOCs6_UoPtYaCdRExgNDyCdGp6jUqLq-MXPl3F3psG-c5h6n8xE25YjJej2LiKJzpSPCcm1xfrWouLx38Q4bVHKBeJhHS6lPQ9wNPf3Ibm17k"/>
+<div class="absolute inset-0 bg-gradient-to-t from-canvas via-canvas/40 to-black/60"></div>
+<div class="absolute inset-0 bg-gradient-to-r from-canvas via-transparent to-canvas/80"></div>
+<div class="absolute inset-0 grain-overlay opacity-40 mix-blend-overlay pointer-events-none"></div>
+</div>
+<!-- FLOATING METRIC & AUDIO DISPATCH BADGE (TOP RIGHT) -->
+<div class="absolute top-8 right-6 lg:right-12 z-20 hidden sm:flex flex-col items-end text-right font-price-tag text-[11px] text-neutral-400 space-y-1">
+<div class="flex items-center gap-2 px-3 py-1 bg-black/60 backdrop-blur-md border border-white/10 text-white">
+<span class="w-2 h-2 rounded-full bg-neon-emerald animate-pulse"></span>
+<span>AUDIO DISPATCH // TOKYO UNDERGROUND 02:44 AM</span>
+</div>
+<span class="text-neutral-500">BPM: 142 // HARD MINIMAL TECHNO</span>
+</div>
+<!-- RUNWAY HERO CONTENT OVERLAY -->
+<div class="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-12 py-20 flex flex-col justify-end min-h-[85vh]">
+<div class="max-w-4xl space-y-6">
+<div class="inline-flex items-center gap-3 px-3.5 py-1.5 bg-black/70 backdrop-blur-lg border border-neon-red/50 text-neon-red font-label-caps text-[10px] tracking-[0.25em] uppercase">
+<span class="w-1.5 h-1.5 bg-neon-red rounded-full"></span>
+            FW25 ACTIVE RUNWAY EXHIBITION
+          </div>
+<h1 class="font-headline-xl text-5xl sm:text-7xl lg:text-8xl font-bold uppercase tracking-tighter leading-[0.9] text-white">
+            SUBVERSION<br/>
+<span class="text-transparent bg-clip-text bg-gradient-to-r from-white via-neutral-200 to-neutral-500">IN FORM</span>
+<span class="text-neon-red font-light tracking-normal italic">// 25</span>
+</h1>
+<p class="font-body text-base sm:text-lg text-neutral-300 max-w-2xl font-light leading-relaxed">
+            Brutalist tailoring and anti-silhouettes manufactured from 520GSM combed Japanese loopback cotton, distressed oiled twill, and high-tensile industrial hardware. An uncompromising darkroom study in subcultural dissent.
+          </p>
+<!-- RUNWAY INTERACTIVE ACTION DOCK -->
+<div class="pt-4 flex flex-wrap items-center gap-4">
+<a class="px-8 py-4 bg-white text-black font-headline-md text-xs font-bold uppercase tracking-[0.2em] hover:bg-neon-red hover:text-white transition-all duration-300 flex items-center gap-3 shadow-[0_0_30px_rgba(255,255,255,0.25)] hover:shadow-[0_0_35px_rgba(255,8,68,0.5)]" href="#lookbook-grid">
+<span>ENTER RUNWAY CAPSULE</span>
+<span class="material-symbols-outlined text-[16px]">north_east</span>
+</a>
+<a class="px-6 py-4 bg-canvas-card/80 backdrop-blur-md border border-white/15 text-white font-label-caps text-xs uppercase tracking-wider hover:border-neon-cyan hover:text-neon-cyan transition-all flex items-center gap-2.5" href="#cinematic-feature">
+<span class="material-symbols-outlined text-[18px]">play_arrow</span>
+<span>PLAY CAMPAIGN FILM [ 04:00 ]</span>
+</a>
+<div class="flex items-center gap-2 pl-2 text-neutral-400 font-label-caps text-[10px]">
+<span class="text-neon-emerald">●</span> 14/18 RUNWAY LOOKS CLAIMED
+            </div>
+</div>
+</div>
+</div>
+<!-- BOTTOM FILM STRIP TIMESTAMP TICKER -->
+<div class="absolute bottom-0 inset-x-0 bg-[#050505]/90 border-t border-white/[0.08] py-2.5 overflow-hidden z-20">
+<div class="flex whitespace-nowrap animate-marquee-slow font-label-caps text-[10px] tracking-[0.3em] uppercase text-neutral-400">
+<span class="flex items-center gap-8 px-6">
+<span>TOMBOY ATELIER PARIS / TOKYO</span>
+<span class="text-neon-red">■</span>
+<span>EXHIBITION 09: SUBVERSION IN FORM</span>
+<span class="text-neon-emerald">■</span>
+<span>520GSM JAPANESE RAW FLEECE</span>
+<span class="text-neon-cyan">■</span>
+<span>GOTHIC CHROME TYPOGRAPHY ARCHIVE</span>
+<span class="text-neon-red">■</span>
+<span>LIMITED ALLOCATION RUN: 300 PCS GLOBALLY</span>
+<span class="text-white">■</span>
+<span>WORLDWIDE COURIER EXPRESS DISPATCH</span>
+<span class="text-neon-emerald">■</span>
+<span>TOMBOY ATELIER PARIS / TOKYO</span>
+<span class="text-neon-red">■</span>
+<span>EXHIBITION 09: SUBVERSION IN FORM</span>
+<span class="text-neon-cyan">■</span>
+</span>
+</div>
+</div>
+</section>
+<!-- SECTION 2: ASYMMETRIC MAGAZINE-STYLE LOOKBOOK GRID -->
+<section class="w-full px-6 lg:px-12 py-24 bg-canvas relative" id="lookbook-grid">
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-12 pb-6 border-b border-white/10 gap-6">
+<div>
+<div class="flex items-center gap-2 text-neon-red font-label-caps text-xs tracking-widest uppercase mb-2">
+<span class="w-2 h-0.5 bg-neon-red"></span>
+            CATALOG // SECTION 01
+          </div>
+<h2 class="font-headline-xl text-3xl sm:text-5xl font-bold uppercase tracking-tight text-white">
+            RUNWAY GRAILS &amp; CAPSULE
+          </h2>
+</div>
+<div class="flex flex-wrap items-center gap-2 font-label-caps text-[11px]">
+<button class="px-4 py-1.5 bg-white text-black font-bold uppercase tracking-wider">ALL ARCHIVE [ 18 ]</button>
+<button class="px-4 py-1.5 bg-canvas-card text-neutral-400 hover:text-white border border-white/5 uppercase tracking-wider transition-colors">OUTERWEAR</button>
+<button class="px-4 py-1.5 bg-canvas-card text-neutral-400 hover:text-white border border-white/5 uppercase tracking-wider transition-colors">HEAVY HOODIES</button>
+<button class="px-4 py-1.5 bg-canvas-card text-neutral-400 hover:text-white border border-white/5 uppercase tracking-wider transition-colors">CUT &amp; SEW</button>
+</div>
+</div>
+<!-- ASYMMETRICAL 4-ITEM HIGH-DRAMA GRID -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6">
+<!-- PRODUCT 1: HERO SPOTLIGHT (LARGE ASYMMETRIC SPAN) -->
+<article class="lg:col-span-6 group bg-canvas-card border border-white/10 overflow-hidden relative flex flex-col justify-between hover:border-neon-red/50 transition-all duration-500">
+<div class="relative w-full aspect-[4/3] sm:aspect-[16/10] bg-gradient-to-br from-[#2a000e] via-[#100307] to-black overflow-hidden flex items-center justify-center p-8">
+<!-- AMBIENT GLOW -->
+<div class="absolute inset-0 bg-neon-red/15 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl"></div>
+<span class="absolute top-4 left-4 font-label-caps text-[10px] text-white/80 bg-black/60 px-2.5 py-1 border border-white/10 backdrop-blur-md">LOOK 01 // V12 SKULL</span>
+<span class="absolute top-4 right-4 font-label-caps text-[10px] text-neon-red bg-neon-red/10 border border-neon-red/30 px-2 py-0.5 uppercase tracking-wider">HIGH VELOCITY</span>
+<img alt="Gothic Chrome Skull Oversized Tee" class="w-3/4 max-h-[82%] object-contain filter drop-shadow-[0_20px_35px_rgba(255,0,50,0.3)] transition-transform duration-700 ease-out group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD90GrhA3I0OxXDe--jiWfh4h0aqBAJH1qjwno_vYVQ_ul_huYZc2bsPQdqIrS9PBmbiswNZaq7sAE_36T8d6AE1XWFvxnE_ZfL6ZT2jvW8BFKUQzbN33tM4b6H1GIz-bx714jH_vOUWyXjpIdTr9d2vtQ1nnH53cYpO0cIAlfzyDTBA1v61C3yghS_dQjPeDDqKcC-56gVewdGV2bEbtDgSsZv01lJbc918_H0t42WM4X-7tTc2Z7-"/>
+<!-- DRAWER QUICK ADD POPUP -->
+<div class="absolute inset-x-4 bottom-4 flex items-center justify-between opacity-0 translate-y-3 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+<span class="bg-black/90 text-neutral-300 font-label-caps text-[10px] px-3 py-2 border border-white/10">JAPANESE 480GSM WASH</span>
+<button class="bg-white text-black font-label-caps text-[10px] font-bold px-4 py-2 hover:bg-neon-red hover:text-white transition-colors uppercase tracking-wider">
+                QUICK SECURE +
+              </button>
+</div>
+</div>
+<div class="p-6 bg-canvas-card border-t border-white/5 flex items-start justify-between">
+<div class="space-y-1">
+<span class="text-xs font-label-caps text-neutral-400 uppercase tracking-widest block">HEAVY VINTAGE TEE</span>
+<h3 class="font-headline-md text-xl font-bold uppercase text-white group-hover:text-neon-red transition-colors">
+                GOTHIC CHROME V12 TEE
+              </h3>
+<p class="font-body text-xs text-neutral-400">Carbon wash with raw hem and hand-pulled scarlet screenprint.</p>
+</div>
+<div class="text-right">
+<span class="font-price-tag text-lg font-bold text-neon-red block">$ 120 USD</span>
+<span class="font-label-caps text-[9px] text-neutral-500 uppercase tracking-wider">[ 35 LEFT ]</span>
+</div>
+</div>
+</article>
+<!-- PRODUCT 2: ANARCHY KNIT HOODIE -->
+<article class="lg:col-span-6 group bg-canvas-card border border-white/10 overflow-hidden relative flex flex-col justify-between hover:border-neon-cyan/50 transition-all duration-500">
+<div class="relative w-full aspect-[4/3] sm:aspect-[16/10] bg-gradient-to-br from-[#12082b] via-[#090317] to-black overflow-hidden flex items-center justify-center p-8">
+<div class="absolute inset-0 bg-neon-cyan/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl"></div>
+<span class="absolute top-4 left-4 font-label-caps text-[10px] text-white/80 bg-black/60 px-2.5 py-1 border border-white/10 backdrop-blur-md">LOOK 02 // PURPLE REBEL</span>
+<span class="absolute top-4 right-4 font-label-caps text-[10px] text-neon-cyan bg-neon-cyan/10 border border-neon-cyan/30 px-2 py-0.5 uppercase tracking-wider">RUNWAY EXCLUSIVE</span>
+<img alt="Anarchy Knit Purple Hoodie" class="w-3/4 max-h-[82%] object-contain filter drop-shadow-[0_20px_35px_rgba(90,20,180,0.4)] transition-transform duration-700 ease-out group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZetKxTC_jBNayqBpZbtLQjwefc-ZXdQCxsL-Xmfj56BRUJWHV6ooKdhorkvzfzj6DDfmTf8SWjJtj_mjGJvfae0dMlhKXPhyjVi5AW-IK9hsda9oI0juH9fxxeFeVBsrzK6XTqlC4K1ewYdJbax-6C1e3A2bNr3UNQp2fDxJExIn5mKULvpkcnpIoHAsAztlbzKbfMOLdKxQIWXvrviXgL26ZdcNSjmzIOS3PLS2Nf276RF7NHM92"/>
+<div class="absolute inset-x-4 bottom-4 flex items-center justify-between opacity-0 translate-y-3 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+<span class="bg-black/90 text-neutral-300 font-label-caps text-[10px] px-3 py-2 border border-white/10">DOUBLE-LAYER HOOD // RAW HARDWARE</span>
+<button class="bg-white text-black font-label-caps text-[10px] font-bold px-4 py-2 hover:bg-neon-cyan hover:text-black transition-colors uppercase tracking-wider">
+                QUICK SECURE +
+              </button>
+</div>
+</div>
+<div class="p-6 bg-canvas-card border-t border-white/5 flex items-start justify-between">
+<div class="space-y-1">
+<span class="text-xs font-label-caps text-neutral-400 uppercase tracking-widest block">OVERSIZED FLEECE PULLOVER</span>
+<h3 class="font-headline-md text-xl font-bold uppercase text-white group-hover:text-neon-cyan transition-colors">
+                ANARCHY CHROME HOODIE
+              </h3>
+<p class="font-body text-xs text-neutral-400">Deep violet high-density puff print with chrome gothic iconography.</p>
+</div>
+<div class="text-right">
+<span class="font-price-tag text-lg font-bold text-neon-cyan block">$ 220 USD</span>
+<span class="font-label-caps text-[9px] text-neutral-500 uppercase tracking-wider">[ 19 LEFT ]</span>
+</div>
+</div>
+</article>
+<!-- PRODUCT 3: ACID MOTO BOXY TEE -->
+<article class="lg:col-span-6 group bg-canvas-card border border-white/10 overflow-hidden relative flex flex-col justify-between hover:border-neon-emerald/50 transition-all duration-500">
+<div class="relative w-full aspect-[4/3] sm:aspect-[16/10] bg-gradient-to-br from-[#062419] via-[#02110c] to-black overflow-hidden flex items-center justify-center p-8">
+<div class="absolute inset-0 bg-neon-emerald/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl"></div>
+<span class="absolute top-4 left-4 font-label-caps text-[10px] text-white/80 bg-black/60 px-2.5 py-1 border border-white/10 backdrop-blur-md">LOOK 03 // CYBER ACID</span>
+<span class="absolute top-4 right-4 font-label-caps text-[10px] text-neon-emerald bg-neon-emerald/10 border border-neon-emerald/30 px-2 py-0.5 uppercase tracking-wider">RESTOCKED</span>
+<img alt="Cyber Moto Boxy Tee" class="w-3/4 max-h-[82%] object-contain filter drop-shadow-[0_20px_35px_rgba(0,245,155,0.25)] transition-transform duration-700 ease-out group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAV2u2PADTVrgupnF8hxwphgkjt7UBM7m8pxTrtoiMRFD_JV81p7W8EbfpHl-IaIScBEsJrAovuU_sWZNkbZNJWGPwkWwuSWXD-sXVvTJkNALAYDQ1mhn45QxUhZ-lVsFxmmOXftNrHpSBNVQgltTxjmSHcLJ_Bs6R6sw5MB9WBdgCPSOXolMv6NN4IJ1fIo7FOw7Z7YtlVicqSwefmCoySzrAbvyspPJnzksgej50Jgct2D_jlUCH"/>
+<div class="absolute inset-x-4 bottom-4 flex items-center justify-between opacity-0 translate-y-3 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+<span class="bg-black/90 text-neutral-300 font-label-caps text-[10px] px-3 py-2 border border-white/10">BOXY DROP SHOULDER SLUB</span>
+<button class="bg-white text-black font-label-caps text-[10px] font-bold px-4 py-2 hover:bg-neon-emerald hover:text-black transition-colors uppercase tracking-wider">
+                QUICK SECURE +
+              </button>
+</div>
+</div>
+<div class="p-6 bg-canvas-card border-t border-white/5 flex items-start justify-between">
+<div class="space-y-1">
+<span class="text-xs font-label-caps text-neutral-400 uppercase tracking-widest block">FOREST MOSS TEE</span>
+<h3 class="font-headline-md text-xl font-bold uppercase text-white group-hover:text-neon-emerald transition-colors">
+                CYBER MOTO BOXY TEE
+              </h3>
+<p class="font-body text-xs text-neutral-400">Oversized silhouette with neon cybernetic motor graphic artwork.</p>
+</div>
+<div class="text-right">
+<span class="font-price-tag text-lg font-bold text-neon-emerald block">$ 110 USD</span>
+<span class="font-label-caps text-[9px] text-neutral-500 uppercase tracking-wider">[ RESTOCK 40 ]</span>
+</div>
+</div>
+</article>
+<!-- PRODUCT 4: DISTRESSED DUCK CANVAS WORK JACKET -->
+<article class="lg:col-span-6 group bg-canvas-card border border-white/10 overflow-hidden relative flex flex-col justify-between hover:border-white/40 transition-all duration-500">
+<div class="relative w-full aspect-[4/3] sm:aspect-[16/10] bg-gradient-to-br from-[#1c1c1f] via-[#0d0d0f] to-black overflow-hidden flex items-center justify-center p-8">
+<div class="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl"></div>
+<span class="absolute top-4 left-4 font-label-caps text-[10px] text-white/80 bg-black/60 px-2.5 py-1 border border-white/10 backdrop-blur-md">LOOK 04 // OBSIDIAN RIGID</span>
+<span class="absolute top-4 right-4 font-label-caps text-[10px] text-white bg-white/10 border border-white/20 px-2 py-0.5 uppercase tracking-wider">LIMITED ARCHIVE [ 60 ]</span>
+<img alt="Distressed Work Jacket" class="w-3/4 max-h-[82%] object-contain filter drop-shadow-[0_20px_35px_rgba(255,255,255,0.15)] transition-transform duration-700 ease-out group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD12SNIuNTUeg9IO7lXoFA1eemiRqnggDogveCXX24GEHBvw9N4FrGOQOdtYwELBDL_Vjfsr4FNbZCpxzNu022u3tZWyzaxvHP1YYqX9ESTkqYlZhtlzJ9OyWLfg2AsXoOdszqG122yXPL8vWgJyHAUVRucuFa6xfND5-Yj-bnUGaXgtiS8bJq-MT6JXqiz9WbhWwxOefNNWyMPctCjUYxqmFgFpW6lchX1D7jqyCOXjnw6UnXjRFAI"/>
+<div class="absolute inset-x-4 bottom-4 flex items-center justify-between opacity-0 translate-y-3 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+<span class="bg-black/90 text-neutral-300 font-label-caps text-[10px] px-3 py-2 border border-white/10">14.5OZ RIGID DUCK CANVAS // SILVER HARDWARE</span>
+<button class="bg-white text-black font-label-caps text-[10px] font-bold px-4 py-2 hover:bg-neutral-300 transition-colors uppercase tracking-wider">
+                QUICK SECURE +
+              </button>
+</div>
+</div>
+<div class="p-6 bg-canvas-card border-t border-white/5 flex items-start justify-between">
+<div class="space-y-1">
+<span class="text-xs font-label-caps text-neutral-400 uppercase tracking-widest block">TACTICAL OUTERWEAR</span>
+<h3 class="font-headline-md text-xl font-bold uppercase text-white group-hover:text-neutral-300 transition-colors">
+                DISTRESSED WORK JACKET
+              </h3>
+<p class="font-body text-xs text-neutral-400">Hand-distressed edges, dual cargo pockets, white brutalist embroidery.</p>
+</div>
+<div class="text-right">
+<span class="font-price-tag text-lg font-bold text-white block">$ 280 USD</span>
+<span class="font-label-caps text-[9px] text-neutral-500 uppercase tracking-wider">[ SOLD 42/60 ]</span>
+</div>
+</div>
+</article>
+</div>
+</section>
+<!-- SECTION 3: CINEMATIC RUNWAY FEATURE & TIMESTAMP DIRECTOR SUITE -->
+<section class="relative w-full bg-black border-y border-white/10 overflow-hidden" id="cinematic-feature">
+<!-- CINEMATIC VIDEO DISPLAY WITH MOODY AMBER/RED SUPERCAR BACKDROP -->
+<div class="relative w-full min-h-[640px] lg:min-h-[740px] flex items-center">
+<div class="absolute inset-0 z-0">
+<div class="w-full h-full bg-cover bg-center filter brightness-[0.6] contrast-125" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBd1BjigtqVhZ37Sm9Jcx_aciOFprOVR4MjYEGrcjegcnE2rYXv93Z87eW3VG_1jgfBwWQ1R1i2wJTlfbZ8GyZENMzHiBWZdhH5S_lKdMBAKkszX0jQPAYg7ABzzAzuifBoVVeUG76y0guhC5eBruAs7G8ecfztotKeUhrVZM76i5d8yjH3yMy_nYdjqE10bI28VOKiJwWAd4ne8q48UcanWxWpqNttYNvyGAalomTQlcQ863EOG_f1')"></div>
+<div class="absolute inset-0 bg-gradient-to-r from-black via-black/80 to-transparent"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black/70"></div>
+<!-- Red Ambient Cinematic Flare -->
+<div class="absolute bottom-10 left-1/4 w-96 h-96 bg-neon-red/20 rounded-full blur-[120px] pointer-events-none"></div>
+</div>
+<!-- DIRECTOR OVERLAY / TIMESTAMP HUD -->
+<div class="relative z-10 w-full max-w-7xl mx-auto px-6 lg:px-12 py-20">
+<div class="max-w-2xl space-y-6">
+<div class="inline-flex items-center gap-3 px-3 py-1 bg-neon-red text-white font-label-caps text-[10px] uppercase tracking-widest">
+<span class="w-2 h-2 rounded-full bg-white animate-ping"></span>
+              LIVE TRANSMISSION // RUNWAY CUT 01
+            </div>
+<h2 class="font-headline-xl text-5xl sm:text-7xl font-bold uppercase tracking-tighter text-white leading-none">
+              NIGHT SHIFT<br/>
+<span class="text-neon-red">RUNWAY FILM</span>
+</h2>
+<p class="font-body text-neutral-300 text-base leading-relaxed">
+              Directed by TOMBOY Atelier in collaboration with Tokyo Kinetic Underground. Shot on 35mm motion picture negative across Shibuya subterranean conduits.
+            </p>
+<!-- PLAY INTERACTIVE CONTROLLER -->
+<div class="pt-2 flex flex-col sm:flex-row sm:items-center gap-6">
+<div class="flex items-center gap-4">
+<button aria-label="Play 4K Cinematic Runway Reel" class="w-16 h-16 rounded-full bg-white text-black flex items-center justify-center hover:bg-neon-red hover:text-white transition-all duration-300 hover:scale-105 shadow-[0_0_30px_rgba(255,255,255,0.3)]">
+<span class="material-symbols-outlined text-[32px]" style="font-variation-settings: 'FILL' 1;">play_arrow</span>
+</button>
+<div>
+<span class="font-headline-md text-sm font-bold uppercase text-white block">PLAY RUNWAY MASTER (4K)</span>
+<span class="font-price-tag text-xs text-neon-red block tracking-wider">[ TIMESTAMP 01:42 / 04:00 ]</span>
+</div>
+</div>
+<!-- PROGRESS BAR HUD -->
+<div class="flex-1 max-w-xs space-y-1 sm:pl-4 sm:border-l border-white/15">
+<div class="w-full bg-white/10 h-1 rounded-full overflow-hidden">
+<div class="bg-neon-red h-full w-[42%]"></div>
+</div>
+<div class="flex justify-between font-price-tag text-[9px] text-neutral-400">
+<span>FRAME: 02,488</span>
+<span>BITRATE: 84 MBPS</span>
+</div>
+</div>
+</div>
+<!-- DIRECTOR NOTES & CAST CREDITS -->
+<div class="pt-6 grid grid-cols-2 sm:grid-cols-3 gap-4 border-t border-white/15 font-label-caps text-[10px]">
+<div>
+<span class="text-neutral-500 block">DIRECTOR // DOP</span>
+<span class="text-neutral-200">K. TAKAHASHI (TOKYO)</span>
+</div>
+<div>
+<span class="text-neutral-500 block">SOUNDTRACK</span>
+<span class="text-neon-cyan">ANARCHY SUB-BASS (OST)</span>
+</div>
+<div>
+<span class="text-neutral-500 block">LOCATION</span>
+<span class="text-neutral-200">SHIBUYA B4 VAULT</span>
+</div>
+</div>
+</div>
+</div>
+<!-- CORNER CAMERA TELEMETRY OVERLAY -->
+<div class="absolute top-8 right-6 lg:right-12 hidden lg:flex flex-col items-end font-price-tag text-[10px] text-neutral-400 bg-black/60 border border-white/10 p-4 space-y-1 backdrop-blur-md">
+<span class="text-neon-red">● REC [ RUNNING ]</span>
+<span>CODEC: PRORES 4444 XQ</span>
+<span>OPTICS: COOKE ANAMORPHIC 40MM</span>
+<span>ISO: 3200 // SHUTTER: 180°</span>
+</div>
+</div>
+</section>
+<!-- SECTION 4: BACKSTAGE EDITORIAL GRAILS // ON-BODY ASYMMETRY -->
+<section class="w-full px-6 lg:px-12 py-24 bg-canvas-subtle" id="backstage-archive">
+<div class="flex items-center justify-between mb-12 pb-6 border-b border-white/10">
+<div>
+<span class="font-label-caps text-xs text-neon-red uppercase tracking-widest block mb-1">// BACKSTAGE ATELIER</span>
+<h2 class="font-headline-xl text-3xl sm:text-5xl font-bold uppercase tracking-tight text-white">
+            GRAIL SILHOUETTES // ON BODY
+          </h2>
+</div>
+<span class="font-price-tag text-xs text-neutral-500 hidden md:inline-block">CURATED BY TOMBOY HIGH-CONCEPT RUNWAY</span>
+</div>
+<!-- ASYMMETRIC FULL-BLEED LOOKBOOK CARDS -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-stretch">
+<!-- LOOK 01: BOMBER JACKET (SPAN 7) -->
+<div class="lg:col-span-7 group relative bg-black overflow-hidden border border-white/10 min-h-[580px] flex flex-col justify-end p-8 lg:p-12 hover:border-white/30 transition-all duration-500">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-1000 ease-out group-hover:scale-105 filter brightness-[0.8] contrast-110" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCSoLGKWHBv60x8wO8DHt6wktTpPxlZ8sFB8ozWUVingJxDGMYdSuwGiWo7Ri24ueJ-KBKwXGr5kysExwVJgbXCug58bUJjRnndGVxo-etm6t7SzDBCywxAAHPF1brWWoHs5a0vNu2DQh8Ah6GMhemOrWPW1QnTf72nnnGW9ZAYTViktR-SXkDcg7qCjgH8Lmm3rjI8LrKHG6HW-_kHw_8p8hZ1DSP1xP8xmSfRdDtYHYkQ6Xabc_KW')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+<div class="relative z-10 space-y-3">
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-1 bg-neon-red text-white font-label-caps text-[10px] uppercase font-bold">RUNWAY LOOK 08</span>
+<span class="font-price-tag text-xs text-neutral-300">[ HEAVY NYLON MA-1 ]</span>
+</div>
+<h3 class="font-headline-lg text-3xl lg:text-4xl font-bold uppercase text-white">
+              TACTICAL MA-1 PUFF BOMBER
+            </h3>
+<p class="font-body text-sm text-neutral-300 max-w-md">
+              Overfilled goose down blend with oversized military storm flaps and reflective runway typography across spine.
+            </p>
+<div class="flex items-center justify-between pt-4 border-t border-white/15">
+<span class="font-price-tag text-xl font-bold text-white">$ 340 USD</span>
+<button class="font-label-caps text-xs uppercase tracking-wider text-white hover:text-neon-red flex items-center gap-2 underline underline-offset-4 transition-colors">
+                SECURE RUNWAY PIECE →
+              </button>
+</div>
+</div>
+</div>
+<!-- LOOK 02: PREDATOR SCARLET MOTIF (SPAN 5) -->
+<div class="lg:col-span-5 group relative bg-black overflow-hidden border border-white/10 min-h-[580px] flex flex-col justify-end p-8 lg:p-12 hover:border-neon-red/40 transition-all duration-500">
+<div class="absolute inset-0 bg-cover bg-center transition-transform duration-1000 ease-out group-hover:scale-105 filter brightness-[0.8] contrast-110" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBDNj33O1DuFF2OFob-LPwr4WQOa0L-k0ydnwFpq4_lZFwM1PyvrWaK2s-hV0A9t80N_cERQmY0WvHzI0J5F8PBGh19R8bW_ZjeCWCoUHPptpq1AwUaikPb7JC95nexQ0K-1n3ppsvPq4HGgG4EH02HTri7wJtQ69XRZpo4LsG2ubdtOavevuvPv_o6wK6-abSISvaR-qGjOp0gYK5WWAjShNPFbPPqavFzagJdwULFxx91NB7ofiCc')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+<div class="relative z-10 space-y-3">
+<div class="flex items-center gap-2">
+<span class="px-2.5 py-1 bg-white text-black font-label-caps text-[10px] uppercase font-bold">RUNWAY LOOK 11</span>
+<span class="font-price-tag text-xs text-neon-red">[ AIRBRUSH CHROME ]</span>
+</div>
+<h3 class="font-headline-lg text-3xl font-bold uppercase text-white">
+              RED PREDATOR BACKPRINT TEE
+            </h3>
+<p class="font-body text-sm text-neutral-300">
+              Vibrant crimson wash with gothic oversized spine typography.
+            </p>
+<div class="flex items-center justify-between pt-4 border-t border-white/15">
+<span class="font-price-tag text-xl font-bold text-neon-red">$ 115 USD</span>
+<button class="font-label-caps text-xs uppercase tracking-wider text-white hover:text-neon-red flex items-center gap-2 underline underline-offset-4 transition-colors">
+                ACQUIRE LOOK →
+              </button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 5: UNDERGROUND VIP ACCESS & SECRET PASS DISPATCH -->
+<section class="relative w-full bg-black py-24 px-6 lg:px-12 border-t border-white/10 overflow-hidden" id="secret-vip">
+<!-- AMBIENT RED & CYAN NEON BLURS -->
+<div class="absolute top-1/2 left-10 -translate-y-1/2 w-80 h-80 bg-neon-red/15 rounded-full blur-[130px] pointer-events-none"></div>
+<div class="absolute top-1/2 right-10 -translate-y-1/2 w-80 h-80 bg-neon-cyan/15 rounded-full blur-[130px] pointer-events-none"></div>
+<div class="relative z-10 max-w-4xl mx-auto flex flex-col items-center text-center space-y-8">
+<div class="inline-flex items-center gap-2 px-3 py-1 bg-white/5 border border-white/20 text-neutral-300 font-label-caps text-[10px] uppercase tracking-[0.3em]">
+<span class="w-1.5 h-1.5 rounded-full bg-neon-cyan animate-ping"></span>
+          UNDERGROUND CLUB INVITATIONAL
+        </div>
+<div class="space-y-3">
+<h2 class="font-headline-xl text-4xl sm:text-6xl font-bold uppercase tracking-tight text-white leading-tight">
+            CLAIM SECRET DROP PASSCODE
+          </h2>
+<p class="font-body text-neutral-400 max-w-xl mx-auto text-base">
+            Private 15-minute buying window for FW25 unreleased prototypes. Enter your encryption key or email to unlock the subterranean locker.
+          </p>
+</div>
+<!-- EMAIL LOCKUP / KEYPASS ACCESS FORM -->
+<div class="w-full max-w-xl">
+<form class="flex flex-col sm:flex-row items-stretch border border-white/20 bg-canvas-card/80 backdrop-blur-xl p-1.5 focus-within:border-neon-red transition-colors shadow-[0_0_40px_rgba(0,0,0,0.8)]" onsubmit="event.preventDefault(); alert('VIP PASS DISPATCHED TO ENCRYPTED TERMINAL.');">
+<div class="flex items-center pl-4 text-neutral-500 font-label-caps text-xs">
+              KEY:
+            </div>
+<input class="w-full bg-transparent border-none px-4 py-3 text-white placeholder-neutral-500 font-label-caps text-xs focus:ring-0 focus:outline-none" placeholder="ENTER REBEL IDENTITY / EMAIL..." required="" type="email"/>
+<button class="bg-neon-red hover:bg-white hover:text-black text-white font-label-caps text-xs font-bold uppercase px-8 py-3.5 tracking-widest transition-all duration-300 shrink-0 shadow-[0_0_20px_rgba(255,8,68,0.4)]" type="submit">
+              AUTHORIZE PASS
+            </button>
+</form>
+<div class="flex items-center justify-between text-neutral-500 font-price-tag text-[10px] mt-3 px-2">
+<span>PASSPHRASE ENCRYPTED SHA-256</span>
+<span>NEXT ACCESS WAVE: 00:14:22</span>
+</div>
+</div>
+<!-- UNDERGROUND PHYSICAL STOCKIST LOCATOR -->
+<div class="pt-8 w-full border-t border-white/10">
+<span class="font-label-caps text-[10px] uppercase tracking-[0.25em] text-neutral-400 block mb-6">
+            // PHYSICAL DARKROOM PARTNERS &amp; CONSIGNMENT VAULTS
+          </span>
+<div class="grid grid-cols-2 sm:grid-cols-4 gap-4 font-label-caps text-xs">
+<div class="p-4 bg-canvas-card border border-white/5 hover:border-white/20 text-left transition-colors">
+<span class="text-neon-red block font-bold">TOKYO VAULT</span>
+<span class="text-neutral-300 text-[11px] block mt-1">SHIBUYA B4 DISTRICT</span>
+<span class="font-price-tag text-[9px] text-neutral-500">2-24-12 B4F</span>
+</div>
+<div class="p-4 bg-canvas-card border border-white/5 hover:border-white/20 text-left transition-colors">
+<span class="text-neon-cyan block font-bold">LONDON BASEMENT</span>
+<span class="text-neutral-300 text-[11px] block mt-1">SOHO BREWER ST</span>
+<span class="font-price-tag text-[9px] text-neutral-500">UNIT 14 CELLAR</span>
+</div>
+<div class="p-4 bg-canvas-card border border-white/5 hover:border-white/20 text-left transition-colors">
+<span class="text-neon-emerald block font-bold">NYC CONDUIT</span>
+<span class="text-neutral-300 text-[11px] block mt-1">MERCER ST SOHO</span>
+<span class="font-price-tag text-[9px] text-neutral-500">ROOM 88 REAR</span>
+</div>
+<div class="p-4 bg-canvas-card border border-white/5 hover:border-neon-red text-left transition-colors">
+<span class="text-white block font-bold">CREPDOG CREW</span>
+<span class="text-neutral-300 text-[11px] block mt-1">HYD | DEL | MUM</span>
+<span class="font-price-tag text-[9px] text-neon-red">SPECIAL PARTNER</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- DARKROOM ATELIER FOOTER -->
+<footer class="w-full bg-[#040404] text-neutral-400 border-t border-white/10 font-body text-xs">
+<div class="max-w-7xl mx-auto px-6 lg:px-12 py-16">
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-12 pb-12 border-b border-white/10">
+<!-- LOGO & BRAND STATEMENT -->
+<div class="lg:col-span-5 space-y-4">
+<div class="h-8 w-32 bg-white p-1 rounded flex items-center justify-center">
+<img alt="TOMBOY LOGO" class="h-full w-full object-contain filter invert" src="https://lh3.googleusercontent.com/aida/AEtjO1VsApCZr_OXfOP7a10cL68n9xqWnWNuQwHHwp0MSPvh_OkYiXXyHJkuO6Hado7PwiyWLyc2YDZdhy4L-t1liMcH4OUwKO-jNACeWilqG4E_asTCHXp7PrW_JnHp7dicyLg-jt5dC7i48WK6pZse9iNToyNEyUffBSqyyvaFsmrK97_mwTgg0FImOcWtTzc3JXbXmhgdqX39LbaQWVYQzBwzB21CDn-sfjXq0llOfMgYn-Sz3_B-KUP6vuY"/>
+</div>
+<p class="font-body text-neutral-400 text-sm max-w-sm font-light leading-relaxed">
+            High-contrast subcultural streetwear atelier constructed in Tokyo and Paris. Heavyweight raw textiles, industrial drape, and anti-fashion runway provocation.
+          </p>
+<div class="font-price-tag text-[11px] text-neutral-500 pt-2">
+            TERMINAL ID: TMBY-FW25-0908 // STATUS: TRANSMITTING
+          </div>
+</div>
+<!-- QUICK RUNWAY PROTOCOLS -->
+<div class="lg:col-span-2 space-y-3 font-label-caps text-[11px]">
+<span class="text-white uppercase tracking-widest font-bold block">RUNWAY DOCS</span>
+<ul class="space-y-2 text-neutral-400">
+<li><a class="hover:text-neon-red transition-colors" href="#">LOOKBOOK FW25</a></li>
+<li><a class="hover:text-neon-red transition-colors" href="#">CAMPAIGN ARCHIVE</a></li>
+<li><a class="hover:text-neon-red transition-colors" href="#">SOUNDTRACK OST</a></li>
+<li><a class="hover:text-neon-red transition-colors" href="#">FABRIC DISCLOSURE</a></li>
+</ul>
+</div>
+<!-- CLIENT CONCIERGE -->
+<div class="lg:col-span-2 space-y-3 font-label-caps text-[11px]">
+<span class="text-white uppercase tracking-widest font-bold block">CONCIERGE</span>
+<ul class="space-y-2 text-neutral-400">
+<li><a class="hover:text-white transition-colors" href="#">CARGO TRACKING</a></li>
+<li><a class="hover:text-white transition-colors" href="#">VIP CODE VERIFY</a></li>
+<li><a class="hover:text-white transition-colors" href="#">RETURNS PROTOCOL</a></li>
+<li><a class="hover:text-white transition-colors" href="#">PRESS ACCREDITATION</a></li>
+</ul>
+</div>
+<!-- SOUNDTRACK & STREAM STATUS -->
+<div class="lg:col-span-3 space-y-3 font-label-caps text-[11px]">
+<span class="text-white uppercase tracking-widest font-bold block">DARKROOM FREQUENCY</span>
+<p class="text-neutral-400 font-body text-xs leading-normal">
+            Broadcast streaming 24/7 direct from the Paris underground runway soundboard.
+          </p>
+<div class="p-3 bg-canvas-card border border-white/10 flex items-center justify-between">
+<span class="text-neon-cyan font-price-tag text-[10px]">NOW PLAYING: RUNWAY 04 DUB</span>
+<span class="material-symbols-outlined text-[16px] text-neon-cyan animate-pulse">volume_up</span>
+</div>
+</div>
+</div>
+<!-- BOTTOM LEGAL & COPYRIGHT -->
+<div class="pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 font-label-caps text-[10px] text-neutral-500">
+<div>© 2025 TOMBOY CLOTHING CORP. ALL FORM SUBVERTED.</div>
+<div class="flex items-center gap-6">
+<a class="hover:text-white transition-colors" href="#">DARKROOM ETHICS</a>
+<a class="hover:text-white transition-colors" href="#">ENCRYPTION POLICY</a>
+<a class="hover:text-white transition-colors" href="#">TERMS OF DISPATCH</a>
+</div>
+</div>
+</div>
+</footer>
+</body></html>

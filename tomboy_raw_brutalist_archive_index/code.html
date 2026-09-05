@@ -1,0 +1,905 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>TOMBOY // ARCHIVE INDEX &amp; SYSTEM</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Space+Mono:ital,wght@0,400;0,700;1,400&amp;family=Hanken+Grotesk:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface": "#f4f3ef",
+            "surface-dim": "#e9e7e1",
+            "surface-high": "#dedcd4",
+            "surface-lowest": "#ffffff",
+            "primary": "#0d0d0d",
+            "on-surface": "#111111",
+            "on-surface-variant": "#5a5c5c",
+            "secondary": "#ba002c",
+            "secondary-container": "#e8043a",
+            "grid-line": "#181818",
+            "grid-subtle": "#d0cec5"
+          },
+          fontFamily: {
+            "headline-xl": ["Space Grotesk", "sans-serif"],
+            "headline-lg": ["Space Grotesk", "sans-serif"],
+            "headline-md": ["Space Grotesk", "sans-serif"],
+            "display-hero": ["Space Grotesk", "sans-serif"],
+            "mono-code": ["Space Mono", "monospace"],
+            "label-caps": ["Space Mono", "monospace"],
+            "body-main": ["Hanken Grotesk", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+<style>
+    @layer base {
+      html, body {
+        margin: 0;
+        padding: 0;
+        background-color: #f4f3ef;
+        color: #111111;
+        font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+      }
+    }
+    .technical-grid {
+      background-size: 24px 24px;
+      background-image: 
+        linear-gradient(to right, rgba(17, 17, 17, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(17, 17, 17, 0.05) 1px, transparent 1px);
+    }
+    .crosshair-corner {
+      position: relative;
+    }
+    .crosshair-corner::before {
+      content: "+";
+      position: absolute;
+      top: -10px;
+      left: -6px;
+      font-family: 'Space Mono', monospace;
+      font-size: 14px;
+      color: #111111;
+      line-height: 1;
+      pointer-events: none;
+      z-index: 20;
+    }
+    .crosshair-corner::after {
+      content: "+";
+      position: absolute;
+      bottom: -10px;
+      right: -6px;
+      font-family: 'Space Mono', monospace;
+      font-size: 14px;
+      color: #111111;
+      line-height: 1;
+      pointer-events: none;
+      z-index: 20;
+    }
+    .barcode-lines {
+      background: repeating-linear-gradient(
+        90deg,
+        #111,
+        #111 2px,
+        transparent 2px,
+        transparent 4px,
+        #111 4px,
+        #111 7px,
+        transparent 7px,
+        transparent 9px,
+        #111 9px,
+        #111 10px
+      );
+    }
+  </style>
+</head>
+<body class="bg-surface font-body-main antialiased text-on-surface technical-grid selection:bg-secondary selection:text-white">
+<!-- TOP RUNNER PROTOCOL BAR -->
+<div class="w-full bg-[#0d0d0d] text-[#e5e5e5] border-b border-grid-line font-mono-code text-[11px] uppercase tracking-wider px-4 sm:px-6 py-1.5 flex flex-wrap items-center justify-between gap-2">
+<div class="flex items-center gap-4">
+<span class="flex items-center gap-1.5 text-secondary">
+<span class="w-2 h-2 bg-secondary animate-pulse"></span>
+        SYSTEM PROTOCOL 04.9 // LIVE
+      </span>
+<span class="hidden md:inline text-neutral-400">|</span>
+<span class="hidden md:inline text-neutral-300">SERVER: TOKYO B4-GRID</span>
+<span class="hidden lg:inline text-neutral-400">|</span>
+<span class="hidden lg:inline text-neutral-400">LAT: 35.6595° N // LON: 139.7004° E</span>
+</div>
+<div class="flex items-center gap-5 text-neutral-300 ml-auto">
+<span class="font-bold text-white tracking-widest">[ SHUTTLE DISPATCH EVERY FRI 18:00 GMT ]</span>
+<div class="flex items-center gap-2 text-[10px] text-neutral-400 border border-neutral-700 px-2 py-0.5">
+<span>UTC+9</span>
+<span class="text-white font-mono" id="live-clock">02:44:12</span>
+</div>
+</div>
+</div>
+<!-- MINIMALIST TECHNICAL BRUTALIST HEADER -->
+<header class="sticky top-0 z-50 w-full bg-[#f4f3ef]/95 backdrop-blur-md border-b border-grid-line">
+<div class="w-full grid grid-cols-12 items-stretch h-16 divide-x divide-grid-line">
+<!-- Brand Logo Cell -->
+<div class="col-span-6 md:col-span-3 lg:col-span-2 flex items-center px-4 md:px-6 bg-surface">
+<a class="flex items-center gap-3 group" href="#">
+<img alt="TOMBOY LOGO" class="h-7 w-auto object-contain transition-transform group-hover:scale-95 duration-200" src="https://lh3.googleusercontent.com/aida/AEtjO1VsApCZr_OXfOP7a10cL68n9xqWnWNuQwHHwp0MSPvh_OkYiXXyHJkuO6Hado7PwiyWLyc2YDZdhy4L-t1liMcH4OUwKO-jNACeWilqG4E_asTCHXp7PrW_JnHp7dicyLg-jt5dC7i48WK6pZse9iNToyNEyUffBSqyyvaFsmrK97_mwTgg0FImOcWtTzc3JXbXmhgdqX39LbaQWVYQzBwzB21CDn-sfjXq0llOfMgYn-Sz3_B-KUP6vuY"/>
+<span class="font-headline-xl font-black tracking-tighter text-xl uppercase hidden sm:inline-block">TOMBOY</span>
+</a>
+</div>
+<!-- Navigation Index Matrix -->
+<nav class="hidden lg:flex col-span-5 xl:col-span-6 items-stretch font-mono-code text-[11px] font-bold tracking-widest divide-x divide-grid-line">
+<a class="flex-1 flex items-center justify-center px-4 hover:bg-black hover:text-white transition-colors uppercase gap-1.5" href="#catalog">
+<span class="text-secondary text-[9px]">//01</span> ARCHIVE
+        </a>
+<a class="flex-1 flex items-center justify-center px-4 hover:bg-black hover:text-white transition-colors uppercase gap-1.5" href="#catalog">
+<span class="text-secondary text-[9px]">//02</span> CAPSULE
+        </a>
+<a class="flex-1 flex items-center justify-center px-4 hover:bg-black hover:text-white transition-colors uppercase gap-1.5" href="#catalog">
+<span class="text-secondary text-[9px]">//03</span> OBJECTS
+        </a>
+<a class="flex-1 flex items-center justify-center px-4 hover:bg-black hover:text-white transition-colors uppercase gap-1.5" href="#editorial-section">
+<span class="text-secondary text-[9px]">//04</span> RUNWAY FILM
+        </a>
+<a class="flex-1 flex items-center justify-center px-4 hover:bg-black hover:text-white transition-colors uppercase gap-1.5" href="#stockists">
+<span class="text-secondary text-[9px]">//05</span> MATRIX
+        </a>
+</nav>
+<!-- Utility Matrix -->
+<div class="col-span-6 md:col-span-9 lg:col-span-5 xl:col-span-4 flex items-stretch divide-x divide-grid-line justify-end">
+<div class="hidden sm:flex items-center px-4 font-mono-code text-[11px] tracking-wider text-neutral-700 bg-surface">
+<span>CURRENCY: [ USD $ ]</span>
+</div>
+<button class="flex items-center justify-center px-4 hover:bg-black hover:text-white transition-colors" title="Search Archive">
+<span class="material-symbols-outlined text-[19px]">search</span>
+</button>
+<button class="flex items-center justify-center px-4 hover:bg-black hover:text-white transition-colors" title="Terminal Access">
+<span class="material-symbols-outlined text-[19px]">terminal</span>
+</button>
+<a class="flex items-center gap-2 px-5 bg-black text-white hover:bg-secondary transition-colors font-mono-code text-[11px] font-bold tracking-widest" href="#cart">
+<span>CART</span>
+<span class="px-1.5 py-0.5 bg-neutral-800 text-white border border-neutral-600 text-[10px]">[ 0 ]</span>
+</a>
+</div>
+</div>
+</header>
+<main class="w-full">
+<!-- HERO SECTION: TECHNICAL DROP INDEX & SPLIT MANIFEST -->
+<section class="w-full border-b border-grid-line bg-surface">
+<div class="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-grid-line">
+<!-- Left Side: Technical Spec Sheet Manifest -->
+<div class="lg:col-span-5 xl:col-span-5 p-6 md:p-10 flex flex-col justify-between bg-surface relative overflow-hidden">
+<!-- Background Spec Watermark -->
+<div class="absolute -bottom-8 -right-8 font-mono-code text-[140px] font-bold text-neutral-900/[0.04] select-none pointer-events-none leading-none">
+            004
+          </div>
+<!-- Top Meta Barcode -->
+<div class="space-y-6">
+<div class="flex items-start justify-between border-b border-grid-line pb-4">
+<div>
+<span class="font-mono-code text-[10px] uppercase tracking-widest text-secondary block font-bold">SPEC SHEET // SYSTEM ARCHIVE</span>
+<span class="font-mono-code text-[12px] font-bold uppercase tracking-wider block">ID: TMB-FW25-CH04-ALPHA</span>
+</div>
+<div class="text-right flex flex-col items-end">
+<div class="barcode-lines w-24 h-6 border-b border-grid-line"></div>
+<span class="font-mono-code text-[9px] text-neutral-500 tracking-tighter block mt-1">*9820-TMBY-25*</span>
+</div>
+</div>
+<!-- Brutalist Typographic Title -->
+<div class="space-y-3">
+<div class="inline-flex items-center gap-2 px-2.5 py-1 bg-black text-white font-mono-code text-[10px] uppercase tracking-widest">
+<span class="w-1.5 h-1.5 bg-secondary"></span> RUN 004 // LIMITED TO 450 UNITS
+              </div>
+<h1 class="font-headline-xl text-5xl md:text-6xl font-black uppercase tracking-tighter leading-[0.9] text-primary">
+                REBEL<br/>YOUTH.<br/>
+<span class="text-secondary italic font-mono-code text-3xl md:text-4xl block pt-2 tracking-tight">// MANIFEST 2025</span>
+</h1>
+<p class="font-body-main text-sm text-neutral-700 max-w-md pt-2 leading-relaxed">
+                Industrial heavyweight tailoring engineered for raw subcultural resistance. Zero synthetic softening. Constructed from 480GSM double-faced Japanese combed cotton, distressed rigid duck canvas, and reinforced flatlock structural seam work.
+              </p>
+</div>
+<!-- Technical Specification Table -->
+<div class="border border-grid-line divide-y divide-grid-line font-mono-code text-[11px] bg-surface-lowest">
+<div class="grid grid-cols-3 divide-x divide-grid-line p-2">
+<span class="text-neutral-500">FABRIC LAB</span>
+<span class="col-span-2 font-bold uppercase">480GSM COMBED LOOPBACK FLEECE</span>
+</div>
+<div class="grid grid-cols-3 divide-x divide-grid-line p-2">
+<span class="text-neutral-500">CUT / SILHOUETTE</span>
+<span class="col-span-2 font-bold uppercase">ARCHITECTURAL DROP-SHOULDER BOXY</span>
+</div>
+<div class="grid grid-cols-3 divide-x divide-grid-line p-2">
+<span class="text-neutral-500">DYE PROCESS</span>
+<span class="col-span-2 font-bold uppercase">COLD REACTIVE MINERAL PIGMENT WASH</span>
+</div>
+<div class="grid grid-cols-3 divide-x divide-grid-line p-2">
+<span class="text-neutral-500">PRODUCTION</span>
+<span class="col-span-2 font-bold text-secondary uppercase">450 NUMBERED PIECES ONLY [VERIFIED]</span>
+</div>
+</div>
+</div>
+<!-- Bottom Action Buttons & Time Matrix -->
+<div class="pt-8 space-y-4">
+<div class="flex flex-col sm:flex-row items-stretch gap-3 font-mono-code text-[12px]">
+<a class="flex-1 bg-black text-white hover:bg-secondary transition-colors py-3.5 px-6 font-bold uppercase tracking-wider text-center flex items-center justify-center gap-2" href="#catalog">
+<span>COMMENCE CATALOG INDEX</span>
+<span class="material-symbols-outlined text-[16px]">arrow_downward</span>
+</a>
+<a class="bg-surface-lowest border border-grid-line hover:bg-neutral-200 transition-colors py-3.5 px-5 font-bold uppercase tracking-wider text-center" href="#editorial-section">
+                SPECS [ CAD ]
+              </a>
+</div>
+<div class="grid grid-cols-2 gap-2 pt-2 font-mono-code text-[10px] text-neutral-600 border-t border-grid-line">
+<div>STOCK RUN: <strong class="text-black">18 / 18 ITEMS INDEXED</strong></div>
+<div class="text-right">DISPATCH PROTOCOL: <strong class="text-secondary">AIR CARGO PRIORITY</strong></div>
+</div>
+</div>
+</div>
+<!-- Right Side: Framed Brutalist Campaign Editorial with Crosshair Corners -->
+<div class="lg:col-span-7 xl:col-span-7 bg-[#111111] p-4 sm:p-8 flex flex-col justify-between relative overflow-hidden">
+<!-- Crosshair Box Container -->
+<div class="relative w-full h-full border border-neutral-700 crosshair-corner p-2 flex flex-col">
+<!-- Top Image Index Bar -->
+<div class="flex items-center justify-between border-b border-neutral-800 pb-2 px-2 text-neutral-400 font-mono-code text-[10px] uppercase">
+<span class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 bg-emerald-500"></span> CAMPAIGN VISUAL FRAME 001
+              </span>
+<span>LENS: 35MM T1.3 // ISO 800</span>
+<span class="hidden sm:inline">TOMBOY FW25-CAM-A</span>
+</div>
+<!-- The Hero Image -->
+<div class="relative w-full h-[480px] lg:h-[620px] overflow-hidden my-2 border border-neutral-800">
+<img alt="Tomboy Clothing Streetwear Hero Campaign" class="w-full h-full object-cover object-center filter grayscale-[20%] contrast-110 hover:scale-102 hover:grayscale-0 transition-all duration-700" src="https://lh3.googleusercontent.com/aida/AEtjO1WjVMuyo4RJwZjmBCXRFQzXTyv33dg373hgUqzaCitGe1hCXSlKMnHwqczYYXHLDqtz-8u1dS8C8IzG2zhgjq1u0kAaa7u5Jtc9pO2JKNm-m5q7kl6XuncO79dLh2qwc8WMyrIXVTvPM9EOCs6_UoPtYaCdRExgNDyCdGp6jUqLq-MXPl3F3psG-c5h6n8xE25YjJej2LiKJzpSPCcm1xfrWouLx38Q4bVHKBeJhHS6lPQ9wNPf3Ibm17k"/>
+<!-- Grid HUD Overlay -->
+<div class="absolute top-4 left-4 font-mono-code text-[10px] text-white/90 bg-black/70 backdrop-blur-sm border border-neutral-700 px-3 py-1.5 uppercase">
+                OBJECT: FW25-DROP-TRIAD
+              </div>
+<div class="absolute bottom-4 right-4 font-mono-code text-[10px] text-white/90 bg-black/70 backdrop-blur-sm border border-neutral-700 px-3 py-1.5 uppercase">
+                COORDINATE: [35°39'N 139°42'E]
+              </div>
+<div class="absolute bottom-4 left-4 flex gap-2">
+<span class="px-2 py-1 bg-secondary text-white font-mono-code text-[10px] uppercase font-bold tracking-wider">CH-04 NOW ONLINE</span>
+</div>
+</div>
+<!-- Bottom Frame Meta -->
+<div class="flex items-center justify-between pt-2 px-2 text-neutral-400 font-mono-code text-[10px] uppercase border-t border-neutral-800">
+<span>FIG. 04.1 ARCHITECTURAL STREETWEAR SYSTEM</span>
+<span class="text-white font-bold">ALL GARMENTS UNISEX SPEC</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- CONTINUOUS DATA MARQUEE STRIP -->
+<div class="w-full bg-black text-[#f4f3ef] border-b border-grid-line py-2.5 overflow-hidden select-none font-mono-code text-[11px] tracking-widest uppercase">
+<div class="flex whitespace-nowrap animate-marquee">
+<span class="flex items-center gap-6 px-4">
+<span class="text-secondary font-bold">/// TOMBOY REBEL YOUTH CORP</span>
+<span class="text-neutral-500">[SKU-INDEX: ACTIVE]</span>
+<span>480GSM HEAVYWEIGHT JAPANESE COMBED COTTON</span>
+<span class="text-secondary">●</span>
+<span>ZERO POLYESTER FILLERS</span>
+<span class="text-neutral-500">[CERTIFIED TOKYO/LONDON/NYC]</span>
+<span>FLATLOCK INDUSTRIAL REINFORCEMENT</span>
+<span class="text-secondary font-bold">/// CHAPTER 04 ARCHIVE ONLINE NOW</span>
+<span class="text-secondary">●</span>
+<span>TOMBOY REBEL YOUTH CORP</span>
+<span class="text-neutral-500">[SKU-INDEX: ACTIVE]</span>
+<span>480GSM HEAVYWEIGHT JAPANESE COMBED COTTON</span>
+</span>
+</div>
+</div>
+<!-- CATALOG GRID SECTION: ARCHITECTURAL INDEX TABLE -->
+<section class="w-full border-b border-grid-line bg-surface" id="catalog">
+<!-- Grid Section Header & Technical Filter Controls -->
+<div class="border-b border-grid-line p-6 md:p-8 flex flex-col lg:flex-row lg:items-end justify-between gap-6 bg-surface-dim/40">
+<div>
+<div class="flex items-center gap-3 font-mono-code text-[11px] font-bold text-secondary uppercase tracking-widest mb-1">
+<span class="w-2 h-2 bg-secondary"></span> ARCHIVAL CATALOG INDEX
+          </div>
+<h2 class="font-headline-xl text-3xl md:text-4xl font-black uppercase tracking-tight text-primary">
+            FALL / WINTER 2025 GARMENT SPECIFICATION
+          </h2>
+</div>
+<!-- Filter Pills Barcode Bar -->
+<div class="flex flex-wrap items-center gap-2 font-mono-code text-[11px]">
+<span class="text-neutral-500 mr-2 uppercase text-[10px]">FILTER BY SEGMENT:</span>
+<button class="bg-black text-white px-3.5 py-1.5 font-bold uppercase tracking-wider">ALL ARCHIVES [ 08 ]</button>
+<button class="bg-surface-lowest border border-grid-line text-neutral-800 hover:bg-black hover:text-white px-3.5 py-1.5 uppercase transition-colors">TEES [ 03 ]</button>
+<button class="bg-surface-lowest border border-grid-line text-neutral-800 hover:bg-black hover:text-white px-3.5 py-1.5 uppercase transition-colors">HOODIES [ 02 ]</button>
+<button class="bg-surface-lowest border border-grid-line text-neutral-800 hover:bg-black hover:text-white px-3.5 py-1.5 uppercase transition-colors">OUTERWEAR [ 02 ]</button>
+<button class="bg-surface-lowest border border-grid-line text-neutral-800 hover:bg-black hover:text-white px-3.5 py-1.5 uppercase transition-colors">BLANKS [ 01 ]</button>
+</div>
+</div>
+<!-- Architectural Multi-Column Grid (4 Columns with 1px dark borders) -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-grid-line border-b border-grid-line bg-surface-lowest">
+<!-- PRODUCT CARD 1 -->
+<article class="group flex flex-col justify-between bg-surface relative hover:bg-surface-dim/30 transition-colors border-b lg:border-b-0 border-grid-line">
+<!-- Card Header Specs -->
+<div class="border-b border-grid-line p-3 font-mono-code text-[10px] flex items-center justify-between bg-surface-lowest">
+<span class="font-bold text-black tracking-wider">SKU: TMB-01-MGT</span>
+<span class="px-1.5 py-0.5 bg-secondary text-white font-bold uppercase">HOT // DROP 01</span>
+</div>
+<!-- Color-Blocked Frame (Signature Gryape Magenta Accent) -->
+<div class="relative w-full aspect-[4/5] bg-[#c71042] overflow-hidden flex items-center justify-center p-6 border-b border-grid-line">
+<div class="absolute top-3 left-3 font-mono-code text-[9px] text-white/90 bg-black/40 px-2 py-0.5 backdrop-blur-xs">
+              HEX: #C71042
+            </div>
+<div class="absolute top-3 right-3 font-mono-code text-[9px] text-white/90 bg-black/40 px-2 py-0.5">
+              WT: 480 GSM
+            </div>
+<img alt="Gothic Chrome Skull Tee" class="w-4/5 h-4/5 object-contain filter drop-shadow-2xl transition-transform duration-300 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD90GrhA3I0OxXDe--jiWfh4h0aqBAJH1qjwno_vYVQ_ul_huYZc2bsPQdqIrS9PBmbiswNZaq7sAE_36T8d6AE1XWFvxnE_ZfL6ZT2jvW8BFKUQzbN33tM4b6H1GIz-bx714jH_vOUWyXjpIdTr9d2vtQ1nnH53cYpO0cIAlfzyDTBA1v61C3yghS_dQjPeDDqKcC-56gVewdGV2bEbtDgSsZv01lJbc918_H0t42WM4X-7tTc2Z7-"/>
+<div class="absolute bottom-3 left-3 right-3 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="bg-black text-white font-mono-code text-[9px] px-2 py-1 uppercase">RESTRICTED 1/120</span>
+<span class="bg-white text-black font-mono-code text-[9px] px-2 py-1 uppercase font-bold">PREVIEW READY</span>
+</div>
+</div>
+<!-- Technical Spec Matrix Rows -->
+<div class="p-4 flex-1 flex flex-col justify-between space-y-4">
+<div class="space-y-1.5">
+<div class="flex items-baseline justify-between">
+<h3 class="font-headline-md font-bold uppercase text-lg text-primary tracking-tight">GOTHIC CHROME TEE</h3>
+<span class="font-mono-code font-bold text-sm text-black">$ 120.00</span>
+</div>
+<p class="font-mono-code text-[11px] text-neutral-600 uppercase">
+                MATTE CARBON PIGMENT // CHROME AIRBRUSH FRONT
+              </p>
+</div>
+<!-- Size Selector & Quick Add Button -->
+<div class="space-y-2 pt-2 border-t border-grid-subtle">
+<div class="flex items-center justify-between font-mono-code text-[10px]">
+<span class="text-neutral-500">SELECT SIZE:</span>
+<div class="flex gap-1">
+<span class="px-2 py-0.5 border border-grid-line bg-black text-white font-bold cursor-pointer">S</span>
+<span class="px-2 py-0.5 border border-grid-line hover:bg-neutral-200 cursor-pointer">M</span>
+<span class="px-2 py-0.5 border border-grid-line hover:bg-neutral-200 cursor-pointer">L</span>
+<span class="px-2 py-0.5 border border-grid-line hover:bg-neutral-200 cursor-pointer">XL</span>
+</div>
+</div>
+<button class="w-full bg-black text-white hover:bg-secondary transition-colors font-mono-code text-[11px] font-bold uppercase py-2.5 flex items-center justify-center gap-2">
+<span>ADD TO CARGO</span>
+<span class="font-mono-code text-[10px]">[ + ]</span>
+</button>
+</div>
+</div>
+</article>
+<!-- PRODUCT CARD 2 -->
+<article class="group flex flex-col justify-between bg-surface relative hover:bg-surface-dim/30 transition-colors border-b lg:border-b-0 border-grid-line">
+<div class="border-b border-grid-line p-3 font-mono-code text-[10px] flex items-center justify-between bg-surface-lowest">
+<span class="font-bold text-black tracking-wider">SKU: TMB-02-VLT</span>
+<span class="px-1.5 py-0.5 border border-grid-line bg-surface font-bold uppercase">FLEECE LINED</span>
+</div>
+<!-- Color-Blocked Frame (Cobalt Purple Violet Accent) -->
+<div class="relative w-full aspect-[4/5] bg-[#3a1872] overflow-hidden flex items-center justify-center p-6 border-b border-grid-line">
+<div class="absolute top-3 left-3 font-mono-code text-[9px] text-white/90 bg-black/40 px-2 py-0.5 backdrop-blur-xs">
+              HEX: #3A1872
+            </div>
+<div class="absolute top-3 right-3 font-mono-code text-[9px] text-white/90 bg-black/40 px-2 py-0.5">
+              WT: 520 GSM
+            </div>
+<img alt="Anarchy Knit Hoodie" class="w-4/5 h-4/5 object-contain filter drop-shadow-2xl transition-transform duration-300 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZetKxTC_jBNayqBpZbtLQjwefc-ZXdQCxsL-Xmfj56BRUJWHV6ooKdhorkvzfzj6DDfmTf8SWjJtj_mjGJvfae0dMlhKXPhyjVi5AW-IK9hsda9oI0juH9fxxeFeVBsrzK6XTqlC4K1ewYdJbax-6C1e3A2bNr3UNQp2fDxJExIn5mKULvpkcnpIoHAsAztlbzKbfMOLdKxQIWXvrviXgL26ZdcNSjmzIOS3PLS2Nf276RF7NHM92"/>
+<div class="absolute bottom-3 left-3 right-3 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="bg-black text-white font-mono-code text-[9px] px-2 py-1 uppercase">RAW SILVER EYELETS</span>
+<span class="bg-white text-black font-mono-code text-[9px] px-2 py-1 uppercase font-bold">PREVIEW READY</span>
+</div>
+</div>
+<div class="p-4 flex-1 flex flex-col justify-between space-y-4">
+<div class="space-y-1.5">
+<div class="flex items-baseline justify-between">
+<h3 class="font-headline-md font-bold uppercase text-lg text-primary tracking-tight">ANARCHY KNIT HOODIE</h3>
+<span class="font-mono-code font-bold text-sm text-black">$ 220.00</span>
+</div>
+<p class="font-mono-code text-[11px] text-neutral-600 uppercase">
+                PURPLE CHROME EMBOSS // DOUBLE LAYERED HOOD
+              </p>
+</div>
+<div class="space-y-2 pt-2 border-t border-grid-subtle">
+<div class="flex items-center justify-between font-mono-code text-[10px]">
+<span class="text-neutral-500">SELECT SIZE:</span>
+<div class="flex gap-1">
+<span class="px-2 py-0.5 border border-grid-line hover:bg-neutral-200 cursor-pointer">S</span>
+<span class="px-2 py-0.5 border border-grid-line bg-black text-white font-bold cursor-pointer">M</span>
+<span class="px-2 py-0.5 border border-grid-line hover:bg-neutral-200 cursor-pointer">L</span>
+<span class="px-2 py-0.5 border border-grid-line opacity-40 line-through">XL</span>
+</div>
+</div>
+<button class="w-full bg-black text-white hover:bg-secondary transition-colors font-mono-code text-[11px] font-bold uppercase py-2.5 flex items-center justify-center gap-2">
+<span>ADD TO CARGO</span>
+<span class="font-mono-code text-[10px]">[ + ]</span>
+</button>
+</div>
+</div>
+</article>
+<!-- PRODUCT CARD 3 -->
+<article class="group flex flex-col justify-between bg-surface relative hover:bg-surface-dim/30 transition-colors border-b lg:border-b-0 border-grid-line">
+<div class="border-b border-grid-line p-3 font-mono-code text-[10px] flex items-center justify-between bg-surface-lowest">
+<span class="font-bold text-black tracking-wider">SKU: TMB-03-ACD</span>
+<span class="px-1.5 py-0.5 bg-emerald-800 text-white font-bold uppercase">RESTOCKED</span>
+</div>
+<!-- Color-Blocked Frame (Acid Emerald Green Accent) -->
+<div class="relative w-full aspect-[4/5] bg-[#1e4e3b] overflow-hidden flex items-center justify-center p-6 border-b border-grid-line">
+<div class="absolute top-3 left-3 font-mono-code text-[9px] text-white/90 bg-black/40 px-2 py-0.5 backdrop-blur-xs">
+              HEX: #1E4E3B
+            </div>
+<div class="absolute top-3 right-3 font-mono-code text-[9px] text-white/90 bg-black/40 px-2 py-0.5">
+              WT: 420 GSM
+            </div>
+<img alt="Cyber Moto Boxy Tee" class="w-4/5 h-4/5 object-contain filter drop-shadow-2xl transition-transform duration-300 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAV2u2PADTVrgupnF8hxwphgkjt7UBM7m8pxTrtoiMRFD_JV81p7W8EbfpHl-IaIScBEsJrAovuU_sWZNkbZNJWGPwkWwuSWXD-sXVvTJkNALAYDQ1mhn45QxUhZ-lVsFxmmOXftNrHpSBNVQgltTxjmSHcLJ_Bs6R6sw5MB9WBdgCPSOXolMv6NN4IJ1fIo7FOw7Z7YtlVicqSwefmCoySzrAbvyspPJnzksgej50Jgct2D_jlUCH"/>
+<div class="absolute bottom-3 left-3 right-3 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="bg-black text-white font-mono-code text-[9px] px-2 py-1 uppercase">SLUB TEXTURED YARN</span>
+<span class="bg-white text-black font-mono-code text-[9px] px-2 py-1 uppercase font-bold">PREVIEW READY</span>
+</div>
+</div>
+<div class="p-4 flex-1 flex flex-col justify-between space-y-4">
+<div class="space-y-1.5">
+<div class="flex items-baseline justify-between">
+<h3 class="font-headline-md font-bold uppercase text-lg text-primary tracking-tight">CYBER MOTO BOXY TEE</h3>
+<span class="font-mono-code font-bold text-sm text-black">$ 110.00</span>
+</div>
+<p class="font-mono-code text-[11px] text-neutral-600 uppercase">
+                DEEP FOREST GREEN // MOTOR SPORT CHEST PRINT
+              </p>
+</div>
+<div class="space-y-2 pt-2 border-t border-grid-subtle">
+<div class="flex items-center justify-between font-mono-code text-[10px]">
+<span class="text-neutral-500">SELECT SIZE:</span>
+<div class="flex gap-1">
+<span class="px-2 py-0.5 border border-grid-line hover:bg-neutral-200 cursor-pointer">S</span>
+<span class="px-2 py-0.5 border border-grid-line hover:bg-neutral-200 cursor-pointer">M</span>
+<span class="px-2 py-0.5 border border-grid-line bg-black text-white font-bold cursor-pointer">L</span>
+<span class="px-2 py-0.5 border border-grid-line hover:bg-neutral-200 cursor-pointer">XL</span>
+</div>
+</div>
+<button class="w-full bg-black text-white hover:bg-secondary transition-colors font-mono-code text-[11px] font-bold uppercase py-2.5 flex items-center justify-center gap-2">
+<span>ADD TO CARGO</span>
+<span class="font-mono-code text-[10px]">[ + ]</span>
+</button>
+</div>
+</div>
+</article>
+<!-- PRODUCT CARD 4 -->
+<article class="group flex flex-col justify-between bg-surface relative hover:bg-surface-dim/30 transition-colors border-b lg:border-b-0 border-grid-line">
+<div class="border-b border-grid-line p-3 font-mono-code text-[10px] flex items-center justify-between bg-surface-lowest">
+<span class="font-bold text-black tracking-wider">SKU: TMB-04-OBS</span>
+<span class="px-1.5 py-0.5 bg-secondary text-white font-bold uppercase">RUN 004 // ARCHIVE</span>
+</div>
+<!-- Color-Blocked Frame (Pitch Obsidian Black Accent) -->
+<div class="relative w-full aspect-[4/5] bg-[#141415] overflow-hidden flex items-center justify-center p-6 border-b border-grid-line">
+<div class="absolute top-3 left-3 font-mono-code text-[9px] text-white/90 bg-black/40 px-2 py-0.5 backdrop-blur-xs">
+              HEX: #141415
+            </div>
+<div class="absolute top-3 right-3 font-mono-code text-[9px] text-white/90 bg-black/40 px-2 py-0.5">
+              WT: 640 GSM
+            </div>
+<img alt="Distressed Canvas Work Jacket" class="w-4/5 h-4/5 object-contain filter drop-shadow-2xl transition-transform duration-300 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD12SNIuNTUeg9IO7lXoFA1eemiRqnggDogveCXX24GEHBvw9N4FrGOQOdtYwELBDL_Vjfsr4FNbZCpxzNu022u3tZWyzaxvHP1YYqX9ESTkqYlZhtlzJ9OyWLfg2AsXoOdszqG122yXPL8vWgJyHAUVRucuFa6xfND5-Yj-bnUGaXgtiS8bJq-MT6JXqiz9WbhWwxOefNNWyMPctCjUYxqmFgFpW6lchX1D7jqyCOXjnw6UnXjRFAI"/>
+<div class="absolute bottom-3 left-3 right-3 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity">
+<span class="bg-black text-white font-mono-code text-[9px] px-2 py-1 uppercase">HEAVY DUCK CANVAS</span>
+<span class="bg-white text-black font-mono-code text-[9px] px-2 py-1 uppercase font-bold">PREVIEW READY</span>
+</div>
+</div>
+<div class="p-4 flex-1 flex flex-col justify-between space-y-4">
+<div class="space-y-1.5">
+<div class="flex items-baseline justify-between">
+<h3 class="font-headline-md font-bold uppercase text-lg text-primary tracking-tight">DISTRESSED WORK JACKET</h3>
+<span class="font-mono-code font-bold text-sm text-black">$ 280.00</span>
+</div>
+<p class="font-mono-code text-[11px] text-neutral-600 uppercase">
+                RIGID CHARCOAL DUCK CANVAS // SILVER HARDWARE
+              </p>
+</div>
+<div class="space-y-2 pt-2 border-t border-grid-subtle">
+<div class="flex items-center justify-between font-mono-code text-[10px]">
+<span class="text-neutral-500">SELECT SIZE:</span>
+<div class="flex gap-1">
+<span class="px-2 py-0.5 border border-grid-line hover:bg-neutral-200 cursor-pointer">S</span>
+<span class="px-2 py-0.5 border border-grid-line bg-black text-white font-bold cursor-pointer">M</span>
+<span class="px-2 py-0.5 border border-grid-line hover:bg-neutral-200 cursor-pointer">L</span>
+<span class="px-2 py-0.5 border border-grid-line hover:bg-neutral-200 cursor-pointer">XL</span>
+</div>
+</div>
+<button class="w-full bg-black text-white hover:bg-secondary transition-colors font-mono-code text-[11px] font-bold uppercase py-2.5 flex items-center justify-center gap-2">
+<span>ADD TO CARGO</span>
+<span class="font-mono-code text-[10px]">[ + ]</span>
+</button>
+</div>
+</div>
+</article>
+</div>
+<!-- Second Grid Row: Blanks & Tonal Capsule -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-grid-line bg-surface-lowest">
+<!-- BLANK 1: LILAC -->
+<article class="p-5 flex flex-col justify-between hover:bg-surface-dim/40 transition-colors">
+<div class="flex items-center justify-between font-mono-code text-[10px] pb-2 border-b border-grid-subtle">
+<span class="font-bold">TONAL 01 // LILAC</span>
+<span class="text-neutral-500">500GSM TERRY</span>
+</div>
+<div class="w-full aspect-square bg-[#7c5695] p-4 flex items-center justify-center my-3 border border-grid-line relative">
+<span class="absolute top-2 left-2 font-mono-code text-[9px] text-white/80 bg-black/40 px-1.5 py-0.5">#7C5695</span>
+<img alt="Lilac Sorbet Sweatshirt" class="w-3/4 h-3/4 object-contain filter drop-shadow-md" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0Hq4z1XzqyNg68kERnwDoJOmMRg5SBIEtY9lUbD5fl-lHqsLJnyxuu8vlzxIQ7fBDXt1KYGV7boF6ato3vFFyjPNN4O3q1XrfCtPb5-HcUGCb7iLXLqtJLPPP289AW6VBkcA9rnKBxdRCpSIwch1E84SWw3yBmYAbM7HJV0ekwJ50ZeWABK5aNHS2Sr8al-icToZ0H53HUJel4IPbfqzKjHPDNv1rRY6X7ep97XGSANhutxpf5YgG"/>
+</div>
+<div class="space-y-2">
+<div class="flex items-center justify-between">
+<span class="font-headline-md font-bold uppercase text-sm">LILAC SORBET SWEAT</span>
+<span class="font-mono-code font-bold text-sm">$ 165</span>
+</div>
+<button class="w-full border border-grid-line hover:bg-black hover:text-white transition-colors py-2 font-mono-code text-[10px] uppercase font-bold">QUICK ORDER</button>
+</div>
+</article>
+<!-- BLANK 2: SAGE MOSS -->
+<article class="p-5 flex flex-col justify-between hover:bg-surface-dim/40 transition-colors">
+<div class="flex items-center justify-between font-mono-code text-[10px] pb-2 border-b border-grid-subtle">
+<span class="font-bold">TONAL 02 // SAGE</span>
+<span class="text-neutral-500">420GSM COMBED</span>
+</div>
+<div class="w-full aspect-square bg-[#637d68] p-4 flex items-center justify-center my-3 border border-grid-line relative">
+<span class="absolute top-2 left-2 font-mono-code text-[9px] text-white/80 bg-black/40 px-1.5 py-0.5">#637D68</span>
+<img alt="Pistachio Boxy Tee" class="w-3/4 h-3/4 object-contain filter drop-shadow-md" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBanvKuwD9_p4dCrgmstTsCLwIwf5xxMQbQCZoD4Ff1FW0jdZKyV730jNPeBxL7l5o3PVNLXlefALYBanQdbYIHM9TAYXyWTKcJhJPeCorGtZUFkADDkUbWpKAjFiqvt3Z9iYi2Zc8X_hEjtb74eZBjZVNlPTwwHxwDsoKyN-L5B9JxCj4vQZzKdEkSYwhT2p86X39ZNQEoahhIclnEmhi-do03kWfouEukd3AIpFBhnBG7Gzb9MDo"/>
+</div>
+<div class="space-y-2">
+<div class="flex items-center justify-between">
+<span class="font-headline-md font-bold uppercase text-sm">PISTACHIO BOXY TEE</span>
+<span class="font-mono-code font-bold text-sm">$ 95</span>
+</div>
+<button class="w-full border border-grid-line hover:bg-black hover:text-white transition-colors py-2 font-mono-code text-[10px] uppercase font-bold">QUICK ORDER</button>
+</div>
+</article>
+<!-- BLANK 3: VANILLA MILK -->
+<article class="p-5 flex flex-col justify-between hover:bg-surface-dim/40 transition-colors">
+<div class="flex items-center justify-between font-mono-code text-[10px] pb-2 border-b border-grid-subtle">
+<span class="font-bold">TONAL 03 // ECRU</span>
+<span class="text-neutral-500">550GSM OVERSIZED</span>
+</div>
+<div class="w-full aspect-square bg-[#d9d5cb] p-4 flex items-center justify-center my-3 border border-grid-line relative">
+<span class="absolute top-2 left-2 font-mono-code text-[9px] text-neutral-800 bg-white/70 px-1.5 py-0.5">#D9D5CB</span>
+<img alt="Vanilla Latte Hoodie" class="w-3/4 h-3/4 object-contain filter drop-shadow-md" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4LbZF7AuJvMG22ozMn3kzNAiZb0thb3l4SEqz5v1hLSr-AJEeuXMfMqF1HTIycY2M9ozgd9qvjTw7YLQ7newFkeu9SnVSgBB-z3Mm5TcnpK9PJ-OLud_qIFS8-wWeXCtsqc5RVWergQHoLIes6YjOWVB9CDPKtvzmUIdnyv0ywEtM9eJTf8U1iuz6eUw9by2sisrCef8jcJDTyiS27q3h_csZLjELTrrUOCJUT0k4TmjTsc4wPakS"/>
+</div>
+<div class="space-y-2">
+<div class="flex items-center justify-between">
+<span class="font-headline-md font-bold uppercase text-sm">VANILLA HOODIE</span>
+<span class="font-mono-code font-bold text-sm">$ 195</span>
+</div>
+<button class="w-full border border-grid-line hover:bg-black hover:text-white transition-colors py-2 font-mono-code text-[10px] uppercase font-bold">QUICK ORDER</button>
+</div>
+</article>
+<!-- BLANK 4: BERRY GLAZE -->
+<article class="p-5 flex flex-col justify-between hover:bg-surface-dim/40 transition-colors">
+<div class="flex items-center justify-between font-mono-code text-[10px] pb-2 border-b border-grid-subtle">
+<span class="font-bold">TONAL 04 // GLAZE</span>
+<span class="text-neutral-500">500GSM HEAVY FLEECE</span>
+</div>
+<div class="w-full aspect-square bg-[#a01332] p-4 flex items-center justify-center my-3 border border-grid-line relative">
+<span class="absolute top-2 left-2 font-mono-code text-[9px] text-white/80 bg-black/40 px-1.5 py-0.5">#A01332</span>
+<img alt="Berry Glaze Crewneck" class="w-3/4 h-3/4 object-contain filter drop-shadow-md" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCMnktCLH9yj9ly2q3QGcU4a3LgZwMJT2c60RJqcnlXOxoXNlTa0ujfQXhTaTruQm6pCuymWYXTKaEQZ_3x743hH0Xel9vEh7hviDIV2-abYiam4YCfzNSXsp1FJRcZA11UhVykkA1hjBnce-n6R8fbdziXstfo-gcn2JNFMIg1j_zTGxWnr0FvhCOb8JbKNh5aJUyPPg88Qe7a2S3AVflBW_K0CAVQzLXcsFsJtW0xNUV2wCFmlaeF"/>
+</div>
+<div class="space-y-2">
+<div class="flex items-center justify-between">
+<span class="font-headline-md font-bold uppercase text-sm">BERRY GLAZE CREW</span>
+<span class="font-mono-code font-bold text-sm">$ 145</span>
+</div>
+<button class="w-full border border-grid-line hover:bg-black hover:text-white transition-colors py-2 font-mono-code text-[10px] uppercase font-bold">QUICK ORDER</button>
+</div>
+</article>
+</div>
+</section>
+<!-- EDITORIAL CAD & AUDIO-STREAM BREAK: RAW ARCHITECTURAL DRAPE -->
+<section class="w-full border-b border-grid-line bg-black text-white" id="editorial-section">
+<div class="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-neutral-800">
+<!-- Left: Brutalist CAD Blueprint & Spec Diagram -->
+<div class="lg:col-span-7 p-8 md:p-12 flex flex-col justify-between relative overflow-hidden bg-neutral-950">
+<div class="space-y-6">
+<div class="flex items-center justify-between font-mono-code text-[11px] text-neutral-400 border-b border-neutral-800 pb-4">
+<span>PATTERN SCHEMATIC: CAD-004-HOOD</span>
+<span class="text-secondary font-bold">RATIO 1:1 INDUSTRIAL FIT</span>
+</div>
+<div class="space-y-2">
+<span class="font-mono-code text-[10px] text-secondary tracking-widest uppercase block">// ARCHITECTURAL SILHOUETTE BLUEPRINT</span>
+<h2 class="font-headline-xl text-4xl md:text-5xl font-black uppercase tracking-tight text-white leading-none">
+                RAW ARCHITECTURAL<br/><span class="text-neutral-500">DRAPE PROTOCOL</span>
+</h2>
+<p class="font-body-main text-sm text-neutral-400 max-w-xl pt-2">
+                Every pattern piece is calculated using rectilinear volumetric cutting to eliminate shoulder seam drape collapse. Under gravity, the 480GSM fabric locks into an imposing rectangular silhouette without clinging to body contours.
+              </p>
+</div>
+<!-- Technical Crosshair Diagram Canvas Simulation -->
+<div class="w-full border border-neutral-800 bg-black p-6 font-mono-code text-[11px] space-y-4">
+<div class="flex items-center justify-between text-neutral-500 border-b border-neutral-800 pb-2">
+<span>[X: 042.8] [Y: 119.4]</span>
+<span class="text-white">REINFORCED DOUBLE-STITCH 0.6MM</span>
+<span>TOLERANCE: ±0.5MM</span>
+</div>
+<div class="grid grid-cols-3 gap-4 py-4 text-center">
+<div class="border border-neutral-800 p-3 bg-neutral-900/50">
+<div class="text-secondary font-bold text-lg">74 CM</div>
+<div class="text-[9px] text-neutral-400 uppercase mt-1">CHEST WIDTH (BOXY)</div>
+</div>
+<div class="border border-neutral-800 p-3 bg-neutral-900/50">
+<div class="text-white font-bold text-lg">68 CM</div>
+<div class="text-[9px] text-neutral-400 uppercase mt-1">TORSO LENGTH</div>
+</div>
+<div class="border border-neutral-800 p-3 bg-neutral-900/50">
+<div class="text-secondary font-bold text-lg">58 CM</div>
+<div class="text-[9px] text-neutral-400 uppercase mt-1">DROP SHOULDER SPAN</div>
+</div>
+</div>
+<!-- Audio Stream Player UI -->
+<div class="border border-neutral-800 bg-neutral-900 p-3 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<button class="w-8 h-8 rounded-none bg-white text-black flex items-center justify-center hover:bg-secondary hover:text-white transition-colors" title="Play Runway Transmission">
+<span class="material-symbols-outlined text-[18px]">play_arrow</span>
+</button>
+<div>
+<div class="font-mono-code text-[10px] text-white font-bold">RUNWAY AUDIO DISPATCH: SHIBUYA_AM_0244.WAV</div>
+<div class="font-mono-code text-[9px] text-neutral-400">LENGTH: 03:22 // BITRATE: 1411 KBPS LOSSLESS</div>
+</div>
+</div>
+<div class="hidden sm:flex items-center gap-1 font-mono-code text-secondary text-[11px]">
+<span>▮</span><span>▮</span><span>▮</span><span>▯</span><span>▯</span>
+</div>
+</div>
+</div>
+</div>
+<div class="pt-6 flex items-center justify-between text-neutral-500 font-mono-code text-[10px]">
+<span>DESIGNED BY TOMBOY ATELIER // TOKYO - LONDON</span>
+<span>VERIFIED ARCHIVE GRADE A</span>
+</div>
+</div>
+<!-- Right: Night Shift Editorial Lookbook Visual Split -->
+<div class="lg:col-span-5 relative min-h-[440px] flex flex-col justify-end p-8 overflow-hidden bg-[#090909]">
+<div class="absolute inset-0 z-0">
+<div class="bg-cover bg-center w-full h-full filter brightness-70 contrast-125" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBd1BjigtqVhZ37Sm9Jcx_aciOFprOVR4MjYEGrcjegcnE2rYXv93Z87eW3VG_1jgfBwWQ1R1i2wJTlfbZ8GyZENMzHiBWZdhH5S_lKdMBAKkszX0jQPAYg7ABzzAzuifBoVVeUG76y0guhC5eBruAs7G8ecfztotKeUhrVZM76i5d8yjH3yMy_nYdjqE10bI28VOKiJwWAd4ne8q48UcanWxWpqNttYNvyGAalomTQlcQ863EOG_f1');">
+</div>
+<div class="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent"></div>
+</div>
+<div class="relative z-10 space-y-4">
+<span class="inline-block px-2.5 py-1 bg-secondary text-white font-mono-code text-[10px] uppercase font-bold tracking-widest">
+              TURISMO HIGH-OCTANE EDITION
+            </span>
+<h3 class="font-headline-lg text-3xl font-black uppercase tracking-tight text-white leading-tight">
+              NIGHT SHIFT // SPEED RUSH 02
+            </h3>
+<p class="font-body-main text-xs text-neutral-300 max-w-sm">
+              Tested under extreme kinetic night conditions. Heat-pressed reflective rubber branding and industrial zipper tabs.
+            </p>
+<div class="pt-2">
+<a class="inline-flex items-center gap-2 border border-white text-white hover:bg-white hover:text-black transition-colors font-mono-code text-[11px] font-bold uppercase py-2.5 px-5" href="#catalog">
+<span>VIEW CAPSULE CATALOG</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- ON-BODY LOOKBOOK INDEX (2-COLUMN BRUTALIST DISPLAY) -->
+<section class="w-full border-b border-grid-line bg-surface">
+<div class="border-b border-grid-line p-6 md:p-8 flex items-center justify-between bg-surface-dim/40">
+<div>
+<span class="font-mono-code text-[10px] uppercase tracking-widest text-secondary font-bold block mb-1">// SYSTEM VERIFICATION</span>
+<h2 class="font-headline-xl text-3xl font-black uppercase tracking-tight text-primary">BEST SELLERS // ON-BODY PROFILES</h2>
+</div>
+<div class="hidden sm:block font-mono-code text-[11px] text-neutral-600 text-right">
+<div>DOCUMENTATION: CAMPAIGN FW25</div>
+<div class="text-secondary font-bold">100% GENDERLESS SPEC</div>
+</div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 divide-y md:divide-y-0 md:divide-x divide-grid-line">
+<!-- Look 01 -->
+<div class="group relative overflow-hidden bg-black p-6 md:p-8 flex flex-col justify-end min-h-[480px]">
+<div class="absolute inset-0 bg-cover bg-center filter brightness-85 group-hover:scale-103 transition-transform duration-700" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCSoLGKWHBv60x8wO8DHt6wktTpPxlZ8sFB8ozWUVingJxDGMYdSuwGiWo7Ri24ueJ-KBKwXGr5kysExwVJgbXCug58bUJjRnndGVxo-etm6t7SzDBCywxAAHPF1brWWoHs5a0vNu2DQh8Ah6GMhemOrWPW1QnTf72nnnGW9ZAYTViktR-SXkDcg7qCjgH8Lmm3rjI8LrKHG6HW-_kHw_8p8hZ1DSP1xP8xmSfRdDtYHYkQ6Xabc_KW');">
+</div>
+<div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent"></div>
+<div class="relative z-10 space-y-2 text-white">
+<div class="flex items-center justify-between font-mono-code text-[10px]">
+<span class="px-2 py-0.5 bg-secondary text-white font-bold uppercase">LOOK 01 // OVERSIZED MATRIX</span>
+<span>USD $ 340.00</span>
+</div>
+<h3 class="font-headline-md font-bold uppercase text-2xl text-white">TACTICAL MA-1 BOMBER</h3>
+<p class="font-body-main text-xs text-neutral-300 max-w-md">Distressed flight satin with high-density ribbing and internal webbing carry straps.</p>
+<div class="pt-2">
+<button class="bg-white text-black hover:bg-secondary hover:text-white transition-colors font-mono-code text-[10px] font-bold uppercase py-2 px-4">ORDER LOOK SPEC →</button>
+</div>
+</div>
+</div>
+<!-- Look 02 -->
+<div class="group relative overflow-hidden bg-black p-6 md:p-8 flex flex-col justify-end min-h-[480px]">
+<div class="absolute inset-0 bg-cover bg-center filter brightness-85 group-hover:scale-103 transition-transform duration-700" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBDNj33O1DuFF2OFob-LPwr4WQOa0L-k0ydnwFpq4_lZFwM1PyvrWaK2s-hV0A9t80N_cERQmY0WvHzI0J5F8PBGh19R8bW_ZjeCWCoUHPptpq1AwUaikPb7JC95nexQ0K-1n3ppsvPq4HGgG4EH02HTri7wJtQ69XRZpo4LsG2ubdtOavevuvPv_o6wK6-abSISvaR-qGjOp0gYK5WWAjShNPFbPPqavFzagJdwULFxx91NB7ofiCc');">
+</div>
+<div class="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent"></div>
+<div class="relative z-10 space-y-2 text-white">
+<div class="flex items-center justify-between font-mono-code text-[10px]">
+<span class="px-2 py-0.5 bg-black text-white border border-neutral-700 font-bold uppercase">LOOK 02 // DRAGON MOTIF</span>
+<span>USD $ 115.00</span>
+</div>
+<h3 class="font-headline-md font-bold uppercase text-2xl text-white">RED PREDATOR MOTIF TEE</h3>
+<p class="font-body-main text-xs text-neutral-300 max-w-md">Airbrushed back mural with distressed ribbed crew neckline. Vintage fade finish.</p>
+<div class="pt-2">
+<button class="bg-white text-black hover:bg-secondary hover:text-white transition-colors font-mono-code text-[10px] font-bold uppercase py-2 px-4">ORDER LOOK SPEC →</button>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- PHYSICAL PRESENCE & GLOBAL STOCKIST MATRIX -->
+<section class="w-full border-b border-grid-line bg-surface" id="stockists">
+<div class="p-6 md:p-10 border-b border-grid-line flex flex-col md:flex-row md:items-end justify-between gap-4">
+<div>
+<span class="font-mono-code text-[10px] uppercase tracking-widest text-secondary font-bold block mb-1">// PHYSICAL MANIFEST</span>
+<h2 class="font-headline-xl text-3xl md:text-4xl font-black uppercase tracking-tight text-primary">GLOBAL STOCKIST TERMINAL</h2>
+</div>
+<div class="font-mono-code text-[11px] text-neutral-600">
+          STATUS: <span class="text-emerald-700 font-bold">ALL PHYSICAL CONSIGNMENTS IN-STOCK</span>
+</div>
+</div>
+<!-- Stockist Grid (4 Matrix Cells) -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-grid-line bg-surface-lowest">
+<!-- TOKYO -->
+<div class="p-6 space-y-4 hover:bg-surface transition-colors border-b lg:border-b-0 border-grid-line">
+<div class="flex items-center justify-between border-b border-grid-line pb-2">
+<span class="font-headline-md font-black uppercase text-xl">TOKYO</span>
+<span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 font-mono-code text-[9px] font-bold">ACTIVE</span>
+</div>
+<div class="space-y-1 font-mono-code text-[11px]">
+<div class="font-bold text-black uppercase">TOMBOY FLAGSHIP SHIBUYA</div>
+<div class="text-neutral-500">2-24-12 SHIBUYA, TOKYO</div>
+<div class="text-neutral-500">LAT: 35.6595° N // 139.7004° E</div>
+</div>
+<div class="pt-2 text-[10px] font-mono-code text-neutral-600 flex justify-between">
+<span>HOURS: 11:00 - 20:00</span>
+<span class="text-secondary font-bold">STOCK: 98%</span>
+</div>
+</div>
+<!-- LONDON -->
+<div class="p-6 space-y-4 hover:bg-surface transition-colors border-b lg:border-b-0 border-grid-line">
+<div class="flex items-center justify-between border-b border-grid-line pb-2">
+<span class="font-headline-md font-black uppercase text-xl">LONDON</span>
+<span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 font-mono-code text-[9px] font-bold">ACTIVE</span>
+</div>
+<div class="space-y-1 font-mono-code text-[11px]">
+<div class="font-bold text-black uppercase">TOMBOY SOHO ARCHIVE</div>
+<div class="text-neutral-500">14 BREWER STREET, LONDON W1F</div>
+<div class="text-neutral-500">LAT: 51.5117° N // 0.1345° W</div>
+</div>
+<div class="pt-2 text-[10px] font-mono-code text-neutral-600 flex justify-between">
+<span>HOURS: 10:00 - 19:00</span>
+<span class="text-secondary font-bold">STOCK: 84%</span>
+</div>
+</div>
+<!-- NEW YORK -->
+<div class="p-6 space-y-4 hover:bg-surface transition-colors border-b md:border-b-0 border-grid-line">
+<div class="flex items-center justify-between border-b border-grid-line pb-2">
+<span class="font-headline-md font-black uppercase text-xl">NEW YORK</span>
+<span class="px-2 py-0.5 bg-emerald-100 text-emerald-800 font-mono-code text-[9px] font-bold">ACTIVE</span>
+</div>
+<div class="space-y-1 font-mono-code text-[11px]">
+<div class="font-bold text-black uppercase">TOMBOY SOHO MERCER</div>
+<div class="text-neutral-500">88 MERCER ST, SOHO NY 10012</div>
+<div class="text-neutral-500">LAT: 40.7223° N // 73.9987° W</div>
+</div>
+<div class="pt-2 text-[10px] font-mono-code text-neutral-600 flex justify-between">
+<span>HOURS: 11:00 - 19:30</span>
+<span class="text-secondary font-bold">STOCK: 92%</span>
+</div>
+</div>
+<!-- SEOUL / CREPDOG COLLAB -->
+<div class="p-6 space-y-4 hover:bg-surface transition-colors">
+<div class="flex items-center justify-between border-b border-grid-line pb-2">
+<span class="font-headline-md font-black uppercase text-xl">SEOUL</span>
+<span class="px-2 py-0.5 bg-secondary text-white font-mono-code text-[9px] font-bold">LIMITED</span>
+</div>
+<div class="space-y-1 font-mono-code text-[11px]">
+<div class="font-bold text-black uppercase">CREPDOG CREW CONCEPT</div>
+<div class="text-neutral-500">HANNAM-DONG 683-14, SEOUL</div>
+<div class="text-neutral-500">LAT: 37.5340° N // 127.0026° E</div>
+</div>
+<div class="pt-2 text-[10px] font-mono-code text-neutral-600 flex justify-between">
+<span>HOURS: 12:00 - 21:00</span>
+<span class="text-secondary font-bold">STOCK: 38% [LOW]</span>
+</div>
+</div>
+</div>
+</section>
+</main>
+<!-- BRUTALIST TECHNICAL MANIFEST FOOTER -->
+<footer class="w-full bg-black text-[#e5e5e5] border-t border-grid-line font-mono-code">
+<!-- Top Row: Direct Terminal Subscription -->
+<div class="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-neutral-800 border-b border-neutral-800">
+<div class="lg:col-span-6 p-6 md:p-10 space-y-4">
+<div class="flex items-center gap-3">
+<img alt="TOMBOY LOGO" class="h-6 w-auto object-contain filter invert" src="https://lh3.googleusercontent.com/aida/AEtjO1VsApCZr_OXfOP7a10cL68n9xqWnWNuQwHHwp0MSPvh_OkYiXXyHJkuO6Hado7PwiyWLyc2YDZdhy4L-t1liMcH4OUwKO-jNACeWilqG4E_asTCHXp7PrW_JnHp7dicyLg-jt5dC7i48WK6pZse9iNToyNEyUffBSqyyvaFsmrK97_mwTgg0FImOcWtTzc3JXbXmhgdqX39LbaQWVYQzBwzB21CDn-sfjXq0llOfMgYn-Sz3_B-KUP6vuY"/>
+<span class="font-headline-md font-black tracking-tight uppercase text-xl text-white">TOMBOY CORP // ARCHIVE SYSTEM</span>
+</div>
+<p class="font-body-main text-xs text-neutral-400 max-w-lg leading-relaxed">
+          Raw brutalist industrial garment manufacture. All pieces engineered under rigorous architectural discipline with high-density fibers and uncompromising silhouette geometry.
+        </p>
+<div class="font-mono-code text-[10px] text-neutral-500">
+          OPERATIONAL DIRECTIVE // 2024-2025 // EDITION 04
+        </div>
+</div>
+<div class="lg:col-span-6 p-6 md:p-10 flex flex-col justify-center space-y-3">
+<span class="font-mono-code text-[10px] text-secondary font-bold uppercase tracking-widest block">
+          COMMUNICATION PROTOCOL // VIP NOTIFICATION MATRIX
+        </span>
+<form class="flex items-stretch border border-neutral-700 bg-neutral-900" onsubmit="event.preventDefault();">
+<input class="w-full bg-transparent px-4 py-3 text-xs font-mono-code text-white placeholder:text-neutral-500 focus:outline-none border-none" placeholder="ENTER TERMINAL EMAIL ID" type="email"/>
+<button class="bg-white text-black hover:bg-secondary hover:text-white transition-colors px-6 font-bold text-xs uppercase tracking-wider shrink-0" type="submit">
+            CONNECT
+          </button>
+</form>
+<span class="text-[9px] text-neutral-500">ENCRYPTED DISPATCH ONLY. NO SPAM PROTOCOL.</span>
+</div>
+</div>
+<!-- Middle Row: Technical Links Columns -->
+<div class="grid grid-cols-2 md:grid-cols-4 divide-x divide-neutral-800 border-b border-neutral-800 text-[11px]">
+<div class="p-6 space-y-3">
+<span class="font-bold text-white uppercase text-[10px] tracking-wider block border-b border-neutral-800 pb-1">CATALOG ARCHIVE</span>
+<ul class="space-y-1.5 text-neutral-400">
+<li><a class="hover:text-white transition-colors" href="#catalog">CHAPTER 04 // REBEL YOUTH</a></li>
+<li><a class="hover:text-white transition-colors" href="#catalog">CHAPTER 03 // OBSIDIAN</a></li>
+<li><a class="hover:text-white transition-colors" href="#catalog">CHAPTER 02 // RAW FLEECE</a></li>
+<li><a class="hover:text-white transition-colors" href="#catalog">HEAVYWEIGHT BLANKS</a></li>
+</ul>
+</div>
+<div class="p-6 space-y-3">
+<span class="font-bold text-white uppercase text-[10px] tracking-wider block border-b border-neutral-800 pb-1">SYSTEM SPEC</span>
+<ul class="space-y-1.5 text-neutral-400">
+<li><a class="hover:text-white transition-colors" href="#">FABRIC WEIGHT LAB</a></li>
+<li><a class="hover:text-white transition-colors" href="#">CARE &amp; WASH DIRECTIVE</a></li>
+<li><a class="hover:text-white transition-colors" href="#">AUTHENTICITY CHIP 256</a></li>
+<li><a class="hover:text-white transition-colors" href="#">TRACEABILITY MANIFEST</a></li>
+</ul>
+</div>
+<div class="p-6 space-y-3">
+<span class="font-bold text-white uppercase text-[10px] tracking-wider block border-b border-neutral-800 pb-1">CARGO &amp; DISPATCH</span>
+<ul class="space-y-1.5 text-neutral-400">
+<li><a class="hover:text-white transition-colors" href="#">AIR CARGO TRACKING</a></li>
+<li><a class="hover:text-white transition-colors" href="#">CUSTOMS CLEARANCE</a></li>
+<li><a class="hover:text-white transition-colors" href="#">EXCHANGE PROTOCOLS</a></li>
+<li><a class="hover:text-white transition-colors" href="#">TERMS OF SUPPLY</a></li>
+</ul>
+</div>
+<div class="p-6 space-y-3">
+<span class="font-bold text-white uppercase text-[10px] tracking-wider block border-b border-neutral-800 pb-1">LOCATIONS</span>
+<ul class="space-y-1.5 text-neutral-400">
+<li><a class="hover:text-white transition-colors" href="#stockists">TOKYO // SHIBUYA</a></li>
+<li><a class="hover:text-white transition-colors" href="#stockists">LONDON // SOHO</a></li>
+<li><a class="hover:text-white transition-colors" href="#stockists">NEW YORK // MERCER</a></li>
+<li><a class="hover:text-white transition-colors" href="#stockists">SEOUL // CREPDOG CREW</a></li>
+</ul>
+</div>
+</div>
+<!-- Bottom Barcode & Copyright Terminal Bar -->
+<div class="p-6 flex flex-col md:flex-row items-center justify-between gap-4 text-[10px] text-neutral-500">
+<div class="flex items-center gap-4">
+<span>© 2025 TOMBOY CLOTHING CORP. ALL RIGHTS RESERVED.</span>
+<span>•</span>
+<span>BRUTALIST SYSTEM V4.9</span>
+</div>
+<div class="flex items-center gap-6">
+<span class="hover:text-white cursor-pointer">SECURITY: SHA-256</span>
+<span class="hover:text-white cursor-pointer">PRIVACY MANIFEST</span>
+<span class="hover:text-white cursor-pointer">TERMINAL COOKIES</span>
+</div>
+</div>
+</footer>
+<!-- Realtime Clock Script -->
+<script>
+    (function() {
+      const clockEl = document.getElementById('live-clock');
+      function updateClock() {
+        const now = new Date();
+        // Tokyo time UTC+9
+        const tokyoTime = new Date(now.getTime() + (now.getTimezoneOffset() * 60000) + (9 * 3600000));
+        const hours = String(tokyoTime.getHours()).padStart(2, '0');
+        const minutes = String(tokyoTime.getMinutes()).padStart(2, '0');
+        const seconds = String(tokyoTime.getSeconds()).padStart(2, '0');
+        if (clockEl) {
+          clockEl.textContent = `${hours}:${minutes}:${seconds}`;
+        }
+      }
+      setInterval(updateClock, 1000);
+      updateClock();
+    })();
+  </script>
+</body></html>

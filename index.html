@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Viewer</title>
+    <style>
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+            overflow: hidden;
+        }
+        #nav-bar {
+            height: 50px;
+            background-color: #333;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 20px;
+        }
+        #nav-bar button {
+            padding: 8px 16px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #555;
+            color: white;
+            border: none;
+            border-radius: 4px;
+        }
+        #nav-bar button:hover {
+            background-color: #777;
+        }
+        #nav-bar button:disabled {
+            background-color: #222;
+            color: #666;
+            cursor: not-allowed;
+        }
+        #viewer-frame {
+            width: 100%;
+            height: calc(100% - 50px);
+            border: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="nav-bar">
+        <button id="prev-btn" onclick="prevPage()">Previous</button>
+        <span id="page-info">Page 1 of 4</span>
+        <button id="next-btn" onclick="nextPage()">Next</button>
+    </div>
+
+    <iframe id="viewer-frame" src="tomboy_clothing_home_latest_drop/code.html"></iframe>
+
+    <script>
+        const pages = [
+            "tomboy_clothing_home_latest_drop/code.html",
+            "tomboy_editorial_darkroom_runway/code.html",
+            "tomboy_neo_tokyo_color_clash/code.html",
+            "tomboy_raw_brutalist_archive_index/code.html"
+        ];
+        
+        let currentIndex = 0;
+
+        function updateView() {
+            document.getElementById("viewer-frame").src = pages[currentIndex];
+            document.getElementById("page-info").innerText = `Page ${currentIndex + 1} of ${pages.length}`;
+            
+            document.getElementById("prev-btn").disabled = currentIndex === 0;
+            document.getElementById("next-btn").disabled = currentIndex === pages.length - 1;
+        }
+
+        function nextPage() {
+            if (currentIndex < pages.length - 1) {
+                currentIndex++;
+                updateView();
+            }
+        }
+
+        function prevPage() {
+            if (currentIndex > 0) {
+                currentIndex--;
+                updateView();
+            }
+        }
+        
+        updateView();
+    </script>
+</body>
+</html>
