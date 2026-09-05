@@ -2,7 +2,7 @@
 
 <html lang="en"><head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <title>TOMBOY // ARCHIVE INDEX &amp; SYSTEM</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Space+Mono:ital,wght@0,400;0,700;1,400&amp;family=Hanken+Grotesk:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -46,6 +46,7 @@
         background-color: #f4f3ef;
         color: #111111;
         font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+        overflow-x: hidden;
       }
     }
     .technical-grid {
@@ -98,7 +99,7 @@
     }
   </style>
 </head>
-<body class="bg-surface font-body-main antialiased text-on-surface technical-grid selection:bg-secondary selection:text-white">
+<body class="bg-surface font-body-main antialiased text-on-surface technical-grid selection:bg-secondary selection:text-white overflow-x-hidden">
 <!-- TOP RUNNER PROTOCOL BAR -->
 <div class="w-full bg-[#0d0d0d] text-[#e5e5e5] border-b border-grid-line font-mono-code text-[11px] uppercase tracking-wider px-4 sm:px-6 py-1.5 flex flex-wrap items-center justify-between gap-2">
 <div class="flex items-center gap-4">
@@ -112,7 +113,7 @@
 <span class="hidden lg:inline text-neutral-400">LAT: 35.6595° N // LON: 139.7004° E</span>
 </div>
 <div class="flex items-center gap-5 text-neutral-300 ml-auto">
-<span class="font-bold text-white tracking-widest">[ SHUTTLE DISPATCH EVERY FRI 18:00 GMT ]</span>
+<span class="hidden sm:inline font-bold text-white tracking-widest">[ SHUTTLE DISPATCH EVERY FRI 18:00 GMT ]</span>
 <div class="flex items-center gap-2 text-[10px] text-neutral-400 border border-neutral-700 px-2 py-0.5">
 <span>UTC+9</span>
 <span class="text-white font-mono" id="live-clock">02:44:12</span>
@@ -152,19 +153,93 @@
 <div class="hidden sm:flex items-center px-4 font-mono-code text-[11px] tracking-wider text-neutral-700 bg-surface">
 <span>CURRENCY: [ USD $ ]</span>
 </div>
-<button class="flex items-center justify-center px-4 hover:bg-black hover:text-white transition-colors" title="Search Archive">
+<button class="flex items-center justify-center px-3 sm:px-4 hover:bg-black hover:text-white transition-colors" title="Search Archive" aria-label="Search Archive">
 <span class="material-symbols-outlined text-[19px]">search</span>
 </button>
-<button class="flex items-center justify-center px-4 hover:bg-black hover:text-white transition-colors" title="Terminal Access">
+<button class="hidden sm:flex items-center justify-center px-3 sm:px-4 hover:bg-black hover:text-white transition-colors" title="Terminal Access" aria-label="Terminal Access">
 <span class="material-symbols-outlined text-[19px]">terminal</span>
 </button>
-<a class="flex items-center gap-2 px-5 bg-black text-white hover:bg-secondary transition-colors font-mono-code text-[11px] font-bold tracking-widest" href="#cart">
+<a class="flex items-center gap-2 px-3 sm:px-5 min-h-[44px] bg-black text-white hover:bg-secondary transition-colors font-mono-code text-[11px] font-bold tracking-widest" href="#cart" aria-label="Archive Cart">
 <span>CART</span>
-<span class="px-1.5 py-0.5 bg-neutral-800 text-white border border-neutral-600 text-[10px]">[ 0 ]</span>
 </a>
+<!-- Mobile Menu Trigger -->
+<button id="mobile-menu-trigger" class="flex lg:hidden items-center justify-center min-w-[44px] min-h-[44px] px-3 bg-surface hover:bg-black hover:text-white transition-colors font-mono-code text-[11px] font-bold border-l border-grid-line" aria-label="Open Archive Navigation" aria-expanded="false" aria-controls="mobile-drawer">
+<span class="material-symbols-outlined text-[20px]">menu</span>
+</button>
 </div>
 </div>
 </header>
+<!-- ARCHIVAL MOBILE OFF-CANVAS SIDE DRAWER -->
+<div id="mobile-drawer-backdrop" class="fixed inset-0 z-40 bg-black/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out"></div>
+<aside id="mobile-drawer" class="fixed inset-y-0 right-0 z-50 w-[85vw] max-w-[380px] h-full bg-[#f4f3ef] text-black border-l-2 border-grid-line flex flex-col justify-between transform translate-x-full transition-transform duration-300 ease-out shadow-2xl overflow-y-auto" role="dialog" aria-modal="true" aria-label="Archival Navigation Menu">
+  <div id="mobile-drawer-panel" class="w-full min-h-full flex flex-col justify-between p-0">
+    <!-- Drawer Header -->
+    <div class="border-b border-grid-line bg-surface-dim/50 p-4 flex items-center justify-between">
+      <div class="space-y-0.5">
+        <span class="font-mono-code text-[10px] text-secondary font-bold tracking-widest block">// SYSTEM PROTOCOL 04.9</span>
+        <span class="font-mono-code text-[12px] font-black tracking-wider block">ARCHIVE INDEX // TOKYO</span>
+      </div>
+      <button id="mobile-drawer-close" class="flex items-center justify-center min-w-[44px] min-h-[44px] border border-grid-line bg-surface hover:bg-black hover:text-white transition-colors" aria-label="Close Archival Navigation">
+        <span class="material-symbols-outlined text-[20px]">close</span>
+      </button>
+    </div>
+
+    <!-- Drawer Navigation Links -->
+    <nav class="flex-1 divide-y divide-grid-line font-mono-code text-xs font-bold tracking-widest">
+      <a class="flex items-center justify-between px-6 py-4 hover:bg-black hover:text-white transition-colors" href="#catalog">
+        <span class="flex items-center gap-3">
+          <span class="text-secondary text-[10px]">//01</span> ARCHIVE CATALOG
+        </span>
+        <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+      </a>
+      <a class="flex items-center justify-between px-6 py-4 hover:bg-black hover:text-white transition-colors" href="#catalog">
+        <span class="flex items-center gap-3">
+          <span class="text-secondary text-[10px]">//02</span> CAPSULE DROP
+        </span>
+        <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+      </a>
+      <a class="flex items-center justify-between px-6 py-4 hover:bg-black hover:text-white transition-colors" href="#catalog">
+        <span class="flex items-center gap-3">
+          <span class="text-secondary text-[10px]">//03</span> OBJECTS &amp; BLANKS
+        </span>
+        <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+      </a>
+      <a class="flex items-center justify-between px-6 py-4 hover:bg-black hover:text-white transition-colors" href="#editorial-section">
+        <span class="flex items-center gap-3">
+          <span class="text-secondary text-[10px]">//04</span> RUNWAY MOTION
+        </span>
+        <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+      </a>
+      <a class="flex items-center justify-between px-6 py-4 hover:bg-black hover:text-white transition-colors" href="#stockists">
+        <span class="flex items-center gap-3">
+          <span class="text-secondary text-[10px]">//05</span> MATRIX &amp; STOCKISTS
+        </span>
+        <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+      </a>
+      <a class="flex items-center justify-between px-6 py-4 bg-black text-white hover:bg-secondary transition-colors" href="#cart">
+        <span class="flex items-center gap-3">
+          <span class="text-secondary text-[10px]">//06</span> CART // SECURE CHECKOUT
+        </span>
+        <span class="material-symbols-outlined text-[16px]">shopping_bag</span>
+      </a>
+    </nav>
+
+    <!-- Drawer Telemetry & Spec Footer -->
+    <div class="p-6 border-t border-grid-line bg-surface-dim/30 font-mono-code text-[11px] space-y-4">
+      <div class="flex items-center justify-between text-neutral-600">
+        <span>CURRENCY SPEC:</span>
+        <span class="font-bold text-black">[ USD $ / GLOBAL ]</span>
+      </div>
+      <div class="flex items-center justify-between text-neutral-600">
+        <span>RELAY NODE:</span>
+        <span class="text-secondary font-bold">TOKYO B4-GRID</span>
+      </div>
+      <div class="pt-2 border-t border-grid-line text-[9px] text-neutral-500 tracking-tighter">
+        ISO-9001 ARCHIVAL TEXTILE SYSTEM // ZERO SYNTHETIC SOFTENERS
+      </div>
+    </div>
+  </div>
+</aside>
 <main class="w-full">
 <!-- HERO SECTION: TECHNICAL DROP INDEX & SPLIT MANIFEST -->
 <section class="w-full border-b border-grid-line bg-surface">
@@ -172,7 +247,7 @@
 <!-- Left Side: Technical Spec Sheet Manifest -->
 <div class="lg:col-span-5 xl:col-span-5 p-6 md:p-10 flex flex-col justify-between bg-surface relative overflow-hidden">
 <!-- Background Spec Watermark -->
-<div class="absolute -bottom-8 -right-8 font-mono-code text-[140px] font-bold text-neutral-900/[0.04] select-none pointer-events-none leading-none">
+<div class="absolute -bottom-8 -right-8 font-mono-code text-6xl sm:text-8xl lg:text-[140px] font-bold text-neutral-900/[0.04] select-none pointer-events-none leading-none max-w-full overflow-hidden">
             004
           </div>
 <!-- Top Meta Barcode -->
@@ -303,20 +378,23 @@
             FALL / WINTER 2025 GARMENT SPECIFICATION
           </h2>
 </div>
-<!-- Filter Pills Barcode Bar -->
+<!-- Filter Pills Barcode Bar & Carousel Counter -->
 <div class="flex flex-wrap items-center gap-2 font-mono-code text-[11px]">
-<span class="text-neutral-500 mr-2 uppercase text-[10px]">FILTER BY SEGMENT:</span>
-<button class="bg-black text-white px-3.5 py-1.5 font-bold uppercase tracking-wider">ALL ARCHIVES [ 08 ]</button>
-<button class="bg-surface-lowest border border-grid-line text-neutral-800 hover:bg-black hover:text-white px-3.5 py-1.5 uppercase transition-colors">TEES [ 03 ]</button>
-<button class="bg-surface-lowest border border-grid-line text-neutral-800 hover:bg-black hover:text-white px-3.5 py-1.5 uppercase transition-colors">HOODIES [ 02 ]</button>
-<button class="bg-surface-lowest border border-grid-line text-neutral-800 hover:bg-black hover:text-white px-3.5 py-1.5 uppercase transition-colors">OUTERWEAR [ 02 ]</button>
-<button class="bg-surface-lowest border border-grid-line text-neutral-800 hover:bg-black hover:text-white px-3.5 py-1.5 uppercase transition-colors">BLANKS [ 01 ]</button>
+<div class="flex items-center gap-2 mr-2">
+  <span class="text-neutral-500 uppercase text-[10px]">FILTER BY SEGMENT:</span>
+  <span id="carousel-counter" class="font-mono-code text-[11px] bg-black text-white px-2 py-0.5 tracking-wider font-bold">[ 01 / 04 ]</span>
+</div>
+<button class="bg-black text-white px-3.5 py-1.5 font-bold uppercase tracking-wider min-h-[44px]">ALL ARCHIVES [ 08 ]</button>
+<button class="bg-surface-lowest border border-grid-line text-neutral-800 hover:bg-black hover:text-white px-3.5 py-1.5 uppercase transition-colors min-h-[44px]">TEES [ 03 ]</button>
+<button class="bg-surface-lowest border border-grid-line text-neutral-800 hover:bg-black hover:text-white px-3.5 py-1.5 uppercase transition-colors min-h-[44px]">HOODIES [ 02 ]</button>
+<button class="bg-surface-lowest border border-grid-line text-neutral-800 hover:bg-black hover:text-white px-3.5 py-1.5 uppercase transition-colors min-h-[44px]">OUTERWEAR [ 02 ]</button>
+<button class="bg-surface-lowest border border-grid-line text-neutral-800 hover:bg-black hover:text-white px-3.5 py-1.5 uppercase transition-colors min-h-[44px]">BLANKS [ 01 ]</button>
 </div>
 </div>
-<!-- Architectural Multi-Column Grid (4 Columns with 1px dark borders) -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-grid-line border-b border-grid-line bg-surface-lowest">
+<!-- Architectural Multi-Column Grid / Mobile Touch Carousel -->
+<div id="archive-catalog-carousel" class="flex lg:grid overflow-x-auto lg:overflow-visible snap-x snap-mandatory lg:snap-none pb-4 lg:pb-0 grid-cols-1 md:grid-cols-2 lg:grid-cols-4 divide-y md:divide-y-0 md:divide-x divide-grid-line border-b border-grid-line bg-surface-lowest scrollbar-none" style="-webkit-overflow-scrolling: touch;">
 <!-- PRODUCT CARD 1 -->
-<article class="group flex flex-col justify-between bg-surface relative hover:bg-surface-dim/30 transition-colors border-b lg:border-b-0 border-grid-line">
+<article class="snap-start shrink-0 w-[82vw] sm:w-[60vw] lg:w-auto lg:shrink group flex flex-col justify-between bg-surface relative hover:bg-surface-dim/30 transition-colors border-b lg:border-b-0 border-grid-line">
 <!-- Card Header Specs -->
 <div class="border-b border-grid-line p-3 font-mono-code text-[10px] flex items-center justify-between bg-surface-lowest">
 <span class="font-bold text-black tracking-wider">SKU: TMB-01-MGT</span>
@@ -330,8 +408,8 @@
 <div class="absolute top-3 right-3 font-mono-code text-[9px] text-white/90 bg-black/40 px-2 py-0.5">
               WT: 480 GSM
             </div>
-<img alt="Gothic Chrome Skull Tee" class="w-4/5 h-4/5 object-contain filter drop-shadow-2xl transition-transform duration-300 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD90GrhA3I0OxXDe--jiWfh4h0aqBAJH1qjwno_vYVQ_ul_huYZc2bsPQdqIrS9PBmbiswNZaq7sAE_36T8d6AE1XWFvxnE_ZfL6ZT2jvW8BFKUQzbN33tM4b6H1GIz-bx714jH_vOUWyXjpIdTr9d2vtQ1nnH53cYpO0cIAlfzyDTBA1v61C3yghS_dQjPeDDqKcC-56gVewdGV2bEbtDgSsZv01lJbc918_H0t42WM4X-7tTc2Z7-"/>
-<div class="absolute bottom-3 left-3 right-3 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity">
+<img alt="Gothic Chrome Skull Tee" class="w-4/5 h-4/5 object-contain filter drop-shadow-2xl transition-transform duration-300 group-hover:scale-105" decoding="async" loading="lazy" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD90GrhA3I0OxXDe--jiWfh4h0aqBAJH1qjwno_vYVQ_ul_huYZc2bsPQdqIrS9PBmbiswNZaq7sAE_36T8d6AE1XWFvxnE_ZfL6ZT2jvW8BFKUQzbN33tM4b6H1GIz-bx714jH_vOUWyXjpIdTr9d2vtQ1nnH53cYpO0cIAlfzyDTBA1v61C3yghS_dQjPeDDqKcC-56gVewdGV2bEbtDgSsZv01lJbc918_H0t42WM4X-7tTc2Z7-"/>
+<div class="absolute bottom-3 left-3 right-3 flex items-center justify-between opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
 <span class="bg-black text-white font-mono-code text-[9px] px-2 py-1 uppercase">RESTRICTED 1/120</span>
 <span class="bg-white text-black font-mono-code text-[9px] px-2 py-1 uppercase font-bold">PREVIEW READY</span>
 </div>
@@ -358,7 +436,7 @@
 <span class="px-2 py-0.5 border border-grid-line hover:bg-neutral-200 cursor-pointer">XL</span>
 </div>
 </div>
-<button class="w-full bg-black text-white hover:bg-secondary transition-colors font-mono-code text-[11px] font-bold uppercase py-2.5 flex items-center justify-center gap-2">
+<button class="w-full bg-black text-white hover:bg-secondary transition-colors font-mono-code text-[11px] font-bold uppercase py-2.5 min-h-[44px] flex items-center justify-center gap-2">
 <span>ADD TO CARGO</span>
 <span class="font-mono-code text-[10px]">[ + ]</span>
 </button>
@@ -366,7 +444,7 @@
 </div>
 </article>
 <!-- PRODUCT CARD 2 -->
-<article class="group flex flex-col justify-between bg-surface relative hover:bg-surface-dim/30 transition-colors border-b lg:border-b-0 border-grid-line">
+<article class="snap-start shrink-0 w-[82vw] sm:w-[60vw] lg:w-auto lg:shrink group flex flex-col justify-between bg-surface relative hover:bg-surface-dim/30 transition-colors border-b lg:border-b-0 border-grid-line">
 <div class="border-b border-grid-line p-3 font-mono-code text-[10px] flex items-center justify-between bg-surface-lowest">
 <span class="font-bold text-black tracking-wider">SKU: TMB-02-VLT</span>
 <span class="px-1.5 py-0.5 border border-grid-line bg-surface font-bold uppercase">FLEECE LINED</span>
@@ -379,8 +457,8 @@
 <div class="absolute top-3 right-3 font-mono-code text-[9px] text-white/90 bg-black/40 px-2 py-0.5">
               WT: 520 GSM
             </div>
-<img alt="Anarchy Knit Hoodie" class="w-4/5 h-4/5 object-contain filter drop-shadow-2xl transition-transform duration-300 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZetKxTC_jBNayqBpZbtLQjwefc-ZXdQCxsL-Xmfj56BRUJWHV6ooKdhorkvzfzj6DDfmTf8SWjJtj_mjGJvfae0dMlhKXPhyjVi5AW-IK9hsda9oI0juH9fxxeFeVBsrzK6XTqlC4K1ewYdJbax-6C1e3A2bNr3UNQp2fDxJExIn5mKULvpkcnpIoHAsAztlbzKbfMOLdKxQIWXvrviXgL26ZdcNSjmzIOS3PLS2Nf276RF7NHM92"/>
-<div class="absolute bottom-3 left-3 right-3 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity">
+<img alt="Anarchy Knit Hoodie" class="w-4/5 h-4/5 object-contain filter drop-shadow-2xl transition-transform duration-300 group-hover:scale-105" decoding="async" loading="lazy" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZetKxTC_jBNayqBpZbtLQjwefc-ZXdQCxsL-Xmfj56BRUJWHV6ooKdhorkvzfzj6DDfmTf8SWjJtj_mjGJvfae0dMlhKXPhyjVi5AW-IK9hsda9oI0juH9fxxeFeVBsrzK6XTqlC4K1ewYdJbax-6C1e3A2bNr3UNQp2fDxJExIn5mKULvpkcnpIoHAsAztlbzKbfMOLdKxQIWXvrviXgL26ZdcNSjmzIOS3PLS2Nf276RF7NHM92"/>
+<div class="absolute bottom-3 left-3 right-3 flex items-center justify-between opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
 <span class="bg-black text-white font-mono-code text-[9px] px-2 py-1 uppercase">RAW SILVER EYELETS</span>
 <span class="bg-white text-black font-mono-code text-[9px] px-2 py-1 uppercase font-bold">PREVIEW READY</span>
 </div>
@@ -405,7 +483,7 @@
 <span class="px-2 py-0.5 border border-grid-line opacity-40 line-through">XL</span>
 </div>
 </div>
-<button class="w-full bg-black text-white hover:bg-secondary transition-colors font-mono-code text-[11px] font-bold uppercase py-2.5 flex items-center justify-center gap-2">
+<button class="w-full bg-black text-white hover:bg-secondary transition-colors font-mono-code text-[11px] font-bold uppercase py-2.5 min-h-[44px] flex items-center justify-center gap-2">
 <span>ADD TO CARGO</span>
 <span class="font-mono-code text-[10px]">[ + ]</span>
 </button>
@@ -413,7 +491,7 @@
 </div>
 </article>
 <!-- PRODUCT CARD 3 -->
-<article class="group flex flex-col justify-between bg-surface relative hover:bg-surface-dim/30 transition-colors border-b lg:border-b-0 border-grid-line">
+<article class="snap-start shrink-0 w-[82vw] sm:w-[60vw] lg:w-auto lg:shrink group flex flex-col justify-between bg-surface relative hover:bg-surface-dim/30 transition-colors border-b lg:border-b-0 border-grid-line">
 <div class="border-b border-grid-line p-3 font-mono-code text-[10px] flex items-center justify-between bg-surface-lowest">
 <span class="font-bold text-black tracking-wider">SKU: TMB-03-ACD</span>
 <span class="px-1.5 py-0.5 bg-emerald-800 text-white font-bold uppercase">RESTOCKED</span>
@@ -426,8 +504,8 @@
 <div class="absolute top-3 right-3 font-mono-code text-[9px] text-white/90 bg-black/40 px-2 py-0.5">
               WT: 420 GSM
             </div>
-<img alt="Cyber Moto Boxy Tee" class="w-4/5 h-4/5 object-contain filter drop-shadow-2xl transition-transform duration-300 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAV2u2PADTVrgupnF8hxwphgkjt7UBM7m8pxTrtoiMRFD_JV81p7W8EbfpHl-IaIScBEsJrAovuU_sWZNkbZNJWGPwkWwuSWXD-sXVvTJkNALAYDQ1mhn45QxUhZ-lVsFxmmOXftNrHpSBNVQgltTxjmSHcLJ_Bs6R6sw5MB9WBdgCPSOXolMv6NN4IJ1fIo7FOw7Z7YtlVicqSwefmCoySzrAbvyspPJnzksgej50Jgct2D_jlUCH"/>
-<div class="absolute bottom-3 left-3 right-3 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity">
+<img alt="Cyber Moto Boxy Tee" class="w-4/5 h-4/5 object-contain filter drop-shadow-2xl transition-transform duration-300 group-hover:scale-105" decoding="async" loading="lazy" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAV2u2PADTVrgupnF8hxwphgkjt7UBM7m8pxTrtoiMRFD_JV81p7W8EbfpHl-IaIScBEsJrAovuU_sWZNkbZNJWGPwkWwuSWXD-sXVvTJkNALAYDQ1mhn45QxUhZ-lVsFxmmOXftNrHpSBNVQgltTxjmSHcLJ_Bs6R6sw5MB9WBdgCPSOXolMv6NN4IJ1fIo7FOw7Z7YtlVicqSwefmCoySzrAbvyspPJnzksgej50Jgct2D_jlUCH"/>
+<div class="absolute bottom-3 left-3 right-3 flex items-center justify-between opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
 <span class="bg-black text-white font-mono-code text-[9px] px-2 py-1 uppercase">SLUB TEXTURED YARN</span>
 <span class="bg-white text-black font-mono-code text-[9px] px-2 py-1 uppercase font-bold">PREVIEW READY</span>
 </div>
@@ -452,7 +530,7 @@
 <span class="px-2 py-0.5 border border-grid-line hover:bg-neutral-200 cursor-pointer">XL</span>
 </div>
 </div>
-<button class="w-full bg-black text-white hover:bg-secondary transition-colors font-mono-code text-[11px] font-bold uppercase py-2.5 flex items-center justify-center gap-2">
+<button class="w-full bg-black text-white hover:bg-secondary transition-colors font-mono-code text-[11px] font-bold uppercase py-2.5 min-h-[44px] flex items-center justify-center gap-2">
 <span>ADD TO CARGO</span>
 <span class="font-mono-code text-[10px]">[ + ]</span>
 </button>
@@ -460,7 +538,7 @@
 </div>
 </article>
 <!-- PRODUCT CARD 4 -->
-<article class="group flex flex-col justify-between bg-surface relative hover:bg-surface-dim/30 transition-colors border-b lg:border-b-0 border-grid-line">
+<article class="snap-start shrink-0 w-[82vw] sm:w-[60vw] lg:w-auto lg:shrink group flex flex-col justify-between bg-surface relative hover:bg-surface-dim/30 transition-colors border-b lg:border-b-0 border-grid-line">
 <div class="border-b border-grid-line p-3 font-mono-code text-[10px] flex items-center justify-between bg-surface-lowest">
 <span class="font-bold text-black tracking-wider">SKU: TMB-04-OBS</span>
 <span class="px-1.5 py-0.5 bg-secondary text-white font-bold uppercase">RUN 004 // ARCHIVE</span>
@@ -473,8 +551,8 @@
 <div class="absolute top-3 right-3 font-mono-code text-[9px] text-white/90 bg-black/40 px-2 py-0.5">
               WT: 640 GSM
             </div>
-<img alt="Distressed Canvas Work Jacket" class="w-4/5 h-4/5 object-contain filter drop-shadow-2xl transition-transform duration-300 group-hover:scale-105" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD12SNIuNTUeg9IO7lXoFA1eemiRqnggDogveCXX24GEHBvw9N4FrGOQOdtYwELBDL_Vjfsr4FNbZCpxzNu022u3tZWyzaxvHP1YYqX9ESTkqYlZhtlzJ9OyWLfg2AsXoOdszqG122yXPL8vWgJyHAUVRucuFa6xfND5-Yj-bnUGaXgtiS8bJq-MT6JXqiz9WbhWwxOefNNWyMPctCjUYxqmFgFpW6lchX1D7jqyCOXjnw6UnXjRFAI"/>
-<div class="absolute bottom-3 left-3 right-3 flex items-center justify-between opacity-0 group-hover:opacity-100 transition-opacity">
+<img alt="Distressed Canvas Work Jacket" class="w-4/5 h-4/5 object-contain filter drop-shadow-2xl transition-transform duration-300 group-hover:scale-105" decoding="async" loading="lazy" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD12SNIuNTUeg9IO7lXoFA1eemiRqnggDogveCXX24GEHBvw9N4FrGOQOdtYwELBDL_Vjfsr4FNbZCpxzNu022u3tZWyzaxvHP1YYqX9ESTkqYlZhtlzJ9OyWLfg2AsXoOdszqG122yXPL8vWgJyHAUVRucuFa6xfND5-Yj-bnUGaXgtiS8bJq-MT6JXqiz9WbhWwxOefNNWyMPctCjUYxqmFgFpW6lchX1D7jqyCOXjnw6UnXjRFAI"/>
+<div class="absolute bottom-3 left-3 right-3 flex items-center justify-between opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
 <span class="bg-black text-white font-mono-code text-[9px] px-2 py-1 uppercase">HEAVY DUCK CANVAS</span>
 <span class="bg-white text-black font-mono-code text-[9px] px-2 py-1 uppercase font-bold">PREVIEW READY</span>
 </div>
@@ -499,7 +577,7 @@
 <span class="px-2 py-0.5 border border-grid-line hover:bg-neutral-200 cursor-pointer">XL</span>
 </div>
 </div>
-<button class="w-full bg-black text-white hover:bg-secondary transition-colors font-mono-code text-[11px] font-bold uppercase py-2.5 flex items-center justify-center gap-2">
+<button class="w-full bg-black text-white hover:bg-secondary transition-colors font-mono-code text-[11px] font-bold uppercase py-2.5 min-h-[44px] flex items-center justify-center gap-2">
 <span>ADD TO CARGO</span>
 <span class="font-mono-code text-[10px]">[ + ]</span>
 </button>
@@ -517,14 +595,14 @@
 </div>
 <div class="w-full aspect-square bg-[#7c5695] p-4 flex items-center justify-center my-3 border border-grid-line relative">
 <span class="absolute top-2 left-2 font-mono-code text-[9px] text-white/80 bg-black/40 px-1.5 py-0.5">#7C5695</span>
-<img alt="Lilac Sorbet Sweatshirt" class="w-3/4 h-3/4 object-contain filter drop-shadow-md" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0Hq4z1XzqyNg68kERnwDoJOmMRg5SBIEtY9lUbD5fl-lHqsLJnyxuu8vlzxIQ7fBDXt1KYGV7boF6ato3vFFyjPNN4O3q1XrfCtPb5-HcUGCb7iLXLqtJLPPP289AW6VBkcA9rnKBxdRCpSIwch1E84SWw3yBmYAbM7HJV0ekwJ50ZeWABK5aNHS2Sr8al-icToZ0H53HUJel4IPbfqzKjHPDNv1rRY6X7ep97XGSANhutxpf5YgG"/>
+<img alt="Lilac Sorbet Sweatshirt" class="w-3/4 h-3/4 object-contain filter drop-shadow-md" decoding="async" loading="lazy" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA0Hq4z1XzqyNg68kERnwDoJOmMRg5SBIEtY9lUbD5fl-lHqsLJnyxuu8vlzxIQ7fBDXt1KYGV7boF6ato3vFFyjPNN4O3q1XrfCtPb5-HcUGCb7iLXLqtJLPPP289AW6VBkcA9rnKBxdRCpSIwch1E84SWw3yBmYAbM7HJV0ekwJ50ZeWABK5aNHS2Sr8al-icToZ0H53HUJel4IPbfqzKjHPDNv1rRY6X7ep97XGSANhutxpf5YgG"/>
 </div>
 <div class="space-y-2">
 <div class="flex items-center justify-between">
 <span class="font-headline-md font-bold uppercase text-sm">LILAC SORBET SWEAT</span>
 <span class="font-mono-code font-bold text-sm">$ 165</span>
 </div>
-<button class="w-full border border-grid-line hover:bg-black hover:text-white transition-colors py-2 font-mono-code text-[10px] uppercase font-bold">QUICK ORDER</button>
+<button class="w-full border border-grid-line hover:bg-black hover:text-white transition-colors py-2.5 min-h-[44px] font-mono-code text-[10px] uppercase font-bold">QUICK ORDER</button>
 </div>
 </article>
 <!-- BLANK 2: SAGE MOSS -->
@@ -535,14 +613,14 @@
 </div>
 <div class="w-full aspect-square bg-[#637d68] p-4 flex items-center justify-center my-3 border border-grid-line relative">
 <span class="absolute top-2 left-2 font-mono-code text-[9px] text-white/80 bg-black/40 px-1.5 py-0.5">#637D68</span>
-<img alt="Pistachio Boxy Tee" class="w-3/4 h-3/4 object-contain filter drop-shadow-md" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBanvKuwD9_p4dCrgmstTsCLwIwf5xxMQbQCZoD4Ff1FW0jdZKyV730jNPeBxL7l5o3PVNLXlefALYBanQdbYIHM9TAYXyWTKcJhJPeCorGtZUFkADDkUbWpKAjFiqvt3Z9iYi2Zc8X_hEjtb74eZBjZVNlPTwwHxwDsoKyN-L5B9JxCj4vQZzKdEkSYwhT2p86X39ZNQEoahhIclnEmhi-do03kWfouEukd3AIpFBhnBG7Gzb9MDo"/>
+<img alt="Pistachio Boxy Tee" class="w-3/4 h-3/4 object-contain filter drop-shadow-md" decoding="async" loading="lazy" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBBanvKuwD9_p4dCrgmstTsCLwIwf5xxMQbQCZoD4Ff1FW0jdZKyV730jNPeBxL7l5o3PVNLXlefALYBanQdbYIHM9TAYXyWTKcJhJPeCorGtZUFkADDkUbWpKAjFiqvt3Z9iYi2Zc8X_hEjtb74eZBjZVNlPTwwHxwDsoKyN-L5B9JxCj4vQZzKdEkSYwhT2p86X39ZNQEoahhIclnEmhi-do03kWfouEukd3AIpFBhnBG7Gzb9MDo"/>
 </div>
 <div class="space-y-2">
 <div class="flex items-center justify-between">
 <span class="font-headline-md font-bold uppercase text-sm">PISTACHIO BOXY TEE</span>
 <span class="font-mono-code font-bold text-sm">$ 95</span>
 </div>
-<button class="w-full border border-grid-line hover:bg-black hover:text-white transition-colors py-2 font-mono-code text-[10px] uppercase font-bold">QUICK ORDER</button>
+<button class="w-full border border-grid-line hover:bg-black hover:text-white transition-colors py-2.5 min-h-[44px] font-mono-code text-[10px] uppercase font-bold">QUICK ORDER</button>
 </div>
 </article>
 <!-- BLANK 3: VANILLA MILK -->
@@ -553,14 +631,14 @@
 </div>
 <div class="w-full aspect-square bg-[#d9d5cb] p-4 flex items-center justify-center my-3 border border-grid-line relative">
 <span class="absolute top-2 left-2 font-mono-code text-[9px] text-neutral-800 bg-white/70 px-1.5 py-0.5">#D9D5CB</span>
-<img alt="Vanilla Latte Hoodie" class="w-3/4 h-3/4 object-contain filter drop-shadow-md" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4LbZF7AuJvMG22ozMn3kzNAiZb0thb3l4SEqz5v1hLSr-AJEeuXMfMqF1HTIycY2M9ozgd9qvjTw7YLQ7newFkeu9SnVSgBB-z3Mm5TcnpK9PJ-OLud_qIFS8-wWeXCtsqc5RVWergQHoLIes6YjOWVB9CDPKtvzmUIdnyv0ywEtM9eJTf8U1iuz6eUw9by2sisrCef8jcJDTyiS27q3h_csZLjELTrrUOCJUT0k4TmjTsc4wPakS"/>
+<img alt="Vanilla Latte Hoodie" class="w-3/4 h-3/4 object-contain filter drop-shadow-md" decoding="async" loading="lazy" src="https://lh3.googleusercontent.com/aida-public/AB6AXuA4LbZF7AuJvMG22ozMn3kzNAiZb0thb3l4SEqz5v1hLSr-AJEeuXMfMqF1HTIycY2M9ozgd9qvjTw7YLQ7newFkeu9SnVSgBB-z3Mm5TcnpK9PJ-OLud_qIFS8-wWeXCtsqc5RVWergQHoLIes6YjOWVB9CDPKtvzmUIdnyv0ywEtM9eJTf8U1iuz6eUw9by2sisrCef8jcJDTyiS27q3h_csZLjELTrrUOCJUT0k4TmjTsc4wPakS"/>
 </div>
 <div class="space-y-2">
 <div class="flex items-center justify-between">
 <span class="font-headline-md font-bold uppercase text-sm">VANILLA HOODIE</span>
 <span class="font-mono-code font-bold text-sm">$ 195</span>
 </div>
-<button class="w-full border border-grid-line hover:bg-black hover:text-white transition-colors py-2 font-mono-code text-[10px] uppercase font-bold">QUICK ORDER</button>
+<button class="w-full border border-grid-line hover:bg-black hover:text-white transition-colors py-2.5 min-h-[44px] font-mono-code text-[10px] uppercase font-bold">QUICK ORDER</button>
 </div>
 </article>
 <!-- BLANK 4: BERRY GLAZE -->
@@ -571,14 +649,14 @@
 </div>
 <div class="w-full aspect-square bg-[#a01332] p-4 flex items-center justify-center my-3 border border-grid-line relative">
 <span class="absolute top-2 left-2 font-mono-code text-[9px] text-white/80 bg-black/40 px-1.5 py-0.5">#A01332</span>
-<img alt="Berry Glaze Crewneck" class="w-3/4 h-3/4 object-contain filter drop-shadow-md" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCMnktCLH9yj9ly2q3QGcU4a3LgZwMJT2c60RJqcnlXOxoXNlTa0ujfQXhTaTruQm6pCuymWYXTKaEQZ_3x743hH0Xel9vEh7hviDIV2-abYiam4YCfzNSXsp1FJRcZA11UhVykkA1hjBnce-n6R8fbdziXstfo-gcn2JNFMIg1j_zTGxWnr0FvhCOb8JbKNh5aJUyPPg88Qe7a2S3AVflBW_K0CAVQzLXcsFsJtW0xNUV2wCFmlaeF"/>
+<img alt="Berry Glaze Crewneck" class="w-3/4 h-3/4 object-contain filter drop-shadow-md" decoding="async" loading="lazy" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCMnktCLH9yj9ly2q3QGcU4a3LgZwMJT2c60RJqcnlXOxoXNlTa0ujfQXhTaTruQm6pCuymWYXTKaEQZ_3x743hH0Xel9vEh7hviDIV2-abYiam4YCfzNSXsp1FJRcZA11UhVykkA1hjBnce-n6R8fbdziXstfo-gcn2JNFMIg1j_zTGxWnr0FvhCOb8JbKNh5aJUyPPg88Qe7a2S3AVflBW_K0CAVQzLXcsFsJtW0xNUV2wCFmlaeF"/>
 </div>
 <div class="space-y-2">
 <div class="flex items-center justify-between">
 <span class="font-headline-md font-bold uppercase text-sm">BERRY GLAZE CREW</span>
 <span class="font-mono-code font-bold text-sm">$ 145</span>
 </div>
-<button class="w-full border border-grid-line hover:bg-black hover:text-white transition-colors py-2 font-mono-code text-[10px] uppercase font-bold">QUICK ORDER</button>
+<button class="w-full border border-grid-line hover:bg-black hover:text-white transition-colors py-2.5 min-h-[44px] font-mono-code text-[10px] uppercase font-bold">QUICK ORDER</button>
 </div>
 </article>
 </div>
@@ -807,7 +885,7 @@
 <div class="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-neutral-800 border-b border-neutral-800">
 <div class="lg:col-span-6 p-6 md:p-10 space-y-4">
 <div class="flex items-center gap-3">
-<img alt="TOMBOY LOGO" class="h-6 w-auto object-contain filter invert" src="https://lh3.googleusercontent.com/aida/AEtjO1VsApCZr_OXfOP7a10cL68n9xqWnWNuQwHHwp0MSPvh_OkYiXXyHJkuO6Hado7PwiyWLyc2YDZdhy4L-t1liMcH4OUwKO-jNACeWilqG4E_asTCHXp7PrW_JnHp7dicyLg-jt5dC7i48WK6pZse9iNToyNEyUffBSqyyvaFsmrK97_mwTgg0FImOcWtTzc3JXbXmhgdqX39LbaQWVYQzBwzB21CDn-sfjXq0llOfMgYn-Sz3_B-KUP6vuY"/>
+<img alt="TOMBOY LOGO" class="h-6 w-auto object-contain filter invert" decoding="async" loading="lazy" src="https://lh3.googleusercontent.com/aida/AEtjO1VsApCZr_OXfOP7a10cL68n9xqWnWNuQwHHwp0MSPvh_OkYiXXyHJkuO6Hado7PwiyWLyc2YDZdhy4L-t1liMcH4OUwKO-jNACeWilqG4E_asTCHXp7PrW_JnHp7dicyLg-jt5dC7i48WK6pZse9iNToyNEyUffBSqyyvaFsmrK97_mwTgg0FImOcWtTzc3JXbXmhgdqX39LbaQWVYQzBwzB21CDn-sfjXq0llOfMgYn-Sz3_B-KUP6vuY"/>
 <span class="font-headline-md font-black tracking-tight uppercase text-xl text-white">TOMBOY CORP // ARCHIVE SYSTEM</span>
 </div>
 <p class="font-body-main text-xs text-neutral-400 max-w-lg leading-relaxed">
@@ -831,7 +909,7 @@
 </div>
 </div>
 <!-- Middle Row: Technical Links Columns -->
-<div class="grid grid-cols-1 md:grid-cols-2 md:grid-cols-4 divide-x divide-neutral-800 border-b border-neutral-800 text-[11px]">
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-x divide-neutral-800 border-b border-neutral-800 text-[11px]">
 <div class="p-6 space-y-3">
 <span class="font-bold text-white uppercase text-[10px] tracking-wider block border-b border-neutral-800 pb-1">CATALOG ARCHIVE</span>
 <ul class="space-y-1.5 text-neutral-400">
@@ -902,58 +980,69 @@
       updateClock();
     })();
   </script>
+  <!-- Archival Mobile Drawer & Carousel Controller Script -->
+  <script>
+    // ARCHIVAL MOBILE DRAWER CONTROLLER
+    (function() {
+      const trigger = document.getElementById('mobile-menu-trigger');
+      const drawer = document.getElementById('mobile-drawer');
+      const backdrop = document.getElementById('mobile-drawer-backdrop');
+      const closeBtn = document.getElementById('mobile-drawer-close');
 
-<!-- RESPONSIVE ENHANCEMENTS -->
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-    // Mobile menu toggle
-    const navs = document.querySelectorAll('nav');
-    navs.forEach(nav => {
-        // Find closest header
-        const header = nav.closest('header');
-        if (!header) return;
-        
-        // Add hamburger
-        const btn = document.createElement('button');
-        btn.innerHTML = '<span class="material-symbols-outlined">menu</span>';
-        btn.className = 'flex lg:hidden items-center justify-center p-2 text-current';
-        
-        // Insert button
-        const rightTools = header.querySelector('.flex.items-center.gap-unit-6, .flex.items-center.gap-5, .flex.items-center.gap-3');
-        if (rightTools) {
-            rightTools.appendChild(btn);
-        } else {
-            header.appendChild(btn);
+      if (!trigger || !drawer || !backdrop) return;
+
+      function openDrawer() {
+        drawer.classList.remove('translate-x-full');
+        drawer.classList.add('translate-x-0');
+        backdrop.classList.remove('opacity-0', 'pointer-events-none');
+        backdrop.classList.add('opacity-100', 'pointer-events-auto');
+        trigger.setAttribute('aria-expanded', 'true');
+        drawer.setAttribute('aria-hidden', 'false');
+        document.body.style.overflow = 'hidden';
+      }
+
+      function closeDrawer() {
+        drawer.classList.remove('translate-x-0');
+        drawer.classList.add('translate-x-full');
+        backdrop.classList.remove('opacity-100', 'pointer-events-auto');
+        backdrop.classList.add('opacity-0', 'pointer-events-none');
+        trigger.setAttribute('aria-expanded', 'false');
+        drawer.setAttribute('aria-hidden', 'true');
+        document.body.style.overflow = '';
+      }
+
+      trigger.addEventListener('click', openDrawer);
+      if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
+      backdrop.addEventListener('click', closeDrawer);
+
+      drawer.querySelectorAll('a').forEach(link => {
+        link.addEventListener('click', closeDrawer);
+      });
+
+      window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+          closeDrawer();
         }
-        
-        // Ensure nav has a class we can toggle
-        nav.classList.add('mobile-nav');
-        
-        btn.addEventListener('click', () => {
-            nav.classList.toggle('hidden');
-            nav.classList.toggle('flex');
-            nav.classList.toggle('flex-col');
-            nav.classList.toggle('absolute');
-            nav.classList.toggle('top-full');
-            nav.classList.toggle('left-0');
-            nav.classList.toggle('w-full');
-            nav.classList.toggle('bg-surface');
-            nav.classList.toggle('bg-black');
-            nav.classList.toggle('z-50');
-            nav.classList.toggle('p-4');
-        });
-    });
-});
-</script>
-<style>
-@media (max-width: 1024px) {
-    .mobile-nav {
-        background-color: #080808; /* Dark mode fallback */
-        border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
-}
-/* Ensure text scales */
-html { font-size: 14px; }
-@media (min-width: 768px) { html { font-size: 16px; } }
-</style>
+      });
+    })();
+
+    // ARCHIVE CATALOG CAROUSEL CONTROLLER
+    (function() {
+      const carousel = document.getElementById('archive-catalog-carousel');
+      const counter = document.getElementById('carousel-counter');
+      if (!carousel || !counter) return;
+
+      const cards = carousel.querySelectorAll('article');
+      const total = cards.length;
+
+      function updateCounter() {
+        const scrollLeft = carousel.scrollLeft;
+        const cardWidth = cards[0]?.offsetWidth || 1;
+        const activeIndex = Math.min(Math.max(1, Math.round(scrollLeft / cardWidth) + 1), total);
+        counter.textContent = `[ ${String(activeIndex).padStart(2, '0')} / ${String(total).padStart(2, '0')} ]`;
+      }
+
+      carousel.addEventListener('scroll', updateCounter, { passive: true });
+    })();
+  </script>
 </body></html>

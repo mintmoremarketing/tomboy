@@ -2,7 +2,7 @@
 
 <html class="dark scroll-smooth" lang="en"><head>
 <meta charset="utf-8"/>
-<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport"/>
 <title>TOMBOY // FW25 RUNWAY EDITORIAL</title>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&amp;family=Space+Mono:ital,wght@0,400;0,700;1,400&amp;family=Hanken+Grotesk:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
@@ -70,30 +70,32 @@
     .neon-text-glow-cyan {
       text-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
     }
+    .scrollbar-none::-webkit-scrollbar { display: none; }
+    .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
   </style>
 </head>
-<body class="bg-canvas text-neutral-200 font-body antialiased selection:bg-neon-red selection:text-white">
+<body class="bg-canvas text-neutral-200 font-body antialiased selection:bg-neon-red selection:text-white overflow-x-hidden w-full">
 <!-- TOP DARKROOM TICKER / SYSTEM DISPATCH -->
 <div class="fixed top-0 left-0 w-full z-50 bg-[#050505]/95 backdrop-blur-xl border-b border-border-dark select-none">
-<div class="w-full px-6 h-7 flex items-center justify-between font-label-caps text-[10px] uppercase tracking-widest text-neutral-400">
-<div class="flex items-center gap-3">
-<span class="inline-block w-1.5 h-1.5 rounded-full bg-neon-red animate-ping"></span>
-<span class="text-neutral-200 font-semibold tracking-wider">RUNWAY FEED: FW25 SOUNDTRACK &amp; ARCHIVE ACTIVE</span>
+<div class="w-full px-4 sm:px-6 h-7 flex items-center justify-between font-label-caps text-[10px] uppercase tracking-widest text-neutral-400 overflow-hidden">
+<div class="flex items-center gap-3 truncate">
+<span class="inline-block w-1.5 h-1.5 rounded-full bg-neon-red animate-ping shrink-0"></span>
+<span class="text-neutral-200 font-semibold tracking-wider truncate">RUNWAY FEED: FW25 SOUNDTRACK &amp; ARCHIVE ACTIVE</span>
 <span class="hidden md:inline-block text-neutral-600">//</span>
 <span class="hidden md:inline-block text-neutral-400">RESTRICTED CATALOG ENTRY</span>
 </div>
-<div class="flex items-center gap-6">
+<div class="flex items-center gap-4 sm:gap-6 shrink-0">
 <span class="hidden sm:inline-block text-neutral-500 font-price-tag">[ STREAM FPS: 60 // PARIS METROPOLE ]</span>
 <span class="text-neon-cyan hover:underline cursor-pointer">VIP ACCESS LOCKED</span>
 </div>
 </div>
 <!-- FLOATING GLASSMORPHIC NAVIGATION BAR -->
-<header class="w-full h-16 px-6 lg:px-12 flex items-center justify-between border-b border-white/[0.06]">
-<div class="flex items-center gap-10">
+<header class="w-full h-16 px-4 sm:px-6 lg:px-12 flex items-center justify-between border-b border-white/[0.06]">
+<div class="flex items-center gap-3 sm:gap-10">
 <!-- TOMBOY LOGO INVERTED WHITE WITH DARKROOM CROP -->
-<a class="group flex items-center gap-3 relative py-2" href="#">
-<div class="h-9 w-28 md:w-36 overflow-hidden rounded bg-white p-1 flex items-center justify-center transition-transform duration-300 group-hover:scale-105 shadow-[0_0_25px_rgba(255,255,255,0.2)]">
-<img alt="TOMBOY LOGO" class="h-full w-full object-contain filter invert contrast-200" src="https://lh3.googleusercontent.com/aida/AEtjO1VsApCZr_OXfOP7a10cL68n9xqWnWNuQwHHwp0MSPvh_OkYiXXyHJkuO6Hado7PwiyWLyc2YDZdhy4L-t1liMcH4OUwKO-jNACeWilqG4E_asTCHXp7PrW_JnHp7dicyLg-jt5dC7i48WK6pZse9iNToyNEyUffBSqyyvaFsmrK97_mwTgg0FImOcWtTzc3JXbXmhgdqX39LbaQWVYQzBwzB21CDn-sfjXq0llOfMgYn-Sz3_B-KUP6vuY"/>
+<a class="group flex items-center gap-2 sm:gap-3 relative py-2" href="#">
+<div class="h-8 sm:h-9 w-24 sm:w-28 md:w-36 overflow-hidden rounded bg-white p-1 flex items-center justify-center transition-transform duration-300 group-hover:scale-105 shadow-[0_0_25px_rgba(255,255,255,0.2)]">
+<img alt="TOMBOY LOGO" class="h-full w-full object-contain filter invert contrast-200" decoding="async" src="https://lh3.googleusercontent.com/aida/AEtjO1VsApCZr_OXfOP7a10cL68n9xqWnWNuQwHHwp0MSPvh_OkYiXXyHJkuO6Hado7PwiyWLyc2YDZdhy4L-t1liMcH4OUwKO-jNACeWilqG4E_asTCHXp7PrW_JnHp7dicyLg-jt5dC7i48WK6pZse9iNToyNEyUffBSqyyvaFsmrK97_mwTgg0FImOcWtTzc3JXbXmhgdqX39LbaQWVYQzBwzB21CDn-sfjXq0llOfMgYn-Sz3_B-KUP6vuY"/>
 </div>
 <span class="font-label-caps text-[9px] uppercase tracking-widest text-neon-red hidden sm:inline-block px-1.5 py-0.5 border border-neon-red/30 bg-neon-red/10">DARKROOM</span>
 </a>
@@ -122,23 +124,106 @@
 </nav>
 </div>
 <!-- UTILITY ICONS & CART -->
-<div class="flex items-center gap-5 font-label-caps text-[11px]">
-<button class="hidden sm:flex items-center gap-2 px-3 py-1.5 border border-white/15 bg-white/5 hover:border-white/40 text-neutral-300 transition-all font-price-tag text-[10px]">
+<div class="flex items-center gap-2 sm:gap-4 font-label-caps text-[11px]">
+<button class="hidden md:flex items-center gap-2 px-3 py-1.5 border border-white/15 bg-white/5 hover:border-white/40 text-neutral-300 transition-all font-price-tag text-[10px]">
 <span>INDEX: EUR / USD</span>
 </button>
-<button aria-label="Search Collection" class="p-2 text-neutral-400 hover:text-white transition-colors">
+<button aria-label="Search Collection" class="min-w-[44px] min-h-[44px] flex items-center justify-center text-neutral-400 hover:text-white transition-colors">
 <span class="material-symbols-outlined text-[20px]">search</span>
 </button>
-<button aria-label="Soundtrack Stream" class="p-2 text-neon-cyan hover:text-white transition-colors relative">
+<button aria-label="Soundtrack Stream" class="hidden sm:flex min-w-[44px] min-h-[44px] items-center justify-center text-neon-cyan hover:text-white transition-colors relative">
 <span class="material-symbols-outlined text-[20px]">graphic_eq</span>
-<span class="absolute top-1 right-1 w-1.5 h-1.5 rounded-full bg-neon-cyan animate-ping"></span>
+<span class="absolute top-2.5 right-2.5 w-1.5 h-1.5 rounded-full bg-neon-cyan animate-ping"></span>
 </button>
-<a class="flex items-center gap-2 px-4 py-2 bg-white text-black font-semibold font-label-caps text-[11px] tracking-wider hover:bg-neon-red hover:text-white transition-all shadow-[0_0_20px_rgba(255,255,255,0.15)]" href="#cart">
+<a class="min-h-[44px] min-w-[44px] flex items-center justify-center gap-2 px-3.5 sm:px-4 bg-white text-black font-semibold font-label-caps text-[11px] tracking-wider hover:bg-neon-red hover:text-white transition-all shadow-[0_0_20px_rgba(255,255,255,0.15)]" href="#cart" aria-label="Shopping Cart">
+<span class="material-symbols-outlined text-[16px]">shopping_bag</span>
 <span>CART</span>
-<span class="font-price-tag font-bold">[ 02 ]</span>
 </a>
+<!-- MOBILE MENU TRIGGER -->
+<button id="mobile-menu-trigger" aria-label="Open navigation menu" aria-expanded="false" aria-controls="mobile-nav-drawer" class="lg:hidden min-w-[44px] min-h-[44px] flex items-center justify-center border border-white/20 bg-white/5 text-white hover:border-neon-red hover:text-neon-red hover:bg-neon-red/10 transition-colors">
+<span class="material-symbols-outlined text-[22px]">menu</span>
+</button>
 </div>
 </header>
+</div>
+
+<!-- MOBILE NAVIGATION DRAWER -->
+<div id="mobile-nav-drawer" class="fixed inset-0 z-50 pointer-events-none opacity-0 transition-opacity duration-300 ease-in-out lg:hidden" aria-hidden="true" role="dialog" aria-modal="true" aria-label="Mobile Navigation Menu">
+  <!-- Backdrop Blur Overlay -->
+  <div id="mobile-drawer-backdrop" class="fixed inset-0 z-40 bg-black/85 backdrop-blur-md opacity-0 pointer-events-none transition-opacity duration-300 cursor-pointer"></div>
+  
+  <!-- Off-Canvas Drawer Aside Panel -->
+  <aside id="mobile-drawer" class="fixed inset-y-0 right-0 z-50 w-[85vw] max-w-[380px] h-full bg-[#08080a] text-neutral-200 border-l border-neon-red/30 flex flex-col justify-between transform translate-x-full transition-transform duration-300 ease-in-out shadow-[-15px_0_40px_rgba(255,8,68,0.12)] overflow-y-auto">
+    <div id="mobile-drawer-panel" class="h-full flex flex-col justify-between">
+      <!-- Drawer Header -->
+      <div class="flex items-center justify-between p-5 border-b border-white/10 bg-[#050507]">
+        <div class="flex items-center gap-2">
+          <span class="inline-block w-2 h-2 rounded-full bg-neon-red animate-ping"></span>
+          <span class="font-label-caps text-xs font-bold uppercase tracking-widest text-white">DARKROOM // NAV</span>
+        </div>
+        <button id="mobile-drawer-close" aria-label="Close navigation menu" class="min-w-[44px] min-h-[44px] flex items-center justify-center border border-white/20 hover:border-neon-red hover:text-neon-red transition-colors">
+          <span class="material-symbols-outlined text-[22px]">close</span>
+        </button>
+      </div>
+
+      <!-- Drawer Nav Links -->
+      <nav class="flex flex-col divide-y divide-white/10 px-4 py-6 font-label-caps text-sm tracking-widest uppercase">
+        <a href="#runway-hero" class="drawer-link flex items-center justify-between py-4 px-3 text-neutral-300 hover:text-neon-red hover:bg-white/5 transition-colors">
+          <span class="flex items-center gap-3">
+            <span class="w-1.5 h-1.5 rounded-full bg-neon-red"></span>
+            RUNWAY
+          </span>
+          <span class="font-price-tag text-[10px] text-neutral-500">01</span>
+        </a>
+        <a href="#lookbook-grid" class="drawer-link flex items-center justify-between py-4 px-3 text-neutral-300 hover:text-neon-cyan hover:bg-white/5 transition-colors">
+          <span class="flex items-center gap-3">
+            <span class="w-1.5 h-1.5 rounded-full bg-neon-cyan"></span>
+            CAPSULE
+          </span>
+          <span class="font-price-tag text-[10px] text-neutral-500">02</span>
+        </a>
+        <a href="#cinematic-feature" class="drawer-link flex items-center justify-between py-4 px-3 text-neutral-300 hover:text-neon-emerald hover:bg-white/5 transition-colors">
+          <span class="flex items-center gap-3">
+            <span class="w-1.5 h-1.5 rounded-full bg-neon-emerald"></span>
+            CINEMATICS
+          </span>
+          <span class="font-price-tag text-[10px] text-neutral-500">03</span>
+        </a>
+        <a href="#backstage-archive" class="drawer-link flex items-center justify-between py-4 px-3 text-neutral-300 hover:text-white hover:bg-white/5 transition-colors">
+          <span class="flex items-center gap-3">
+            <span class="w-1.5 h-1.5 rounded-full bg-white"></span>
+            GRAILS
+          </span>
+          <span class="font-price-tag text-[10px] text-neutral-500">04</span>
+        </a>
+        <a href="#secret-vip" class="drawer-link flex items-center justify-between py-4 px-3 text-neutral-300 hover:text-neon-red hover:bg-white/5 transition-colors">
+          <span class="flex items-center gap-3">
+            <span class="w-1.5 h-1.5 rounded-full bg-neon-red animate-pulse"></span>
+            VIP PASS
+          </span>
+          <span class="font-price-tag text-[10px] text-neon-red">SECRET</span>
+        </a>
+      </nav>
+
+      <!-- Drawer Footer -->
+      <div class="p-5 border-t border-white/10 bg-[#050507] space-y-4 font-label-caps text-xs">
+        <div class="space-y-1.5 font-price-tag text-[10px] text-neutral-400">
+          <div class="flex items-center justify-between">
+            <span class="text-neutral-500">SOUNDTRACK</span>
+            <span class="text-neon-cyan">PARIS RUNWAY 04 DUB</span>
+          </div>
+          <div class="flex items-center justify-between">
+            <span class="text-neutral-500">TRANSMISSION</span>
+            <span class="text-neon-emerald">60 FPS // ENCRYPTED</span>
+          </div>
+        </div>
+        <a href="#cart" class="drawer-link min-h-[44px] w-full py-3 bg-white text-black font-semibold font-label-caps text-xs tracking-wider uppercase hover:bg-neon-red hover:text-white transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(255,255,255,0.15)]">
+          <span class="material-symbols-outlined text-[18px]">shopping_bag</span>
+          <span>VIEW CART</span>
+        </a>
+      </div>
+    </div>
+  </aside>
 </div>
 <main class="w-full pt-28">
 <!-- SECTION 1: HYPER-CINEMATIC RUNWAY HERO -->
@@ -148,7 +233,7 @@
 <div class="absolute -bottom-40 -right-40 w-[700px] h-[700px] bg-neon-emerald/15 rounded-full blur-[160px] pointer-events-none animate-pulse-glow" style="animation-delay: 3s;"></div>
 <!-- FULL-BLEED EDITORIAL RUNWAY PHOTOGRAPH -->
 <div class="absolute inset-0 z-0">
-<img alt="Tomboy Runway Editorial Models" class="w-full h-full object-cover object-center filter brightness-[0.78] contrast-125 saturate-[1.1] scale-[1.02] transform transition-transform duration-1000 ease-out" src="https://lh3.googleusercontent.com/aida/AEtjO1WjVMuyo4RJwZjmBCXRFQzXTyv33dg373hgUqzaCitGe1hCXSlKMnHwqczYYXHLDqtz-8u1dS8C8IzG2zhgjq1u0kAaa7u5Jtc9pO2JKNm-m5q7kl6XuncO79dLh2qwc8WMyrIXVTvPM9EOCs6_UoPtYaCdRExgNDyCdGp6jUqLq-MXPl3F3psG-c5h6n8xE25YjJej2LiKJzpSPCcm1xfrWouLx38Q4bVHKBeJhHS6lPQ9wNPf3Ibm17k"/>
+<img alt="Tomboy Runway Editorial Models" class="w-full h-full object-cover object-center filter brightness-[0.78] contrast-125 saturate-[1.1] scale-[1.02] transform transition-transform duration-1000 ease-out" decoding="async" src="https://lh3.googleusercontent.com/aida/AEtjO1WjVMuyo4RJwZjmBCXRFQzXTyv33dg373hgUqzaCitGe1hCXSlKMnHwqczYYXHLDqtz-8u1dS8C8IzG2zhgjq1u0kAaa7u5Jtc9pO2JKNm-m5q7kl6XuncO79dLh2qwc8WMyrIXVTvPM9EOCs6_UoPtYaCdRExgNDyCdGp6jUqLq-MXPl3F3psG-c5h6n8xE25YjJej2LiKJzpSPCcm1xfrWouLx38Q4bVHKBeJhHS6lPQ9wNPf3Ibm17k"/>
 <div class="absolute inset-0 bg-gradient-to-t from-canvas via-canvas/40 to-black/60"></div>
 <div class="absolute inset-0 bg-gradient-to-r from-canvas via-transparent to-canvas/80"></div>
 <div class="absolute inset-0 grain-overlay opacity-40 mix-blend-overlay pointer-events-none"></div>
@@ -168,7 +253,7 @@
 <span class="w-1.5 h-1.5 bg-neon-red rounded-full"></span>
             FW25 ACTIVE RUNWAY EXHIBITION
           </div>
-<h1 class="font-headline-xl text-5xl sm:text-7xl lg:text-8xl font-bold uppercase tracking-tighter leading-[0.9] text-white">
+<h1 class="font-headline-xl text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-bold uppercase tracking-tighter leading-[0.9] text-white break-words">
             SUBVERSION<br/>
 <span class="text-transparent bg-clip-text bg-gradient-to-r from-white via-neutral-200 to-neutral-500">IN FORM</span>
 <span class="text-neon-red font-light tracking-normal italic">// 25</span>
@@ -177,12 +262,12 @@
             Brutalist tailoring and anti-silhouettes manufactured from 520GSM combed Japanese loopback cotton, distressed oiled twill, and high-tensile industrial hardware. An uncompromising darkroom study in subcultural dissent.
           </p>
 <!-- RUNWAY INTERACTIVE ACTION DOCK -->
-<div class="pt-4 flex flex-wrap items-center gap-4">
-<a class="px-8 py-4 bg-white text-black font-headline-md text-xs font-bold uppercase tracking-[0.2em] hover:bg-neon-red hover:text-white transition-all duration-300 flex items-center gap-3 shadow-[0_0_30px_rgba(255,255,255,0.25)] hover:shadow-[0_0_35px_rgba(255,8,68,0.5)]" href="#lookbook-grid">
+<div class="pt-4 flex flex-col sm:flex-row items-stretch sm:items-center gap-4">
+<a class="min-h-[44px] px-6 sm:px-8 py-3.5 sm:py-4 bg-white text-black font-headline-md text-xs font-bold uppercase tracking-[0.2em] hover:bg-neon-red hover:text-white transition-all duration-300 flex items-center justify-center gap-3 shadow-[0_0_30px_rgba(255,255,255,0.25)] hover:shadow-[0_0_35px_rgba(255,8,68,0.5)]" href="#lookbook-grid">
 <span>ENTER RUNWAY CAPSULE</span>
 <span class="material-symbols-outlined text-[16px]">north_east</span>
 </a>
-<a class="px-6 py-4 bg-canvas-card/80 backdrop-blur-md border border-white/15 text-white font-label-caps text-xs uppercase tracking-wider hover:border-neon-cyan hover:text-neon-cyan transition-all flex items-center gap-2.5" href="#cinematic-feature">
+<a class="min-h-[44px] px-5 sm:px-6 py-3.5 sm:py-4 bg-canvas-card/80 backdrop-blur-md border border-white/15 text-white font-label-caps text-xs uppercase tracking-wider hover:border-neon-cyan hover:text-neon-cyan transition-all flex items-center justify-center gap-2.5" href="#cinematic-feature">
 <span class="material-symbols-outlined text-[18px]">play_arrow</span>
 <span>PLAY CAMPAIGN FILM [ 04:00 ]</span>
 </a>
@@ -218,13 +303,13 @@
 </section>
 <!-- SECTION 2: ASYMMETRIC MAGAZINE-STYLE LOOKBOOK GRID -->
 <section class="w-full px-6 lg:px-12 py-24 bg-canvas relative" id="lookbook-grid">
-<div class="flex flex-col md:flex-row md:items-end justify-between mb-12 pb-6 border-b border-white/10 gap-6">
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-8 lg:mb-12 pb-6 border-b border-white/10 gap-6">
 <div>
 <div class="flex items-center gap-2 text-neon-red font-label-caps text-xs tracking-widest uppercase mb-2">
 <span class="w-2 h-0.5 bg-neon-red"></span>
             CATALOG // SECTION 01
           </div>
-<h2 class="font-headline-xl text-3xl sm:text-5xl font-bold uppercase tracking-tight text-white">
+<h2 class="font-headline-xl text-2xl sm:text-4xl lg:text-5xl font-bold uppercase tracking-tight text-white">
             RUNWAY GRAILS &amp; CAPSULE
           </h2>
 </div>
@@ -235,20 +320,30 @@
 <button class="px-4 py-1.5 bg-canvas-card text-neutral-400 hover:text-white border border-white/5 uppercase tracking-wider transition-colors">CUT &amp; SEW</button>
 </div>
 </div>
-<!-- ASYMMETRICAL 4-ITEM HIGH-DRAMA GRID -->
-<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-6">
+
+<!-- LIVE CAROUSEL COUNTER HUD (MOBILE/TABLET) -->
+<div class="flex lg:hidden items-center justify-between py-2 mb-4 border-b border-white/10 font-label-caps text-xs text-neutral-400">
+  <span class="flex items-center gap-2">
+    <span class="w-1.5 h-1.5 rounded-full bg-neon-red animate-pulse"></span>
+    SWIPE LOOKBOOK //
+  </span>
+  <span id="carousel-counter" class="font-mono text-xs text-white bg-black/80 border border-white/20 px-2.5 py-1 tracking-wider">[ 01 / 04 ]</span>
+</div>
+
+<!-- ASYMMETRICAL 4-ITEM HIGH-DRAMA GRID / MOBILE TOUCH-SWIPE CAROUSEL -->
+<div id="lookbook-carousel" class="flex overflow-x-auto snap-x snap-mandatory scrollbar-none pb-4 -mx-6 px-6 lg:mx-0 lg:px-0 lg:grid lg:grid-cols-12 lg:overflow-visible lg:pb-0 gap-6" style="scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch;">
 <!-- PRODUCT 1: HERO SPOTLIGHT (LARGE ASYMMETRIC SPAN) -->
-<article class="lg:col-span-6 group bg-canvas-card border border-white/10 overflow-hidden relative flex flex-col justify-between hover:border-neon-red/50 transition-all duration-500">
+<article class="snap-start shrink-0 w-[82vw] sm:w-[60vw] lg:w-auto lg:shrink lg:col-span-6 group bg-canvas-card border border-white/10 overflow-hidden relative flex flex-col justify-between hover:border-neon-red/50 transition-all duration-500">
 <div class="relative w-full aspect-[4/3] sm:aspect-[16/10] bg-gradient-to-br from-[#2a000e] via-[#100307] to-black overflow-hidden flex items-center justify-center p-8">
 <!-- AMBIENT GLOW -->
 <div class="absolute inset-0 bg-neon-red/15 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl"></div>
 <span class="absolute top-4 left-4 font-label-caps text-[10px] text-white/80 bg-black/60 px-2.5 py-1 border border-white/10 backdrop-blur-md">LOOK 01 // V12 SKULL</span>
 <span class="absolute top-4 right-4 font-label-caps text-[10px] text-neon-red bg-neon-red/10 border border-neon-red/30 px-2 py-0.5 uppercase tracking-wider">HIGH VELOCITY</span>
-<img alt="Gothic Chrome Skull Oversized Tee" class="w-3/4 max-h-[82%] object-contain filter drop-shadow-[0_20px_35px_rgba(255,0,50,0.3)] transition-transform duration-700 ease-out group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD90GrhA3I0OxXDe--jiWfh4h0aqBAJH1qjwno_vYVQ_ul_huYZc2bsPQdqIrS9PBmbiswNZaq7sAE_36T8d6AE1XWFvxnE_ZfL6ZT2jvW8BFKUQzbN33tM4b6H1GIz-bx714jH_vOUWyXjpIdTr9d2vtQ1nnH53cYpO0cIAlfzyDTBA1v61C3yghS_dQjPeDDqKcC-56gVewdGV2bEbtDgSsZv01lJbc918_H0t42WM4X-7tTc2Z7-"/>
+<img alt="Gothic Chrome Skull Oversized Tee" loading="lazy" decoding="async" class="w-3/4 max-h-[82%] object-contain filter drop-shadow-[0_20px_35px_rgba(255,0,50,0.3)] transition-transform duration-700 ease-out group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD90GrhA3I0OxXDe--jiWfh4h0aqBAJH1qjwno_vYVQ_ul_huYZc2bsPQdqIrS9PBmbiswNZaq7sAE_36T8d6AE1XWFvxnE_ZfL6ZT2jvW8BFKUQzbN33tM4b6H1GIz-bx714jH_vOUWyXjpIdTr9d2vtQ1nnH53cYpO0cIAlfzyDTBA1v61C3yghS_dQjPeDDqKcC-56gVewdGV2bEbtDgSsZv01lJbc918_H0t42WM4X-7tTc2Z7-"/>
 <!-- DRAWER QUICK ADD POPUP -->
-<div class="absolute inset-x-4 bottom-4 flex items-center justify-between opacity-0 translate-y-3 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+<div class="absolute inset-x-4 bottom-4 flex items-center justify-between opacity-100 translate-y-0 lg:opacity-0 lg:translate-y-3 lg:group-hover:opacity-100 lg:group-hover:translate-y-0 transition-all duration-300">
 <span class="bg-black/90 text-neutral-300 font-label-caps text-[10px] px-3 py-2 border border-white/10">JAPANESE 480GSM WASH</span>
-<button class="bg-white text-black font-label-caps text-[10px] font-bold px-4 py-2 hover:bg-neon-red hover:text-white transition-colors uppercase tracking-wider">
+<button class="min-h-[44px] min-w-[44px] flex items-center justify-center bg-white text-black font-label-caps text-[10px] font-bold px-4 py-2 hover:bg-neon-red hover:text-white transition-colors uppercase tracking-wider">
                 QUICK SECURE +
               </button>
 </div>
@@ -268,15 +363,15 @@
 </div>
 </article>
 <!-- PRODUCT 2: ANARCHY KNIT HOODIE -->
-<article class="lg:col-span-6 group bg-canvas-card border border-white/10 overflow-hidden relative flex flex-col justify-between hover:border-neon-cyan/50 transition-all duration-500">
+<article class="snap-start shrink-0 w-[82vw] sm:w-[60vw] lg:w-auto lg:shrink lg:col-span-6 group bg-canvas-card border border-white/10 overflow-hidden relative flex flex-col justify-between hover:border-neon-cyan/50 transition-all duration-500">
 <div class="relative w-full aspect-[4/3] sm:aspect-[16/10] bg-gradient-to-br from-[#12082b] via-[#090317] to-black overflow-hidden flex items-center justify-center p-8">
 <div class="absolute inset-0 bg-neon-cyan/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl"></div>
 <span class="absolute top-4 left-4 font-label-caps text-[10px] text-white/80 bg-black/60 px-2.5 py-1 border border-white/10 backdrop-blur-md">LOOK 02 // PURPLE REBEL</span>
 <span class="absolute top-4 right-4 font-label-caps text-[10px] text-neon-cyan bg-neon-cyan/10 border border-neon-cyan/30 px-2 py-0.5 uppercase tracking-wider">RUNWAY EXCLUSIVE</span>
-<img alt="Anarchy Knit Purple Hoodie" class="w-3/4 max-h-[82%] object-contain filter drop-shadow-[0_20px_35px_rgba(90,20,180,0.4)] transition-transform duration-700 ease-out group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZetKxTC_jBNayqBpZbtLQjwefc-ZXdQCxsL-Xmfj56BRUJWHV6ooKdhorkvzfzj6DDfmTf8SWjJtj_mjGJvfae0dMlhKXPhyjVi5AW-IK9hsda9oI0juH9fxxeFeVBsrzK6XTqlC4K1ewYdJbax-6C1e3A2bNr3UNQp2fDxJExIn5mKULvpkcnpIoHAsAztlbzKbfMOLdKxQIWXvrviXgL26ZdcNSjmzIOS3PLS2Nf276RF7NHM92"/>
-<div class="absolute inset-x-4 bottom-4 flex items-center justify-between opacity-0 translate-y-3 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+<img alt="Anarchy Knit Purple Hoodie" loading="lazy" decoding="async" class="w-3/4 max-h-[82%] object-contain filter drop-shadow-[0_20px_35px_rgba(90,20,180,0.4)] transition-transform duration-700 ease-out group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDZetKxTC_jBNayqBpZbtLQjwefc-ZXdQCxsL-Xmfj56BRUJWHV6ooKdhorkvzfzj6DDfmTf8SWjJtj_mjGJvfae0dMlhKXPhyjVi5AW-IK9hsda9oI0juH9fxxeFeVBsrzK6XTqlC4K1ewYdJbax-6C1e3A2bNr3UNQp2fDxJExIn5mKULvpkcnpIoHAsAztlbzKbfMOLdKxQIWXvrviXgL26ZdcNSjmzIOS3PLS2Nf276RF7NHM92"/>
+<div class="absolute inset-x-4 bottom-4 flex items-center justify-between opacity-100 translate-y-0 lg:opacity-0 lg:translate-y-3 lg:group-hover:opacity-100 lg:group-hover:translate-y-0 transition-all duration-300">
 <span class="bg-black/90 text-neutral-300 font-label-caps text-[10px] px-3 py-2 border border-white/10">DOUBLE-LAYER HOOD // RAW HARDWARE</span>
-<button class="bg-white text-black font-label-caps text-[10px] font-bold px-4 py-2 hover:bg-neon-cyan hover:text-black transition-colors uppercase tracking-wider">
+<button class="min-h-[44px] min-w-[44px] flex items-center justify-center bg-white text-black font-label-caps text-[10px] font-bold px-4 py-2 hover:bg-neon-cyan hover:text-black transition-colors uppercase tracking-wider">
                 QUICK SECURE +
               </button>
 </div>
@@ -296,15 +391,15 @@
 </div>
 </article>
 <!-- PRODUCT 3: ACID MOTO BOXY TEE -->
-<article class="lg:col-span-6 group bg-canvas-card border border-white/10 overflow-hidden relative flex flex-col justify-between hover:border-neon-emerald/50 transition-all duration-500">
+<article class="snap-start shrink-0 w-[82vw] sm:w-[60vw] lg:w-auto lg:shrink lg:col-span-6 group bg-canvas-card border border-white/10 overflow-hidden relative flex flex-col justify-between hover:border-neon-emerald/50 transition-all duration-500">
 <div class="relative w-full aspect-[4/3] sm:aspect-[16/10] bg-gradient-to-br from-[#062419] via-[#02110c] to-black overflow-hidden flex items-center justify-center p-8">
 <div class="absolute inset-0 bg-neon-emerald/10 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl"></div>
 <span class="absolute top-4 left-4 font-label-caps text-[10px] text-white/80 bg-black/60 px-2.5 py-1 border border-white/10 backdrop-blur-md">LOOK 03 // CYBER ACID</span>
 <span class="absolute top-4 right-4 font-label-caps text-[10px] text-neon-emerald bg-neon-emerald/10 border border-neon-emerald/30 px-2 py-0.5 uppercase tracking-wider">RESTOCKED</span>
-<img alt="Cyber Moto Boxy Tee" class="w-3/4 max-h-[82%] object-contain filter drop-shadow-[0_20px_35px_rgba(0,245,155,0.25)] transition-transform duration-700 ease-out group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAV2u2PADTVrgupnF8hxwphgkjt7UBM7m8pxTrtoiMRFD_JV81p7W8EbfpHl-IaIScBEsJrAovuU_sWZNkbZNJWGPwkWwuSWXD-sXVvTJkNALAYDQ1mhn45QxUhZ-lVsFxmmOXftNrHpSBNVQgltTxjmSHcLJ_Bs6R6sw5MB9WBdgCPSOXolMv6NN4IJ1fIo7FOw7Z7YtlVicqSwefmCoySzrAbvyspPJnzksgej50Jgct2D_jlUCH"/>
-<div class="absolute inset-x-4 bottom-4 flex items-center justify-between opacity-0 translate-y-3 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+<img alt="Cyber Moto Boxy Tee" loading="lazy" decoding="async" class="w-3/4 max-h-[82%] object-contain filter drop-shadow-[0_20px_35px_rgba(0,245,155,0.25)] transition-transform duration-700 ease-out group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAV2u2PADTVrgupnF8hxwphgkjt7UBM7m8pxTrtoiMRFD_JV81p7W8EbfpHl-IaIScBEsJrAovuU_sWZNkbZNJWGPwkWwuSWXD-sXVvTJkNALAYDQ1mhn45QxUhZ-lVsFxmmOXftNrHpSBNVQgltTxjmSHcLJ_Bs6R6sw5MB9WBdgCPSOXolMv6NN4IJ1fIo7FOw7Z7YtlVicqSwefmCoySzrAbvyspPJnzksgej50Jgct2D_jlUCH"/>
+<div class="absolute inset-x-4 bottom-4 flex items-center justify-between opacity-100 translate-y-0 lg:opacity-0 lg:translate-y-3 lg:group-hover:opacity-100 lg:group-hover:translate-y-0 transition-all duration-300">
 <span class="bg-black/90 text-neutral-300 font-label-caps text-[10px] px-3 py-2 border border-white/10">BOXY DROP SHOULDER SLUB</span>
-<button class="bg-white text-black font-label-caps text-[10px] font-bold px-4 py-2 hover:bg-neon-emerald hover:text-black transition-colors uppercase tracking-wider">
+<button class="min-h-[44px] min-w-[44px] flex items-center justify-center bg-white text-black font-label-caps text-[10px] font-bold px-4 py-2 hover:bg-neon-emerald hover:text-black transition-colors uppercase tracking-wider">
                 QUICK SECURE +
               </button>
 </div>
@@ -324,15 +419,15 @@
 </div>
 </article>
 <!-- PRODUCT 4: DISTRESSED DUCK CANVAS WORK JACKET -->
-<article class="lg:col-span-6 group bg-canvas-card border border-white/10 overflow-hidden relative flex flex-col justify-between hover:border-white/40 transition-all duration-500">
+<article class="snap-start shrink-0 w-[82vw] sm:w-[60vw] lg:w-auto lg:shrink lg:col-span-6 group bg-canvas-card border border-white/10 overflow-hidden relative flex flex-col justify-between hover:border-white/40 transition-all duration-500">
 <div class="relative w-full aspect-[4/3] sm:aspect-[16/10] bg-gradient-to-br from-[#1c1c1f] via-[#0d0d0f] to-black overflow-hidden flex items-center justify-center p-8">
 <div class="absolute inset-0 bg-white/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500 blur-2xl"></div>
 <span class="absolute top-4 left-4 font-label-caps text-[10px] text-white/80 bg-black/60 px-2.5 py-1 border border-white/10 backdrop-blur-md">LOOK 04 // OBSIDIAN RIGID</span>
 <span class="absolute top-4 right-4 font-label-caps text-[10px] text-white bg-white/10 border border-white/20 px-2 py-0.5 uppercase tracking-wider">LIMITED ARCHIVE [ 60 ]</span>
-<img alt="Distressed Work Jacket" class="w-3/4 max-h-[82%] object-contain filter drop-shadow-[0_20px_35px_rgba(255,255,255,0.15)] transition-transform duration-700 ease-out group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD12SNIuNTUeg9IO7lXoFA1eemiRqnggDogveCXX24GEHBvw9N4FrGOQOdtYwELBDL_Vjfsr4FNbZCpxzNu022u3tZWyzaxvHP1YYqX9ESTkqYlZhtlzJ9OyWLfg2AsXoOdszqG122yXPL8vWgJyHAUVRucuFa6xfND5-Yj-bnUGaXgtiS8bJq-MT6JXqiz9WbhWwxOefNNWyMPctCjUYxqmFgFpW6lchX1D7jqyCOXjnw6UnXjRFAI"/>
-<div class="absolute inset-x-4 bottom-4 flex items-center justify-between opacity-0 translate-y-3 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-300">
+<img alt="Distressed Work Jacket" loading="lazy" decoding="async" class="w-3/4 max-h-[82%] object-contain filter drop-shadow-[0_20px_35px_rgba(255,255,255,0.15)] transition-transform duration-700 ease-out group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD12SNIuNTUeg9IO7lXoFA1eemiRqnggDogveCXX24GEHBvw9N4FrGOQOdtYwELBDL_Vjfsr4FNbZCpxzNu022u3tZWyzaxvHP1YYqX9ESTkqYlZhtlzJ9OyWLfg2AsXoOdszqG122yXPL8vWgJyHAUVRucuFa6xfND5-Yj-bnUGaXgtiS8bJq-MT6JXqiz9WbhWwxOefNNWyMPctCjUYxqmFgFpW6lchX1D7jqyCOXjnw6UnXjRFAI"/>
+<div class="absolute inset-x-4 bottom-4 flex items-center justify-between opacity-100 translate-y-0 lg:opacity-0 lg:translate-y-3 lg:group-hover:opacity-100 lg:group-hover:translate-y-0 transition-all duration-300">
 <span class="bg-black/90 text-neutral-300 font-label-caps text-[10px] px-3 py-2 border border-white/10">14.5OZ RIGID DUCK CANVAS // SILVER HARDWARE</span>
-<button class="bg-white text-black font-label-caps text-[10px] font-bold px-4 py-2 hover:bg-neutral-300 transition-colors uppercase tracking-wider">
+<button class="min-h-[44px] min-w-[44px] flex items-center justify-center bg-white text-black font-label-caps text-[10px] font-bold px-4 py-2 hover:bg-neutral-300 transition-colors uppercase tracking-wider">
                 QUICK SECURE +
               </button>
 </div>
@@ -456,7 +551,7 @@
             </p>
 <div class="flex items-center justify-between pt-4 border-t border-white/15">
 <span class="font-price-tag text-xl font-bold text-white">$ 340 USD</span>
-<button class="font-label-caps text-xs uppercase tracking-wider text-white hover:text-neon-red flex items-center gap-2 underline underline-offset-4 transition-colors">
+<button class="min-h-[44px] font-label-caps text-xs uppercase tracking-wider text-white hover:text-neon-red flex items-center gap-2 underline underline-offset-4 transition-colors">
                 SECURE RUNWAY PIECE →
               </button>
 </div>
@@ -479,7 +574,7 @@
             </p>
 <div class="flex items-center justify-between pt-4 border-t border-white/15">
 <span class="font-price-tag text-xl font-bold text-neon-red">$ 115 USD</span>
-<button class="font-label-caps text-xs uppercase tracking-wider text-white hover:text-neon-red flex items-center gap-2 underline underline-offset-4 transition-colors">
+<button class="min-h-[44px] font-label-caps text-xs uppercase tracking-wider text-white hover:text-neon-red flex items-center gap-2 underline underline-offset-4 transition-colors">
                 ACQUIRE LOOK →
               </button>
 </div>
@@ -498,7 +593,7 @@
           UNDERGROUND CLUB INVITATIONAL
         </div>
 <div class="space-y-3">
-<h2 class="font-headline-xl text-4xl sm:text-6xl font-bold uppercase tracking-tight text-white leading-tight">
+<h2 class="font-headline-xl text-3xl sm:text-5xl lg:text-6xl font-bold uppercase tracking-tight text-white leading-tight">
             CLAIM SECRET DROP PASSCODE
           </h2>
 <p class="font-body text-neutral-400 max-w-xl mx-auto text-base">
@@ -559,7 +654,7 @@
 <!-- LOGO & BRAND STATEMENT -->
 <div class="lg:col-span-5 space-y-4">
 <div class="h-8 w-32 bg-white p-1 rounded flex items-center justify-center">
-<img alt="TOMBOY LOGO" class="h-full w-full object-contain filter invert" src="https://lh3.googleusercontent.com/aida/AEtjO1VsApCZr_OXfOP7a10cL68n9xqWnWNuQwHHwp0MSPvh_OkYiXXyHJkuO6Hado7PwiyWLyc2YDZdhy4L-t1liMcH4OUwKO-jNACeWilqG4E_asTCHXp7PrW_JnHp7dicyLg-jt5dC7i48WK6pZse9iNToyNEyUffBSqyyvaFsmrK97_mwTgg0FImOcWtTzc3JXbXmhgdqX39LbaQWVYQzBwzB21CDn-sfjXq0llOfMgYn-Sz3_B-KUP6vuY"/>
+<img alt="TOMBOY LOGO" class="h-full w-full object-contain filter invert" loading="lazy" decoding="async" src="https://lh3.googleusercontent.com/aida/AEtjO1VsApCZr_OXfOP7a10cL68n9xqWnWNuQwHHwp0MSPvh_OkYiXXyHJkuO6Hado7PwiyWLyc2YDZdhy4L-t1liMcH4OUwKO-jNACeWilqG4E_asTCHXp7PrW_JnHp7dicyLg-jt5dC7i48WK6pZse9iNToyNEyUffBSqyyvaFsmrK97_mwTgg0FImOcWtTzc3JXbXmhgdqX39LbaQWVYQzBwzB21CDn-sfjXq0llOfMgYn-Sz3_B-KUP6vuY"/>
 </div>
 <p class="font-body text-neutral-400 text-sm max-w-sm font-light leading-relaxed">
             High-contrast subcultural streetwear atelier constructed in Tokyo and Paris. Heavyweight raw textiles, industrial drape, and anti-fashion runway provocation.
@@ -612,57 +707,116 @@
 </div>
 </footer>
 
-<!-- RESPONSIVE ENHANCEMENTS -->
+<!-- DARKROOM EDITORIAL MOBILE CONTROLLER -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
-    // Mobile menu toggle
-    const navs = document.querySelectorAll('nav');
-    navs.forEach(nav => {
-        // Find closest header
-        const header = nav.closest('header');
-        if (!header) return;
-        
-        // Add hamburger
-        const btn = document.createElement('button');
-        btn.innerHTML = '<span class="material-symbols-outlined">menu</span>';
-        btn.className = 'flex lg:hidden items-center justify-center p-2 text-current';
-        
-        // Insert button
-        const rightTools = header.querySelector('.flex.items-center.gap-unit-6, .flex.items-center.gap-5, .flex.items-center.gap-3');
-        if (rightTools) {
-            rightTools.appendChild(btn);
-        } else {
-            header.appendChild(btn);
+  // Mobile Navigation Drawer Controller
+  const trigger = document.getElementById("mobile-menu-trigger");
+  const drawer = document.getElementById("mobile-nav-drawer");
+  const panel = document.getElementById("mobile-drawer");
+  const backdrop = document.getElementById("mobile-drawer-backdrop");
+  const closeBtn = document.getElementById("mobile-drawer-close");
+  const navLinks = drawer ? drawer.querySelectorAll(".drawer-link, a") : [];
+
+  function openDrawer() {
+    if (!drawer || !panel) return;
+    drawer.classList.remove("pointer-events-none", "opacity-0");
+    drawer.classList.add("pointer-events-auto", "opacity-100");
+    if (backdrop) {
+      backdrop.classList.remove("pointer-events-none", "opacity-0");
+      backdrop.classList.add("pointer-events-auto", "opacity-100");
+    }
+    panel.classList.remove("translate-x-full");
+    panel.classList.add("translate-x-0");
+    if (trigger) trigger.setAttribute("aria-expanded", "true");
+    drawer.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+  }
+
+  function closeDrawer() {
+    if (!drawer || !panel) return;
+    panel.classList.remove("translate-x-0");
+    panel.classList.add("translate-x-full");
+    if (backdrop) {
+      backdrop.classList.remove("pointer-events-auto", "opacity-100");
+      backdrop.classList.add("pointer-events-none", "opacity-0");
+    }
+    drawer.classList.remove("pointer-events-auto", "opacity-100");
+    drawer.classList.add("pointer-events-none", "opacity-0");
+    if (trigger) trigger.setAttribute("aria-expanded", "false");
+    drawer.setAttribute("aria-hidden", "true");
+    document.body.style.overflow = "";
+  }
+
+  if (trigger) trigger.addEventListener("click", openDrawer);
+  if (closeBtn) closeBtn.addEventListener("click", closeDrawer);
+  if (backdrop) backdrop.addEventListener("click", closeDrawer);
+
+  navLinks.forEach((link) => {
+    link.addEventListener("click", closeDrawer);
+  });
+
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && drawer && drawer.getAttribute("aria-hidden") === "false") {
+      closeDrawer();
+    }
+  });
+
+  // Touch swipe to dismiss drawer
+  if (panel) {
+    let startX = 0;
+    panel.addEventListener("touchstart", (e) => {
+      startX = e.changedTouches[0].screenX;
+    }, { passive: true });
+    panel.addEventListener("touchend", (e) => {
+      const endX = e.changedTouches[0].screenX;
+      if (endX - startX > 50) {
+        closeDrawer();
+      }
+    }, { passive: true });
+  }
+
+  // Lookbook Mobile Touch Carousel & Live Counter Controller
+  const carousel = document.getElementById("lookbook-carousel");
+  const counter = document.getElementById("carousel-counter");
+
+  if (carousel && counter) {
+    const cards = carousel.querySelectorAll(".snap-start");
+    const total = cards.length || 4;
+
+    function updateCounterOnScroll() {
+      const scrollLeft = carousel.scrollLeft;
+      let activeIndex = 0;
+      cards.forEach((card, idx) => {
+        const cardLeft = card.offsetLeft - carousel.offsetLeft;
+        if (scrollLeft >= cardLeft - card.offsetWidth / 3) {
+          activeIndex = idx;
         }
-        
-        // Ensure nav has a class we can toggle
-        nav.classList.add('mobile-nav');
-        
-        btn.addEventListener('click', () => {
-            nav.classList.toggle('hidden');
-            nav.classList.toggle('flex');
-            nav.classList.toggle('flex-col');
-            nav.classList.toggle('absolute');
-            nav.classList.toggle('top-full');
-            nav.classList.toggle('left-0');
-            nav.classList.toggle('w-full');
-            nav.classList.toggle('bg-surface');
-            nav.classList.toggle('bg-black');
-            nav.classList.toggle('z-50');
-            nav.classList.toggle('p-4');
+      });
+      const cur = String(activeIndex + 1).padStart(2, "0");
+      const tot = String(total).padStart(2, "0");
+      counter.textContent = `[ ${cur} / ${tot} ]`;
+    }
+
+    carousel.addEventListener("scroll", updateCounterOnScroll, { passive: true });
+
+    if ("IntersectionObserver" in window) {
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting && entry.intersectionRatio >= 0.5) {
+            const idx = Array.from(cards).indexOf(entry.target);
+            if (idx !== -1) {
+              const cur = String(idx + 1).padStart(2, "0");
+              const tot = String(total).padStart(2, "0");
+              counter.textContent = `[ ${cur} / ${tot} ]`;
+            }
+          }
         });
-    });
+      }, { root: carousel, threshold: 0.5 });
+
+      cards.forEach((card) => observer.observe(card));
+    }
+  }
 });
 </script>
-<style>
-@media (max-width: 1024px) {
-    .mobile-nav {
-        background-color: #080808; /* Dark mode fallback */
-        border-bottom: 1px solid rgba(255,255,255,0.1);
-    }
-}
-/* Ensure text scales */
-html { font-size: 14px; }
-@media (min-width: 768px) { html { font-size: 16px; } }
-</style>
 </body></html>
