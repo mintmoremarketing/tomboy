@@ -1,0 +1,38 @@
+.obsidian-text-fill {
+  width: 100%;
+  position: relative;
+}
+
+.obsidian-text-fill .tfa-heading {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  column-gap: 0.38em;
+  row-gap: 0.3em;
+  font-size: var(--tfa-text-size, clamp(1.4rem, 2.8vw, 2.2rem));
+  font-weight: 800;
+  line-height: 1.45;
+  letter-spacing: -0.02em;
+  color: var(--tfa-text-color, #0A0A0A);
+  word-break: normal;
+  overflow-wrap: normal;
+}
+
+.obsidian-text-fill .tfa-word {
+  display: inline-flex;
+  white-space: nowrap;
+  margin-right: 0.36em;
+}
+
+.obsidian-text-fill .tfa-word:last-child {
+  margin-right: 0;
+}
+
+@media (max-width: 768px) {
+  .obsidian-text-fill .tfa-heading {
+    font-size: var(--tfa-mobile-text-size, clamp(1.25rem, 4.8vw, 1.6rem));
+    line-height: 1.4;
+    column-gap: 0.32em;
+    row-gap: 0.25em;
+  }
+}
