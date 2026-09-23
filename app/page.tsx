@@ -658,7 +658,7 @@ function SearchModal({
         ) : (
           <div className="search-modal__results">
             {filtered.length === 0 ? (
-              <p className="search-modal__empty">No products found for "{query}". Try another search term.</p>
+              <p className="search-modal__empty">No products found for &quot;{query}&quot;. Try another search term.</p>
             ) : (
               <div className="search-results-grid">
                 {filtered.map((item) => (
