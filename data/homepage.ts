@@ -168,17 +168,17 @@ export const footerGroups = [
   {
     title: "About",
     links: [
-      { name: "About Us", href: "/pages/about-us" },
-      { name: "Contact Us", href: "/pages/contact" },
+      { name: "About Us", href: "/info/about-us" },
+      { name: "Contact Us", href: "/info/contact" },
     ],
   },
   {
     title: "Support & Policies",
     links: [
-      { name: "Shipping Policy", href: "/pages/shipping-policy" },
-      { name: "Refunds & Returns", href: "/pages/refunds-returns-policy" },
-      { name: "Privacy Policy", href: "/pages/privacy-policy" },
-      { name: "Terms & Conditions", href: "/pages/terms-conditions" },
+      { name: "Shipping Policy", href: "/info/shipping-policy" },
+      { name: "Refunds & Returns", href: "/info/refunds-returns-policy" },
+      { name: "Privacy Policy", href: "/info/privacy-policy" },
+      { name: "Terms & Conditions", href: "/info/terms-conditions" },
     ],
   },
 ];

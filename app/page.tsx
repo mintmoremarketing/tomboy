@@ -569,10 +569,10 @@ function Header({
             >
               <CircleUserRound size={20} /> My Account
             </button>
-            <Link href="/pages/about-us" onClick={() => setMobileMenuOpen(false)}>
+            <Link href="/info/about-us" onClick={() => setMobileMenuOpen(false)}>
               Our Story
             </Link>
-            <Link href="/pages/contact" onClick={() => setMobileMenuOpen(false)}>
+            <Link href="/info/contact" onClick={() => setMobileMenuOpen(false)}>
               Contact Us
             </Link>
           </div>
