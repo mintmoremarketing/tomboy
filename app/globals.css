@@ -429,6 +429,20 @@ button {
   position: relative;
 }
 
+.audience-pill__label {
+  display: grid;
+}
+
+.audience-pill__label > span {
+  grid-area: 1 / 1;
+  text-align: center;
+  visibility: hidden;
+}
+
+.audience-pill__label > span.is-current {
+  visibility: visible;
+}
+
 .audience-pill__chevron {
   transition: transform 0.2s ease;
 }
@@ -2998,7 +3012,7 @@ button {
   }
 
   .gw-full .lineup-card--kids .lineup-card__label {
-    left: 50%;
+    left: 43%;
   }
 
   .gw-full .lineup-card--men .lineup-card__label {
@@ -3053,8 +3067,10 @@ button {
     z-index: 1;
   }
 
+  /* the kid's body sits left of centre in his image, so the box is nudged
+     right to put him optically between the parents */
   .gw-full .lineup-card--kids {
-    left: 29%;
+    left: 32%;
     width: 42%;
     height: 76%;
     z-index: 2;
@@ -3098,7 +3114,7 @@ button {
 
   /* clear of her raised fist: sits above the man's head instead */
   .gw-full .lineup-sticker--top {
-    top: -30px;
+    top: -12px;
     left: auto;
     right: 4px;
     transform: rotate(6deg);
@@ -3120,4 +3136,437 @@ button {
 .lineup-card.is-leaving {
   opacity: 0.3;
   transition: opacity 0.35s ease, flex-grow 0.55s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Desktop hover: the other two cards compact down so the hovered one gets the
+   stage. The woman's card opens widest because her raised-arm pose is wider. */
+@media (min-width: 861px) {
+  .gw-full .lineup-card.is-active {
+    flex-grow: 2.2;
+  }
+
+  .gw-full .lineup-card--women.is-active {
+    flex-grow: 2.8;
+  }
+
+  .gw-full .lineup-card.is-dimmed {
+    flex-grow: 0.55;
+  }
+
+  .gw-full .lineup-card__label {
+    transition: font-size 0.45s cubic-bezier(0.2, 0.8, 0.2, 1);
+  }
+
+  .gw-full .lineup-card.is-dimmed .lineup-card__label {
+    font-size: 1.05rem;
+  }
+
+  .gw-full .lineup-card.is-dimmed .lineup-card__num {
+    opacity: 0;
+  }
+}
+
+/* ---- Hero character (components/block/hero-character.tsx) ----
+   Lives inside .hero-stickers-layer, before the stickers, so they stay on top. */
+.hero-character {
+  position: absolute;
+  left: 74%;
+  bottom: 0; /* feet on the hero's bottom edge */
+  height: 92%;
+  transform: translateX(-50%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+.hero-character__figure {
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+}
+
+/* wraps the image + phone callouts; must be sized at every width or the
+   image falls back to its natural 1400px height */
+.hero-character__body {
+  position: relative;
+  display: block;
+  height: 100%;
+}
+
+.hero-character__figure img {
+  position: relative;
+  z-index: 1;
+  display: block;
+  height: 100%;
+  width: auto;
+  max-width: none;
+  user-select: none;
+  filter: drop-shadow(0 12px 18px rgba(10, 10, 10, 0.12));
+}
+
+.hero-character__halo {
+  position: absolute;
+  left: 50%;
+  top: 6%;
+  height: 58%;
+  aspect-ratio: 1;
+  transform: translateX(-50%);
+  border-radius: 50%;
+}
+
+@media (max-width: 768px) {
+  .hero-stickers-layer {
+    height: 340px;
+  }
+
+  .hero-character {
+    left: 50%;
+    bottom: 0;
+    height: 100%;
+  }
+}
+
+/* Phones: CTAs go below the character board, within easy thumb reach.
+   The copy wrapper dissolves so its children join the hero's column
+   and the actions can be ordered after the sticker board. */
+@media (max-width: 768px) {
+  .hero__copy {
+    display: contents;
+  }
+
+  .hero__pill {
+    align-self: flex-start;
+  }
+
+  .hero__copy p,
+  .hero__copy .hero__body-text {
+    margin-bottom: 0;
+  }
+
+  .hero {
+    gap: 18px;
+  }
+
+  .hero-stickers-layer {
+    order: 2;
+    height: 290px;
+    margin-top: 0;
+  }
+
+  .hero__actions {
+    order: 3;
+    margin-top: 0;
+  }
+}
+
+/* ====================================================
+   PHONE HERO — one-screen poster
+   headline top · swipeable character (with spec callouts) · sticker strip · CTAs
+   Desktop keeps the draggable sticker hero; these pieces are phone-only.
+==================================================== */
+.hero-swipe-dots,
+.hero-sticker-strip,
+.sticky-shop,
+.hero-callout {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .hero {
+    /* fill the screen under the ticker + header */
+    min-height: calc(100svh - 96px);
+    padding: 18px 0 14px;
+    gap: 10px;
+  }
+
+  .hero__pill,
+  .hero__body-text {
+    display: none;
+  }
+
+  .hero .eyebrow {
+    margin: 0;
+  }
+
+  .hero__copy h1 {
+    margin: 4px 0 0;
+  }
+
+  /* swipeable character stage */
+  .hero-stickers-layer {
+    order: 2;
+    flex: 1 1 auto;
+    height: auto;
+    min-height: 300px;
+    margin: 0;
+    pointer-events: auto;
+    touch-action: pan-y;
+    user-select: none;
+  }
+
+  .hero-stickers-layer .draggable-sticker {
+    display: none;
+  }
+
+  .hero-character {
+    left: 50%;
+    bottom: 30px;
+    height: calc(100% - 34px);
+  }
+
+  /* spec callouts: dot on the garment → short leader line → tag */
+  .hero-callout {
+    display: block;
+    position: absolute;
+    top: var(--y);
+    width: 24px;
+    height: 0;
+    z-index: 2;
+  }
+
+  .hero-callout--right {
+    left: var(--x);
+  }
+
+  .hero-callout--left {
+    left: calc(var(--x) - 24px);
+  }
+
+  .hero-callout__dot {
+    position: absolute;
+    top: -4px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #0A0A0A;
+    box-shadow: 0 0 0 2.5px #FFFFFF;
+  }
+
+  .hero-callout--right .hero-callout__dot {
+    left: -4px;
+  }
+
+  .hero-callout--left .hero-callout__dot {
+    right: -4px;
+  }
+
+  .hero-callout__line {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -0.75px;
+    height: 1.5px;
+    background: #0A0A0A;
+  }
+
+  .hero-callout__tag {
+    position: absolute;
+    top: 0;
+    transform: translateY(-50%);
+    padding: 3px 8px;
+    border: 1.5px solid #0A0A0A;
+    border-radius: var(--radius-full);
+    background: #FFFFFF;
+    box-shadow: 2px 2px 0 #0A0A0A;
+    color: #0A0A0A;
+    font-size: 0.52rem;
+    font-weight: 900;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .hero-callout--right .hero-callout__tag {
+    left: calc(100% + 3px);
+  }
+
+  .hero-callout--left .hero-callout__tag {
+    right: calc(100% + 3px);
+  }
+
+  /* swipe dots (padding = bigger tap target) */
+  .hero-swipe-dots {
+    display: flex;
+    position: absolute;
+    left: 50%;
+    bottom: 0;
+    transform: translateX(-50%);
+    z-index: 3;
+  }
+
+  .hero-swipe-dot {
+    width: 24px;
+    height: 24px;
+    padding: 8px;
+    border: 0;
+    background: #D1D5DB;
+    background-clip: content-box;
+    border-radius: var(--radius-full);
+    transition: width 0.3s ease, background-color 0.3s ease;
+  }
+
+  .hero-swipe-dot.is-active {
+    width: 44px;
+    background-color: #0A0A0A;
+  }
+
+  /* rolling sticker strip */
+  .hero-sticker-strip {
+    display: block;
+    order: 3;
+    margin: 0 -16px;
+    padding: 8px 0 10px;
+    overflow: hidden;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  }
+
+  .hero-sticker-strip__track {
+    display: flex;
+    gap: 12px;
+    width: max-content;
+    padding: 0 6px;
+    animation: hero-strip-roll 28s linear infinite;
+  }
+
+  .hero-strip-sticker {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border: 2px solid #0A0A0A;
+    border-radius: var(--radius-full);
+    font-size: 0.64rem;
+    font-weight: 900;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    outline: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .hero-strip-sticker:active,
+  .hero-strip-sticker:focus {
+    animation: hero-strip-wiggle 0.5s ease;
+  }
+
+  .hero__actions {
+    order: 4;
+    margin: 0;
+  }
+
+  .hero__actions .button--dark {
+    flex: 1.6 1 0;
+  }
+
+  /* sticky Shop pill once the hero CTAs have scrolled away */
+  .sticky-shop {
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: calc(14px + env(safe-area-inset-bottom));
+    z-index: 80;
+    pointer-events: none;
+  }
+
+  .sticky-shop__pill {
+    pointer-events: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 22px;
+    border: 2px solid #0A0A0A;
+    border-radius: var(--radius-full);
+    background: #0A0A0A;
+    color: #FFFFFF;
+    box-shadow: 3px 3px 0 #00F5D4;
+    font-size: 0.82rem;
+    font-weight: 800;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+}
+
+@keyframes hero-strip-roll {
+  to { transform: translateX(-50%); }
+}
+
+@keyframes hero-strip-wiggle {
+  0%, 100% { transform: rotate(0); }
+  25% { transform: rotate(-6deg) scale(1.06); }
+  75% { transform: rotate(5deg) scale(1.06); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-sticker-strip__track {
+    animation: none;
+  }
+}
+
+/* ---- Phone header: audience switch moves into the menu drawer ---- */
+.drawer-audience {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .header-actions .audience-menu {
+    display: none;
+  }
+
+  .header-actions {
+    gap: 10px;
+  }
+
+  .drawer-audience {
+    display: block;
+    margin-bottom: 24px;
+  }
+
+  .drawer-audience__title {
+    margin: 0 0 10px;
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .drawer-audience__options {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+
+  .drawer-audience__option {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    padding: 12px 8px;
+    border: 2px solid #0A0A0A;
+    border-radius: var(--radius-full);
+    background: #FFFFFF;
+    color: #0A0A0A;
+    font-size: 0.82rem;
+    font-weight: 900;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+  }
+
+  .drawer-audience__option.is-active {
+    background: #0A0A0A;
+    color: #FFFFFF;
+    box-shadow: 3px 3px 0 var(--dot);
+  }
+
+  .drawer-audience__dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    border: 1.5px solid currentColor;
+    background: var(--dot);
+  }
 }

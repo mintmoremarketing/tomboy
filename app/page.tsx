@@ -16,12 +16,14 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
+import { AnimatePresence, motion } from "motion/react";
 import { StretchHeadline, type HeadlineMood } from "@/components/block/stretch-headline";
 import { CraftStorySection } from "@/components/block/text-fill-animation";
 import { MagneticImageTrail } from "@/components/block/magnetic-image-trail";
 import { PointerHighlight } from "@/components/ui/pointer-highlight";
 import { LiveOrb } from "@/components/ui/live-orb";
 import { StartingGateway } from "@/components/block/starting-gateway";
+import { HeroCharacter } from "@/components/block/hero-character";
 import {
   audienceContent,
   brandCards,
@@ -106,7 +108,7 @@ export default function Home() {
         onOpenGateway={() => setShowGateway(true)}
         products={products}
       />
-      <Hero audience={audience} ready={audienceReady} />
+      <Hero audience={audience} ready={audienceReady} onSelectAudience={switchAudience} />
       <Essentials audience={audience} />
       <CraftStorySection audience={audience} />
       <ProductCarousel products={products} audience={audience} />
@@ -142,6 +144,7 @@ interface StickerItem {
   rotation: number;
 }
 
+// Desktop: two columns of three framing the hero character (centred at 74%).
 const initialStickers: StickerItem[] = [
   {
     id: "og",
@@ -151,11 +154,11 @@ const initialStickers: StickerItem[] = [
     bgColor: "#FFFFFF",
     textColor: "#0A0A0A",
     shadowColor: "#FF3344",
-    defaultLeft: "48%",
-    defaultTop: "12%",
-    mobileLeft: "2%",
-    mobileTop: "4%",
-    rotation: -18,
+    defaultLeft: "50%",
+    defaultTop: "14%",
+    mobileLeft: "0%",
+    mobileTop: "2%",
+    rotation: -12,
   },
   {
     id: "softness",
@@ -165,11 +168,11 @@ const initialStickers: StickerItem[] = [
     bgColor: "#2E7CF6",
     textColor: "#FFFFFF",
     shadowColor: "#0A0A0A",
-    defaultLeft: "80%",
+    defaultLeft: "81%",
     defaultTop: "8%",
-    mobileLeft: "36%",
-    mobileTop: "0%",
-    rotation: -4,
+    mobileLeft: "calc(100% - 196px)",
+    mobileTop: "24%",
+    rotation: 12,
   },
   {
     id: "cotton",
@@ -179,11 +182,11 @@ const initialStickers: StickerItem[] = [
     bgColor: "#FF3399",
     textColor: "#FFFFFF",
     shadowColor: "#0A0A0A",
-    defaultLeft: "62%",
-    defaultTop: "32%",
-    mobileLeft: "3%",
-    mobileTop: "36%",
-    rotation: -18,
+    defaultLeft: "47.5%",
+    defaultTop: "46%",
+    mobileLeft: "0%",
+    mobileTop: "44%",
+    rotation: -6,
   },
   {
     id: "waistband",
@@ -193,11 +196,11 @@ const initialStickers: StickerItem[] = [
     bgColor: "#FFE500",
     textColor: "#0A0A0A",
     shadowColor: "#0A0A0A",
-    defaultLeft: "48%",
-    defaultTop: "70%",
+    defaultLeft: "49%",
+    defaultTop: "86%",
     mobileLeft: "0%",
-    mobileTop: "72%",
-    rotation: 0,
+    mobileTop: "80%",
+    rotation: 6,
   },
   {
     id: "chafe",
@@ -207,11 +210,11 @@ const initialStickers: StickerItem[] = [
     bgColor: "#52F264",
     textColor: "#0A0A0A",
     shadowColor: "#0A0A0A",
-    defaultLeft: "82%",
-    defaultTop: "58%",
-    mobileLeft: "63%",
-    mobileTop: "38%",
-    rotation: -2,
+    defaultLeft: "84%",
+    defaultTop: "46%",
+    mobileLeft: "calc(100% - 128px)",
+    mobileTop: "58%",
+    rotation: -3,
   },
   {
     id: "fit",
@@ -221,11 +224,11 @@ const initialStickers: StickerItem[] = [
     bgColor: "#FF3344",
     textColor: "#FFFFFF",
     shadowColor: "#00F5D4",
-    defaultLeft: "69%",
-    defaultTop: "74%",
-    mobileLeft: "47%",
-    mobileTop: "70%",
-    rotation: 18,
+    defaultLeft: "81%",
+    defaultTop: "82%",
+    mobileLeft: "calc(100% - 156px)",
+    mobileTop: "84%",
+    rotation: 14,
   },
 ];
 
@@ -419,9 +422,81 @@ function HighlightedText({
   );
 }
 
-function Hero({ audience, ready }: { audience: Audience; ready: boolean }) {
+// Phone swipe order matches the welcome lineup: women · men · kids
+const swipeOrder: Audience[] = ["women", "men", "kids"];
+
+function Hero({
+  audience,
+  ready,
+  onSelectAudience,
+}: {
+  audience: Audience;
+  ready: boolean;
+  onSelectAudience: (value: Audience) => void;
+}) {
   const content = audienceContent[audience];
   const [selectedStickerId, setSelectedStickerId] = useState<string | null>(null);
+  // direction of the last swipe/dot tap, remembered with its target so a
+  // dropdown switch afterwards falls back to the vertical pop animation
+  const [swipe, setSwipe] = useState<{ to: Audience; dir: number } | null>(null);
+  const direction = swipe && swipe.to === audience ? swipe.dir : 0;
+  const pointerStart = useRef<{ x: number; y: number } | null>(null);
+
+  const actionsRef = useRef<HTMLDivElement>(null);
+  const [showStickyShop, setShowStickyShop] = useState(false);
+
+  function goTo(target: Audience) {
+    if (target === audience) return;
+    const dir = Math.sign(swipeOrder.indexOf(target) - swipeOrder.indexOf(audience));
+    setSwipe({ to: target, dir });
+    onSelectAudience(target);
+  }
+
+  function step(delta: number) {
+    const index = (swipeOrder.indexOf(audience) + delta + swipeOrder.length) % swipeOrder.length;
+    const target = swipeOrder[index];
+    setSwipe({ to: target, dir: delta });
+    onSelectAudience(target);
+  }
+
+  function onStagePointerDown(e: React.PointerEvent) {
+    pointerStart.current = { x: e.clientX, y: e.clientY };
+  }
+
+  function onStagePointerUp(e: React.PointerEvent) {
+    const start = pointerStart.current;
+    pointerStart.current = null;
+    if (!start || !window.matchMedia("(max-width: 768px)").matches) return;
+    const dx = e.clientX - start.x;
+    const dy = e.clientY - start.y;
+    // swipe left → next audience, swipe right → previous
+    if (Math.abs(dx) > 45 && Math.abs(dx) > Math.abs(dy) * 1.2) step(dx < 0 ? 1 : -1);
+  }
+
+  // Sticky "Shop …" pill (phones): shows once the hero buttons scroll away,
+  // hides again when the footer comes into view.
+  useEffect(() => {
+    const actions = actionsRef.current;
+    const footer = document.querySelector("footer");
+    if (!actions) return;
+    let actionsVisible = true;
+    let footerVisible = false;
+    const update = () => setShowStickyShop(!actionsVisible && !footerVisible);
+    const observer = new IntersectionObserver((entries) => {
+      for (const entry of entries) {
+        if (entry.target === actions) {
+          // only count it as gone once it has scrolled up past the viewport
+          actionsVisible = entry.isIntersecting || entry.boundingClientRect.top > 0;
+        } else {
+          footerVisible = entry.isIntersecting;
+        }
+      }
+      update();
+    });
+    observer.observe(actions);
+    if (footer) observer.observe(footer);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <section
@@ -429,8 +504,16 @@ function Hero({ audience, ready }: { audience: Audience; ready: boolean }) {
       onClick={() => setSelectedStickerId(null)}
     >
       <div className="hero">
-        {/* Free-floating stickers spread across the entire hero */}
-        <div className="hero-stickers-layer" aria-label="Draggable Stickers">
+        {/* Free-floating stickers spread across the entire hero (desktop);
+            on phones this is the swipeable character stage */}
+        <div
+          className="hero-stickers-layer"
+          aria-label="Draggable Stickers"
+          onPointerDown={onStagePointerDown}
+          onPointerUp={onStagePointerUp}
+          onPointerCancel={() => (pointerStart.current = null)}
+        >
+          <HeroCharacter audience={audience} ready={ready} direction={direction} />
           {initialStickers.map((sticker) => (
             <DraggableSticker
               key={sticker.id}
@@ -439,6 +522,41 @@ function Hero({ audience, ready }: { audience: Audience; ready: boolean }) {
               onSelect={(id) => setSelectedStickerId(id)}
             />
           ))}
+          <div className="hero-swipe-dots" role="tablist" aria-label="Choose lineup">
+            {swipeOrder.map((option) => (
+              <button
+                key={option}
+                role="tab"
+                aria-selected={option === audience}
+                aria-label={`Show ${audienceContent[option].label}`}
+                className={`hero-swipe-dot ${option === audience ? "is-active" : ""}`}
+                style={{ "--dot": heroHighlightColor[option] } as React.CSSProperties}
+                onClick={() => goTo(option)}
+              />
+            ))}
+          </div>
+        </div>
+
+        {/* Phones: the stickers roll by in a strip instead of covering the character */}
+        <div className="hero-sticker-strip" aria-hidden="true">
+          <div className="hero-sticker-strip__track">
+            {[...initialStickers, ...initialStickers].map((sticker, i) => (
+              <span
+                key={`${sticker.id}-${i}`}
+                className="hero-strip-sticker"
+                tabIndex={-1}
+                style={{
+                  background: sticker.bgColor,
+                  color: sticker.textColor,
+                  boxShadow: `3px 3px 0 ${sticker.shadowColor}`,
+                  rotate: `${i % 2 ? 3 : -3}deg`,
+                }}
+              >
+                {sticker.emoji && <span>{sticker.emoji}</span>}
+                {sticker.content}
+              </span>
+            ))}
+          </div>
         </div>
 
         <div className="hero__copy">
@@ -472,7 +590,7 @@ function Hero({ audience, ready }: { audience: Audience; ready: boolean }) {
             />
           </div>
 
-          <div className="hero__actions">
+          <div className="hero__actions" ref={actionsRef}>
             <Link className="button button--dark" href={`/collections/${content.collectionHandle}`}>
               Shop {content.label} <ArrowRight size={18} />
             </Link>
@@ -482,6 +600,22 @@ function Hero({ audience, ready }: { audience: Audience; ready: boolean }) {
           </div>
         </div>
       </div>
+
+      <AnimatePresence>
+        {showStickyShop && (
+          <motion.div
+            className="sticky-shop"
+            initial={{ y: 90, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+            exit={{ y: 90, opacity: 0 }}
+            transition={{ type: "spring", stiffness: 380, damping: 30 }}
+          >
+            <Link className="sticky-shop__pill" href={`/collections/${content.collectionHandle}`}>
+              Shop {content.label} <ArrowRight size={16} />
+            </Link>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </section>
   );
 }
@@ -540,7 +674,15 @@ function AudienceMenu({
         aria-expanded={open}
         aria-label={`Shopping for ${audienceContent[audience].label}. Change lineup`}
       >
-        <span>{audienceContent[audience].label}</span>
+        {/* all labels share one grid cell so the pill is always as wide as the
+            longest ("Women") and the nav doesn't shift when switching */}
+        <span className="audience-pill__label" aria-hidden="true">
+          {audienceOptions.map((option) => (
+            <span key={option} className={option === audience ? "is-current" : undefined}>
+              {audienceContent[option].label}
+            </span>
+          ))}
+        </span>
         <ChevronDown size={14} className="audience-pill__chevron" />
       </button>
       {open && (
@@ -636,6 +778,28 @@ function Header({
 
       {mobileMenuOpen && (
         <div className="mobile-nav-drawer">
+          {/* phones: the audience switch lives here instead of the cramped header */}
+          <div className="drawer-audience">
+            <p className="drawer-audience__title">Shopping for</p>
+            <div className="drawer-audience__options" role="radiogroup" aria-label="Shopping for">
+              {audienceOptions.map((option) => (
+                <button
+                  key={option}
+                  role="radio"
+                  aria-checked={option === audience}
+                  className={`drawer-audience__option ${option === audience ? "is-active" : ""}`}
+                  style={{ "--dot": heroHighlightColor[option] } as React.CSSProperties}
+                  onClick={() => {
+                    onSelectAudience(option);
+                    setMobileMenuOpen(false);
+                  }}
+                >
+                  <span className="drawer-audience__dot" />
+                  {audienceContent[option].label}
+                </button>
+              ))}
+            </div>
+          </div>
           <div className="mobile-nav-links">
             <Link href="/collections/men" onClick={() => setMobileMenuOpen(false)}>
               Men
