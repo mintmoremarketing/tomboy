@@ -1827,25 +1827,117 @@ button {
 
 .pdp-variants {
   margin-bottom: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.pdp-option-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 
 .pdp-variants__label {
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   font-size: 0.88rem;
   font-weight: 700;
   text-transform: uppercase;
-  margin-bottom: 12px;
+  letter-spacing: 0.03em;
   color: var(--muted);
+  margin: 0;
 }
 
 .pdp-variants__label strong {
   color: var(--black);
+  font-weight: 900;
 }
 
-.pdp-variants__grid {
+.pdp-color-swatches {
   display: flex;
   flex-wrap: wrap;
   gap: 10px;
+}
+
+.pdp-color-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 16px;
+  border-radius: var(--radius-full);
+  border: 2px solid var(--border);
+  background: var(--white);
+  color: var(--black);
+  font-size: 0.88rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.05);
+}
+
+.pdp-color-btn:hover {
+  border-color: var(--black);
+  transform: translateY(-1px);
+}
+
+.pdp-color-btn.is-selected {
+  border-color: var(--black);
+  background: var(--black);
+  color: var(--white);
+  box-shadow: 3px 3px 0px var(--accent);
+}
+
+.pdp-color-dot {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  border: 1px solid rgba(0, 0, 0, 0.2);
+  flex-shrink: 0;
+}
+
+.pdp-size-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.pdp-size-btn {
+  min-width: 54px;
+  height: 46px;
+  padding: 0 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  border: 2px solid var(--border);
+  background: var(--white);
+  color: var(--black);
+  font-size: 0.95rem;
+  font-weight: 900;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: 2px 2px 0px rgba(0, 0, 0, 0.05);
+}
+
+.pdp-size-btn:hover {
+  border-color: var(--black);
+  transform: translateY(-1px);
+}
+
+.pdp-size-btn.is-selected {
+  background: var(--black);
+  color: var(--white);
+  border-color: var(--black);
+  box-shadow: 3px 3px 0px var(--accent-green);
+}
+
+.pdp-size-btn.is-soldout {
+  opacity: 0.45;
+  text-decoration: line-through;
+  background: #f3f4f6;
+  cursor: not-allowed;
 }
 
 .pdp-variant-btn {
