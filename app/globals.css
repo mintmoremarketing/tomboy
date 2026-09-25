@@ -2985,14 +2985,16 @@ button {
   .gw-full .lineup {
     position: relative;
     display: block;
-    height: clamp(360px, 56vh, 500px);
-    margin: 48px 0 56px;
+    /* fit the family + labels on the first screen: ~470px is the logo bar,
+       copy, spacing and label row above/below the group */
+    height: clamp(300px, calc(100svh - 470px), 480px);
+    margin: 44px 0 56px;
   }
 
-  /* Labels sit in one row under the family, evenly spread at ~18% / 50% / 82%
+  /* Labels sit in one row under the family, evenly spread at ~20% / 50% / 80%
      of the group width (left is relative to each figure's own box). */
   .gw-full .lineup-card--women .lineup-card__label {
-    left: 21%;
+    left: 12.5%;
   }
 
   .gw-full .lineup-card--kids .lineup-card__label {
@@ -3000,7 +3002,7 @@ button {
   }
 
   .gw-full .lineup-card--men .lineup-card__label {
-    left: 75%;
+    left: 61%;
   }
 
   /* one soft glow behind the whole family */
@@ -3038,14 +3040,14 @@ button {
   /* ~9% of her image is the raised fist above her head, so she is drawn
      taller than the man to put their heads at the same height */
   .gw-full .lineup-card--women {
-    left: 8%;
+    left: 14%;
     width: 48%;
     height: 109%;
     z-index: 1;
   }
 
   .gw-full .lineup-card--men {
-    right: 7%;
+    right: 3%;
     width: 44%;
     height: 100%;
     z-index: 1;
@@ -3086,6 +3088,12 @@ button {
 
   .gw-full .lineup-sticker--bottom {
     display: none;
+  }
+
+  /* let the grid grow with its content so the bottom padding is real space */
+  .gw-full__grid {
+    flex: 1 0 auto;
+    padding-bottom: 28px;
   }
 
   /* clear of her raised fist: sits above the man's head instead */
