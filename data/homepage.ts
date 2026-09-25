@@ -16,7 +16,7 @@ export const audienceContent = {
   women: {
     label: "Women",
     kicker: "Women's Lineup",
-    headline: "UNAPOLOGETICALLY SOFT.",
+    headline: "INSANELY SOFT.",
     body: "Comfort-first bras, panties & basics designed to move with you.",
     collectionHandle: "women",
   },

@@ -13,11 +13,11 @@ interface FlowingTextProps {
 export function FlowingText({
   children,
   className,
-  intervalMs = 5000,
+  intervalMs = 4500,
 }: FlowingTextProps) {
   const [cycle, setCycle] = useState(0);
 
-  // Periodic slow, elegant cascade wave flow
+  // Periodic wave animation: letters go up one by one, disappear, and re-emerge
   useEffect(() => {
     const timer = setInterval(() => {
       setCycle((prev) => prev + 1);
@@ -33,7 +33,7 @@ export function FlowingText({
     <span
       className={cn("inline-flex flex-wrap items-baseline", className)}
       style={{
-        perspective: "1200px",
+        perspective: "1000px",
         columnGap: "0.36em",
         rowGap: "0.15em",
       }}
@@ -44,26 +44,29 @@ export function FlowingText({
           className="inline-flex whitespace-nowrap"
           style={{ whiteSpace: "nowrap" }}
         >
-          {word.split("").map((char, charIndex) => {
+          {word.split("").map((char) => {
             const index = totalIndex++;
             return (
               <motion.span
                 key={`${cycle}-${index}`}
                 className="inline-block select-none"
                 style={{
-                  transformStyle: "preserve-3d",
                   display: "inline-block",
-                  willChange: "transform",
+                  transformStyle: "preserve-3d",
+                  willChange: "transform, opacity, filter",
                 }}
-                initial={{ y: 0, rotateX: 0 }}
+                initial={{ y: 0, opacity: 1, rotateX: 0, filter: "blur(0px)" }}
                 animate={{
-                  y: [0, -10, 0],
-                  rotateX: [0, 360, 0],
+                  y: [0, -32, 28, 0],
+                  opacity: [1, 0, 0, 1],
+                  filter: ["blur(0px)", "blur(2px)", "blur(1.5px)", "blur(0px)"],
+                  rotateX: [0, -20, 15, 0],
                 }}
                 transition={{
-                  duration: 1.25, // Slow, fluid, graceful duration
-                  delay: index * 0.075, // Smooth wave delay
-                  ease: [0.25, 1, 0.5, 1], // Silky smooth cubic-bezier curve
+                  duration: 1.1,
+                  delay: index * 0.045, // Staggered wave timing
+                  times: [0, 0.38, 0.48, 1],
+                  ease: [0.22, 1, 0.36, 1],
                 }}
               >
                 {char}
