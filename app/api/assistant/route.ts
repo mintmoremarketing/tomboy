@@ -290,12 +290,13 @@ export async function GET() {
   try {
     const catalog = await loadCatalog();
     return NextResponse.json({
-      products: catalog.products.map(({ tag, handle, title, audience, price, image }) => ({
+      products: catalog.products.map(({ tag, handle, title, audience, price, image, tryOn }) => ({
         tag,
         handle,
         title,
         audience,
         price,
+        tryOn,
         thumb: image ? `${image}${image.includes('?') ? '&' : '?'}width=120` : null,
       })),
       categories: catalog.categories.map(({ tag, name, audience, handles }) => ({
@@ -398,6 +399,7 @@ export async function POST(request: Request) {
         tag: p.tag,
         title: p.title,
         price: p.price,
+        tryOn: p.tryOn,
         image: p.image ? `${p.image}${p.image.includes('?') ? '&' : '?'}width=360` : null,
       };
     });

@@ -15,6 +15,7 @@ export interface ProductCard {
   title: string;
   price: string;
   image: string | null;
+  tryOn?: boolean; // eligible for the AI try-on preview
 }
 
 export interface AiMeta {
@@ -187,5 +188,14 @@ export function loadRecentlyViewed(): string[] {
     return JSON.parse(window.localStorage.getItem(RECENT_KEY) ?? "[]") as string[];
   } catch {
     return [];
+  }
+}
+
+// "Clear my data": everything Scout keeps, which all lives in this browser.
+export function clearAssistantData() {
+  try {
+    for (const key of [CHATS_KEY, PROFILE_KEY, RECENT_KEY]) window.localStorage.removeItem(key);
+  } catch {
+    // storage blocked: nothing was saved in the first place
   }
 }

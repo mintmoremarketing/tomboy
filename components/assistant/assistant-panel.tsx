@@ -15,6 +15,7 @@ import { LiveOrb } from "@/components/ui/live-orb";
 import { useScoutQuip } from "@/components/assistant/quips";
 import {
   captureScreenshot,
+  clearAssistantData,
   deleteChat,
   hasProfile,
   listChats,
@@ -32,6 +33,7 @@ import {
   type SizeProfile,
 } from "@/components/assistant/client";
 import { ProductPickSheet, ShoppingForSheet, SizesSheet } from "@/components/assistant/sheets";
+import { TryOnDialog, type TryOnProduct } from "@/components/assistant/try-on-dialog";
 
 // Scout — Tomboy's shopping assistant. A port of KeepUp's Bouncy AssistantPanel
 // (same layout, orb moods, thought bubble, @tags, attachments, history), with
@@ -163,6 +165,7 @@ export function AssistantPanel({
   const [profile, setProfile] = useState<SizeProfile>({});
   useEffect(() => setProfile(loadProfile()), []);
   const [sheet, setSheet] = useState<"sizes" | "recent" | "compare" | "for" | null>(null);
+  const [tryOn, setTryOn] = useState<TryOnProduct | null>(null);
   const [entries, setEntries] = useState<Entry[]>([]);
   const [chatTitle, setChatTitle] = useState<string | null>(null);
   const [activeChatId, setActiveChatId] = useState<string | null>(null);
@@ -593,6 +596,24 @@ export function AssistantPanel({
                   </div>
                 ))
               )}
+              <div className="ap-history__foot">
+                <button
+                  type="button"
+                  className="ap-history__clear"
+                  onClick={() => {
+                    if (!window.confirm("Delete all Scout chats, saved sizes and recently viewed products from this device?")) return;
+                    clearAssistantData();
+                    setChats([]);
+                    setProfile({});
+                    newChat();
+                  }}
+                >
+                  Clear all Scout data
+                </button>
+                <Link href="/privacy/ai" target="_blank" className="ap-history__link">
+                  Privacy
+                </Link>
+              </div>
             </div>
           ) : entries.length === 0 ? (
             // Empty chat: mascot + starters
@@ -616,6 +637,12 @@ export function AssistantPanel({
                   </button>
                 ))}
               </div>
+              <p className="ap-privacy-note">
+                Chats stay on this device. Messages are processed by Google Gemini to answer you.{" "}
+                <Link href="/privacy/ai" target="_blank">
+                  How we handle your data
+                </Link>
+              </p>
             </div>
           ) : (
             <div className="ap-thread">
@@ -667,6 +694,15 @@ export function AssistantPanel({
                               </span>
                               <span className="ap-result__action">View</span>
                             </Link>
+                            {p.tryOn && (
+                              <button
+                                type="button"
+                                className="ap-result__tryon"
+                                onClick={() => setTryOn({ handle: p.handle, title: p.title, image: p.image })}
+                              >
+                                ✦ Try on
+                              </button>
+                            )}
                           </li>
                         ))}
                       </ul>
@@ -977,6 +1013,7 @@ export function AssistantPanel({
           </form>
         </div>
       </aside>
+      {tryOn && <TryOnDialog product={tryOn} onClose={() => setTryOn(null)} />}
     </>
   );
 }

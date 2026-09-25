@@ -204,6 +204,7 @@ export const footerGroups = [
       { name: "Shipping Policy", href: "/info/shipping-policy" },
       { name: "Refunds & Returns", href: "/info/refunds-returns-policy" },
       { name: "Privacy Policy", href: "/info/privacy-policy" },
+      { name: "Scout, Try-on & Your Data", href: "/privacy/ai" },
       { name: "Terms & Conditions", href: "/info/terms-conditions" },
     ],
   },

@@ -1,5 +1,6 @@
 import { getCollectionByHandle, getProducts } from '@/lib/shopify';
 import { shopEssentials } from '@/data/homepage';
+import { isTryOnEligible } from '@/lib/try-on';
 
 // The catalog Scout (the shopping assistant) sees, plus the @tags the chat
 // input offers: every product gets a short readable tag (@classic-briefs), and
@@ -18,6 +19,7 @@ export interface CatalogProduct {
   price: string;
   image: string | null;
   audience: Audience;
+  tryOn: boolean; // eligible for the AI try-on preview (adult outerwear only)
 }
 
 export interface CatalogCategory {
@@ -88,7 +90,7 @@ export async function loadCatalog(): Promise<Catalog> {
   const guessAudience = (title: string): Audience =>
     /\b(boy|girl|kid)/i.test(title) ? 'kids' : /\b(women|ladies|bra|pant(y|ies))/i.test(title) ? 'women' : 'men';
 
-  const byHandle = new Map<string, Omit<CatalogProduct, 'tag'>>();
+  const byHandle = new Map<string, Omit<CatalogProduct, 'tag' | 'tryOn'>>();
   for (const edge of allProducts as any[]) {
     const p = edge.node;
     if (byHandle.has(p.handle)) continue;
@@ -106,7 +108,7 @@ export async function loadCatalog(): Promise<Catalog> {
   const taken = new Set<string>();
   const products = [...byHandle.values()]
     .sort((a, b) => a.handle.localeCompare(b.handle))
-    .map((p) => ({ ...p, tag: productTag(p.title, taken) }));
+    .map((p) => ({ ...p, tag: productTag(p.title, taken), tryOn: isTryOnEligible({ title: p.title, productType: p.type, audience: p.audience }) }));
 
   const entries = AUDIENCES.flatMap((audience) =>
     shopEssentials[audience].map((item) => ({ audience, name: item.title, collection: item.href.split('/').pop() as string })),
