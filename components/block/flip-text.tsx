@@ -1,83 +1,36 @@
-"use client";
+import React from "react";
 
-import React, { useEffect, useState } from "react";
-import { motion } from "motion/react";
-import { cn } from "@/lib/utils";
-
-interface FlowingTextProps {
-  children: string;
+interface LensDriftTextProps {
+  children?: string;
   className?: string;
-  intervalMs?: number;
 }
 
-export function FlowingText({
-  children,
+export function LensDriftText({
+  children = "FOCUS",
   className,
-  intervalMs = 4500,
-}: FlowingTextProps) {
-  const [cycle, setCycle] = useState(0);
-
-  // Periodic wave animation: letters go up one by one, disappear, and re-emerge
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setCycle((prev) => prev + 1);
-    }, intervalMs);
-
-    return () => clearInterval(timer);
-  }, [intervalMs]);
-
-  const words = children.split(" ");
-  let totalIndex = 0;
+}: LensDriftTextProps) {
+  const text = children;
+  const chars = text.split("");
 
   return (
-    <span
-      className={cn("inline-flex flex-wrap items-baseline", className)}
-      style={{
-        perspective: "1000px",
-        columnGap: "0.36em",
-        rowGap: "0.15em",
-      }}
+    <div
+      className={className ? `fx-focus ${className}` : "fx-focus"}
+      role="img"
+      aria-label={text}
     >
-      {words.map((word, wordIndex) => (
-        <span
-          key={wordIndex}
-          className="inline-flex whitespace-nowrap"
-          style={{ whiteSpace: "nowrap" }}
+      {chars.map((char, index) => (
+        <b
+          key={index}
+          aria-hidden="true"
+          style={{ "--i": index } as React.CSSProperties}
         >
-          {word.split("").map((char) => {
-            const index = totalIndex++;
-            return (
-              <motion.span
-                key={`${cycle}-${index}`}
-                className="inline-block select-none"
-                style={{
-                  display: "inline-block",
-                  transformStyle: "preserve-3d",
-                  willChange: "transform, opacity, filter",
-                }}
-                initial={{ y: 0, opacity: 1, rotateX: 0, filter: "blur(0px)" }}
-                animate={{
-                  y: [0, -32, 28, 0],
-                  opacity: [1, 0, 0, 1],
-                  filter: ["blur(0px)", "blur(2px)", "blur(1.5px)", "blur(0px)"],
-                  rotateX: [0, -20, 15, 0],
-                }}
-                transition={{
-                  duration: 1.1,
-                  delay: index * 0.045, // Staggered wave timing
-                  times: [0, 0.38, 0.48, 1],
-                  ease: [0.22, 1, 0.36, 1],
-                }}
-              >
-                {char}
-              </motion.span>
-            );
-          })}
-        </span>
+          {char === " " ? "\u00A0" : char}
+        </b>
       ))}
-    </span>
+    </div>
   );
 }
 
-export const FlipText = FlowingText;
-export default FlowingText;
+export const FlipText = LensDriftText;
+export const FlowingText = LensDriftText;
+export default LensDriftText;
