@@ -1,8 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { ArrowLeft, Check, ShieldCheck, Truck, RefreshCw, ShoppingBag, Sparkles } from "lucide-react";
+import { LiveOrb } from "@/components/ui/live-orb";
+import { AssistantPanel } from "@/components/assistant/assistant-panel";
+import { recordRecentlyViewed } from "@/components/assistant/client";
 
 // Smart CSS color mapping for Tomboy colorways
 const colorSwatchMap: Record<string, string> = {
@@ -36,6 +39,16 @@ function getColorHex(name: string): string {
 }
 
 export default function ProductView({ product }: { product: any }) {
+  // Scout on product pages: "This product" in its + menu attaches the one being viewed
+  const [assistantOpen, setAssistantOpen] = useState(false);
+  const [orbDancing, setOrbDancing] = useState(false);
+  const [audience, setAudience] = useState<"men" | "women" | "kids">("men");
+  useEffect(() => {
+    recordRecentlyViewed(product.handle);
+    const saved = window.localStorage.getItem("tomboy-audience");
+    if (saved === "men" || saved === "women" || saved === "kids") setAudience(saved);
+  }, [product.handle]);
+
   const images = useMemo(
     () => product.images?.edges?.map((e: any) => e.node) || [],
     [product]
@@ -212,10 +225,28 @@ export default function ProductView({ product }: { product: any }) {
         <Link href="/" className="brand" aria-label="Tomboy homepage">
           <img src="/logo.webp" alt="Tomboy India" className="brand-logo" />
         </Link>
-        <Link href="/" className="back-link">
-          <ArrowLeft size={16} /> Back to store
-        </Link>
+        <div className="pdp-topbar__actions">
+          <Link href="/" className="back-link">
+            <ArrowLeft size={16} /> Back to store
+          </Link>
+          <button
+            className="orb-button"
+            aria-label="Ask Scout about this product"
+            title="Ask Scout (press /)"
+            onClick={() => setAssistantOpen(true)}
+            onMouseEnter={() => setOrbDancing(true)}
+            onMouseLeave={() => setOrbDancing(false)}
+          >
+            <LiveOrb variant="custom" color="#FF3333" eyeColor="#FAFAFA" size={34} dance={orbDancing} />
+          </button>
+        </div>
       </div>
+      <AssistantPanel
+        open={assistantOpen}
+        onOpenChange={setAssistantOpen}
+        audience={audience}
+        currentProduct={{ handle: product.handle }}
+      />
 
       <div className="pdp-grid">
         {/* Left: Gallery */}

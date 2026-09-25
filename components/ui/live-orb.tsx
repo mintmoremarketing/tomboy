@@ -1,10 +1,9 @@
 "use client"
 
-// From the @23rd/live-orb registry item; Tailwind classes swapped for
-// `.live-orb*` CSS in globals.css (this project has no Tailwind).
-
+// LiveOrb by 23rd.dev (shadcn registry @23rd/live-orb), ported from KeepUp's version
+// (adds dance / mood / readX). Tailwind classes swapped for `.live-orb*` CSS in
+// globals.css (this project has no Tailwind).
 import { useEffect, useRef, useState } from "react"
-import { cn } from "@/lib/utils"
 
 export type LiveOrbVariant = "white" | "black" | "webgl" | "custom"
 
@@ -21,6 +20,13 @@ export type LiveOrbOptions = {
   interactive?: boolean
   /** Occasional blink. Default `true`. */
   blink?: boolean
+  /** Little eye dance (e.g. while hovered): eyes dart side to side with happy blinks. Added for Keepup's "Bouncy". */
+  dance?: boolean
+  /** Added for Bouncy: "reading" looks down at the text being typed (following `readX`, 0 = start, 1 = far end);
+   *  "pondering" looks up to the right (at its thought bubble) with a little nod;
+   *  "thinking" looks up and drifts in a slow circle while the colours swirl faster. */
+  mood?: "reading" | "pondering" | "thinking" | null
+  readX?: number
   /** Fires when WebGL is ready (`true`) or torn down (`false`). */
   onHasGl?: (ok: boolean) => void
 }
@@ -160,9 +166,7 @@ void main() {
 `
 
 function isDev() {
-  return (
-    typeof process !== "undefined" && process.env?.NODE_ENV !== "production"
-  )
+  return process.env.NODE_ENV !== "production"
 }
 
 function hexToRgb(hex: string): [number, number, number] {
@@ -262,6 +266,8 @@ export function createLiveOrb(
   const look = { x: 0, y: 0.08 }
   const targetLook = { x: 0, y: 0.08 }
   let reduce = false
+  let danceStart = 0
+  let lastDanceBlink = 0
 
   const gl = canvas.getContext("webgl", {
     alpha: true,
@@ -322,6 +328,13 @@ export function createLiveOrb(
 
   let raf = 0
   let running = true
+  // Added for Bouncy: life without a mouse (phones), and when the mouse is idle.
+  // Wander: small glances around on its own. Glance: a short look toward a tap or a scroll.
+  const coarse = window.matchMedia("(pointer: coarse)").matches
+  let lastPointer = -10_000 // last mouse move
+  const wander = { x: 0, y: 0.08 }
+  let nextSaccade = 0
+  let glance: { x: number; y: number; until: number } | null = null
   const start = performance.now()
   let nextBlink = start + 1800 + Math.random() * 2400
   let blinkAt = -10_000
@@ -351,18 +364,47 @@ export function createLiveOrb(
   onReduce()
   mqReduce.addEventListener("change", onReduce)
 
+  // Direction from the orb to a point on screen, as a look target.
+  const lookAt = (clientX: number, clientY: number) => {
+    const parent = canvas.parentElement
+    if (!parent) return null
+    const rect = parent.getBoundingClientRect()
+    if (rect.width <= 0 || rect.height <= 0) return null
+    const dx = (clientX - (rect.left + rect.width / 2)) / (rect.width / 2)
+    const dy = (rect.top + rect.height / 2 - clientY) / (rect.height / 2)
+    return { x: Math.min(1, Math.max(-1, dx)), y: Math.min(1, Math.max(-1, dy)) }
+  }
   const onMove = (e: PointerEvent) => {
     if (!options.interactive) return
-    const parent = canvas.parentElement
-    if (!parent) return
-    const rect = parent.getBoundingClientRect()
-    if (rect.width <= 0 || rect.height <= 0) return
-    const dx = (e.clientX - (rect.left + rect.width / 2)) / (rect.width / 2)
-    const dy = (rect.top + rect.height / 2 - e.clientY) / (rect.height / 2)
-    targetLook.x = Math.min(1, Math.max(-1, dx))
-    targetLook.y = Math.min(1, Math.max(-1, dy))
+    const t = lookAt(e.clientX, e.clientY)
+    if (!t) return
+    if (e.pointerType === "mouse") {
+      targetLook.x = t.x
+      targetLook.y = t.y
+      lastPointer = performance.now()
+    } else {
+      glance = { ...t, until: performance.now() + 900 } // a finger dragging: follow it briefly
+    }
+  }
+  // A tap anywhere: glance toward it.
+  const onDown = (e: PointerEvent) => {
+    if (!options.interactive || e.pointerType === "mouse") return
+    const t = lookAt(e.clientX, e.clientY)
+    if (t) glance = { ...t, until: performance.now() + 1300 }
+  }
+  // Scrolling: a quick look up or down with the movement.
+  let lastScrollY = window.scrollY
+  const onScroll = (e: Event) => {
+    if (!options.interactive) return
+    const el = e.target instanceof Element ? e.target : document.scrollingElement
+    const y = el ? el.scrollTop : window.scrollY
+    const down = y >= lastScrollY
+    lastScrollY = y
+    glance = { x: glance?.x ?? look.x * 0.5, y: down ? -0.55 : 0.6, until: performance.now() + 600 }
   }
   window.addEventListener("pointermove", onMove, { passive: true })
+  window.addEventListener("pointerdown", onDown, { passive: true })
+  window.addEventListener("scroll", onScroll, { passive: true, capture: true })
 
   const tick = (now: number) => {
     if (!running) return
@@ -375,7 +417,56 @@ export function createLiveOrb(
     )
     const time = (now - start) / 1000
 
-    if (options.interactive) {
+    if (options.dance && !reduce) {
+      // Lissajous-style wiggle: left-right on the beat, with a small bounce up and down.
+      const t = (now - danceStart) / 1000
+      const dx = Math.sin(t * 9) * 0.85
+      const dy = 0.12 + Math.sin(t * 18) * 0.28
+      look.x += (dx - look.x) * 0.3
+      look.y += (dy - look.y) * 0.3
+      // Happy blink roughly every half second while dancing.
+      if (options.blink && now - lastDanceBlink > 520) {
+        blinkAt = now
+        lastDanceBlink = now
+      }
+    } else if (options.mood === "thinking" && !reduce) {
+      // Pondering: eyes up and to the side, drifting in a slow circle.
+      const t = now / 1000
+      const dx = 0.35 + Math.cos(t * 1.7) * 0.4
+      const dy = 0.55 + Math.sin(t * 1.7) * 0.22
+      look.x += (dx - look.x) * 0.08
+      look.y += (dy - look.y) * 0.08
+    } else if (options.mood === "pondering") {
+      // Paused typing: gaze up at the thought bubble, nodding slightly now and then.
+      const t = now / 1000
+      const dy = 0.72 + (reduce ? 0 : Math.max(0, Math.sin(t * 2.4)) * 0.12)
+      look.x += (0.5 - look.x) * 0.12
+      look.y += (dy - look.y) * 0.12
+    } else if (options.mood === "reading") {
+      // Reading along: eyes down toward the input, moving right as the text grows.
+      const dx = -0.05 + Math.min(1, Math.max(0, options.readX ?? 0.5)) * 0.95
+      look.x += (dx - look.x) * 0.22
+      look.y += (-0.38 - look.y) * 0.22
+    } else if (options.interactive && glance && now < glance.until) {
+      look.x += (glance.x - look.x) * 0.2
+      look.y += (glance.y - look.y) * 0.2
+    } else if (options.interactive && !reduce && now - lastPointer > (coarse ? 0 : 4000)) {
+      // No mouse (or it's resting): look around on its own, in quick glances with pauses between.
+      if (now >= nextSaccade) {
+        const r = Math.random()
+        if (r < 0.25) {
+          wander.x = 0
+          wander.y = 0.08 // back to you
+        } else {
+          wander.x = (Math.random() * 2 - 1) * 0.65
+          wander.y = -0.3 + Math.random() * 0.75
+        }
+        nextSaccade = now + 1100 + Math.random() * 2600
+        if (Math.random() < 0.3) blinkAt = now // blink with some of the glances
+      }
+      look.x += (wander.x - look.x) * 0.18
+      look.y += (wander.y - look.y) * 0.18
+    } else if (options.interactive) {
       look.x += (targetLook.x - look.x) * 0.16
       look.y += (targetLook.y - look.y) * 0.16
     } else {
@@ -406,7 +497,7 @@ export function createLiveOrb(
     gl.clear(gl.COLOR_BUFFER_BIT)
     gl.uniform2f(uResolution, canvas.width, canvas.height)
     gl.uniform1f(uTime, reduce ? 0 : time)
-    gl.uniform1f(uSpeed, reduce ? 0 : 0.55)
+    gl.uniform1f(uSpeed, reduce ? 0 : options.mood === "thinking" ? 1.6 : 0.55)
     gl.uniform2f(uLook, look.x, look.y)
     gl.uniform1f(uBlink, b)
     gl.uniform1f(uMode, resolved.mode)
@@ -424,6 +515,10 @@ export function createLiveOrb(
 
   return {
     setOptions(next) {
+      if (next.dance && !options.dance) {
+        danceStart = performance.now()
+        lastDanceBlink = danceStart
+      }
       options = { ...options, ...next }
     },
     destroy() {
@@ -432,6 +527,8 @@ export function createLiveOrb(
       ro.disconnect()
       mqReduce.removeEventListener("change", onReduce)
       window.removeEventListener("pointermove", onMove)
+      window.removeEventListener("pointerdown", onDown)
+      window.removeEventListener("scroll", onScroll, { capture: true })
       options.onHasGl?.(false)
       gl.deleteProgram(program)
       gl.deleteShader(vs)
@@ -460,6 +557,9 @@ export function LiveOrb({
   colors,
   interactive = true,
   blink = true,
+  dance = false,
+  mood = null,
+  readX = 0.5,
 }: LiveOrbProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const instanceRef = useRef<LiveOrbInstance | null>(null)
@@ -482,7 +582,6 @@ export function LiveOrb({
       instanceRef.current = null
     }
     // Engine reads live options via setOptions; mount once.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useEffect(() => {
@@ -493,9 +592,12 @@ export function LiveOrb({
       colors,
       interactive,
       blink,
+      dance,
+      mood,
+      readX,
       onHasGl: setHasGl,
     })
-  }, [variant, color, eyeColor, colors, interactive, blink])
+  }, [variant, color, eyeColor, colors, interactive, blink, dance, mood, readX])
 
   const resolved = resolveVariant(variant, color, eyeColor, colors)
 
@@ -504,7 +606,7 @@ export function LiveOrb({
       data-slot="live-orb"
       role="img"
       aria-label="Orb character"
-      className={cn("live-orb", className)}
+      className={`live-orb ${className ?? ""}`}
       style={{ width: size, height: size }}
     >
       {!hasGl ? (

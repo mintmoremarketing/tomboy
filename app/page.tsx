@@ -24,6 +24,7 @@ import { PointerHighlight } from "@/components/ui/pointer-highlight";
 import { LiveOrb } from "@/components/ui/live-orb";
 import { StartingGateway } from "@/components/block/starting-gateway";
 import { HeroCharacter } from "@/components/block/hero-character";
+import { AssistantPanel } from "@/components/assistant/assistant-panel";
 import {
   audienceContent,
   brandCards,
@@ -722,6 +723,8 @@ function Header({
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const [accountOpen, setAccountOpen] = useState(false);
+  const [assistantOpen, setAssistantOpen] = useState(false);
+  const [orbDancing, setOrbDancing] = useState(false);
 
   return (
     <>
@@ -770,11 +773,21 @@ function Header({
             <ShoppingBag size={20} />
           </Link>
           {/* Entry point for the upcoming AI assistant sidebar — no action wired yet */}
-          <button className="orb-button" aria-label="Ask Tomboy AI" title="Ask Tomboy AI">
-            <LiveOrb variant="custom" color="#FF3333" eyeColor="#FAFAFA" size={34} />
+          {/* Scout, the shopping assistant (press / anywhere) */}
+          <button
+            className="orb-button"
+            aria-label="Ask Scout"
+            title="Ask Scout (press /)"
+            onClick={() => setAssistantOpen(true)}
+            onMouseEnter={() => setOrbDancing(true)}
+            onMouseLeave={() => setOrbDancing(false)}
+          >
+            <LiveOrb variant="custom" color="#FF3333" eyeColor="#FAFAFA" size={34} dance={orbDancing} />
           </button>
         </div>
       </header>
+
+      <AssistantPanel open={assistantOpen} onOpenChange={setAssistantOpen} audience={audience} />
 
       {mobileMenuOpen && (
         <div className="mobile-nav-drawer">
@@ -1010,6 +1023,18 @@ function AccountModal({
 
 function Essentials({ audience }: { audience: Audience }) {
   const items = shopEssentials[audience];
+  // one Shopify product photo per card, keyed by collection handle; cached per audience
+  const [photos, setPhotos] = useState<Partial<Record<Audience, Record<string, string | null>>>>({});
+
+  useEffect(() => {
+    if (photos[audience]) return;
+    fetch(`/api/essentials?audience=${audience}`)
+      .then((res) => res.json())
+      .then((data) => {
+        if (data && !data.error) setPhotos((prev) => ({ ...prev, [audience]: data }));
+      })
+      .catch(console.error);
+  }, [audience, photos]);
 
   return (
     <section className="section" id="essentials">
@@ -1026,7 +1051,7 @@ function Essentials({ audience }: { audience: Audience }) {
       <div className="essentials-grid">
         {items.map((item: any) => (
           <Link
-            className="essential-card"
+            className="essential-card essential-card--photo"
             href={item.href}
             key={item.title}
             style={
@@ -1037,8 +1062,25 @@ function Essentials({ audience }: { audience: Audience }) {
               } as React.CSSProperties
             }
           >
-            <span>{item.title}</span>
-            <small>{item.note}</small>
+            <span
+              className={`essential-card__media ${
+                photos[audience] && !photos[audience]![item.href.split("/").pop() as string] ? "is-empty" : ""
+              }`}
+              aria-hidden="true"
+            >
+              {photos[audience]?.[item.href.split("/").pop() as string] && (
+                <img
+                  src={photos[audience]![item.href.split("/").pop() as string] as string}
+                  alt=""
+                  loading="lazy"
+                  onLoad={(e) => e.currentTarget.classList.add("is-loaded")}
+                />
+              )}
+            </span>
+            <span className="essential-card__text">
+              <span className="essential-card__title">{item.title}</span>
+              <small>{item.note}</small>
+            </span>
           </Link>
         ))}
       </div>
