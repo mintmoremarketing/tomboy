@@ -418,10 +418,87 @@ button {
   transition: var(--transition);
 }
 
-.audience-pill:hover {
+.audience-pill:hover,
+.audience-menu.is-open .audience-pill {
   background: var(--black);
   color: var(--white);
   border-color: var(--black);
+}
+
+.audience-menu {
+  position: relative;
+}
+
+.audience-pill__chevron {
+  transition: transform 0.2s ease;
+}
+
+.audience-menu.is-open .audience-pill__chevron {
+  transform: rotate(180deg);
+}
+
+/* padding-top bridges the gap so the hover doesn't drop between pill and list */
+.audience-menu__list {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  z-index: 60;
+  min-width: 150px;
+  padding-top: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.audience-menu__list::before {
+  content: "";
+  position: absolute;
+  inset: 8px 0 0;
+  z-index: -1;
+  background: var(--white);
+  border: 2px solid var(--black);
+  border-radius: var(--radius-md);
+  box-shadow: 4px 4px 0 var(--black);
+}
+
+.audience-menu__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 6px;
+  padding: 10px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 0.82rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  text-align: left;
+  transition: background 0.15s ease;
+}
+
+.audience-menu__item:first-child {
+  margin-top: 6px;
+}
+
+.audience-menu__item:last-child {
+  margin-bottom: 6px;
+}
+
+.audience-menu__item:hover,
+.audience-menu__item:focus-visible {
+  background: var(--bg-card);
+}
+
+.audience-menu__item.is-active {
+  background: var(--black);
+  color: var(--white);
+}
+
+.audience-menu__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  border: 1.5px solid var(--black);
+  flex-shrink: 0;
 }
 
 .icon-button {
@@ -437,6 +514,49 @@ button {
 
 .icon-button:hover {
   background: var(--bg-card);
+}
+
+/* ---- Live Orb (components/ui/live-orb.tsx) ---- */
+.live-orb {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.live-orb__fallback {
+  position: absolute;
+  inset: 2%;
+  overflow: hidden;
+  border-radius: 50%;
+}
+
+.live-orb__eye {
+  position: absolute;
+  border-radius: var(--radius-full);
+}
+
+.live-orb__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.orb-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.orb-button:hover {
+  transform: scale(1.12);
+}
+
+.orb-button:active {
+  transform: scale(0.94);
 }
 
 .icon-button.nav-toggle,
@@ -630,7 +750,51 @@ button {
   letter-spacing: inherit;
 }
 
-.hero__copy p {
+/* ---- Stretch headline (components/block/stretch-headline.tsx) ---- */
+.stretch-headline .sh-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+.stretch-headline .sh-block {
+  display: block;
+  transform-origin: left center;
+}
+
+.stretch-headline .sh-line {
+  display: block;
+}
+
+.stretch-headline .sh-word {
+  display: inline-block;
+  white-space: nowrap;
+  transform-origin: left center;
+}
+
+.stretch-headline .sh-unit,
+.stretch-headline .sh-letter {
+  display: inline-block;
+  transform-origin: center bottom;
+}
+
+.stretch-headline .sh-letter {
+  cursor: default;
+}
+
+.stretch-headline .sh-band {
+  display: block;
+  width: min(180px, 40%);
+  height: 8px;
+  margin-top: 14px;
+  border-radius: var(--radius-full);
+  transform-origin: left center;
+}
+
+.hero__copy p, .hero__copy .hero__body-text {
   font-size: 1.1rem;
   line-height: 1.6;
   color: var(--muted);
@@ -638,6 +802,83 @@ button {
   margin: 0 0 32px;
   position: relative;
   z-index: 1;
+}
+
+/* Static pill in the same style as the draggable hero stickers */
+.hero__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 0 22px;
+  padding: 10px 18px;
+  border: 2.5px solid #0A0A0A;
+  border-radius: var(--radius-full);
+  background: #FFFFFF;
+  color: #0A0A0A;
+  box-shadow: 4px 4px 0px #00F5D4;
+  font-size: 0.84rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transform: rotate(-3deg);
+  transform-origin: left center;
+}
+
+/* Highlighted phrase inside body copy: keep it on one line so the box stays a rectangle */
+.ph-inline {
+  white-space: nowrap;
+  color: var(--black);
+  font-weight: 800;
+}
+
+/* ---- Pointer Highlight (components/ui/pointer-highlight.tsx) ---- */
+.ph-container {
+  position: relative;
+  display: inline-block;
+  padding: 0 5px;
+  margin: 0 1px;
+  vertical-align: baseline;
+  line-height: inherit;
+}
+
+.ph-content {
+  position: relative;
+  z-index: 1;
+}
+
+.ph-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.ph-rect {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  box-sizing: border-box;
+  border-radius: 3px;
+  background: var(--ph-color, #00F5D4);
+}
+
+.ph-pointer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  display: block;
+  width: 18px;
+  height: 18px;
+  line-height: 0;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.ph-pointer-icon {
+  width: 18px;
+  height: 18px;
+  color: var(--ph-color, #00F5D4);
 }
 
 .hero__actions {
@@ -731,6 +972,8 @@ button {
 
 .draggable-sticker {
   position: absolute;
+  left: var(--x);
+  top: var(--y);
   pointer-events: auto;
   cursor: grab;
   user-select: none;
@@ -810,6 +1053,47 @@ button {
   height: 8px;
   background: #0A0A0A;
 }
+
+.sticker-scale-handle-wrapper {
+  position: absolute;
+  bottom: -12px;
+  right: -12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  pointer-events: auto;
+  z-index: 50;
+  opacity: 0;
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.draggable-sticker:hover .sticker-scale-handle-wrapper,
+.draggable-sticker.is-selected .sticker-scale-handle-wrapper {
+  opacity: 1;
+}
+
+.sticker-scale-knob {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #FFFFFF;
+  border: 2px solid #0A0A0A;
+  box-shadow: 2px 2px 0px #0A0A0A;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: nwse-resize;
+  color: #0A0A0A;
+  transition: transform 0.15s ease, background-color 0.15s ease;
+}
+
+.sticker-scale-knob:hover,
+.sticker-scale-knob.is-scaling {
+  background: #00F5D4;
+  transform: scale(1.18);
+  cursor: nwse-resize;
+}
+
 
 .draggable-sticker .sticker-label {
   display: inline-flex;
@@ -1788,7 +2072,7 @@ button {
 
 .pdp-grid {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 42fr 58fr;
   gap: 56px;
   align-items: start;
 }
@@ -1918,9 +2202,9 @@ button {
 
 .pdp-color-btn.is-selected {
   border-color: var(--black);
-  background: var(--black);
-  color: var(--white);
-  box-shadow: 3px 3px 0px var(--accent);
+  background: var(--white);
+  color: var(--black);
+  box-shadow: 4px 4px 0px var(--black);
 }
 
 .pdp-color-dot {
@@ -2281,3 +2565,551 @@ button {
   gap: 12px;
 }
 
+
+/* ----------------------------------------------------
+   HERO — PHONE LAYOUT
+   Stickers leave the copy and get their own board under the buttons.
+---------------------------------------------------- */
+@media (max-width: 768px) {
+  .hero {
+    flex-direction: column;
+    align-items: stretch;
+    width: calc(100% - 32px);
+    min-height: 0;
+    padding: 24px 0 16px;
+  }
+
+  .hero__copy {
+    max-width: none;
+  }
+
+  .hero__pill {
+    margin-bottom: 16px;
+    padding: 7px 14px;
+    font-size: 0.72rem;
+  }
+
+  .hero__copy h1 {
+    font-size: clamp(2rem, 9.4vw, 2.8rem);
+    margin: 8px 0 14px;
+  }
+
+  .stretch-headline .sh-band {
+    height: 6px;
+    margin-top: 10px;
+  }
+
+  .hero__copy p,
+  .hero__copy .hero__body-text {
+    font-size: 1rem;
+    margin-bottom: 22px;
+  }
+
+  .hero__actions {
+    flex-wrap: nowrap;
+    gap: 12px;
+  }
+
+  .hero__actions .button {
+    flex: 1 1 0;
+    justify-content: center;
+    padding-left: 12px;
+    padding-right: 12px;
+    font-size: 0.8rem;
+    white-space: nowrap;
+  }
+
+  .hero-stickers-layer {
+    order: 2;
+    position: relative;
+    inset: auto;
+    height: 210px;
+    margin-top: 28px;
+  }
+
+  .draggable-sticker {
+    left: var(--mx);
+    top: var(--my);
+    padding: 7px 12px;
+    font-size: 0.68rem;
+    border-width: 2px;
+  }
+
+  .draggable-sticker .sticker-emoji {
+    font-size: 0.85rem;
+  }
+}
+
+/* Welcome gateway on small phones — keep all three lineup buttons on one row */
+@media (max-width: 480px) {
+  .welcome-floating-buttons {
+    left: 10px;
+    right: 10px;
+    gap: 6px;
+  }
+
+  .welcome-pill-btn {
+    flex: 1 1 0;
+    min-width: 0;
+    gap: 3px;
+    padding: 11px 6px;
+    font-size: 0.78rem;
+  }
+
+  .welcome-pill-btn svg {
+    width: 14px;
+    height: 14px;
+    flex-shrink: 0;
+  }
+}
+
+/* ---- Welcome lineup: character-select poster cards ---- */
+.welcome-visual {
+  position: relative;
+}
+
+/* --top = space reserved for the number/label/tagline; the character fills the rest */
+.lineup {
+  --top: 112px;
+  display: flex;
+  gap: 12px;
+  width: 100%;
+  aspect-ratio: 4 / 4.4;
+}
+
+.lineup-card {
+  position: relative;
+  flex: 1 1 0;
+  min-width: 0;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 18px 18px 0;
+  border: 2px solid #0A0A0A;
+  border-radius: 22px;
+  background: var(--tint);
+  color: #0A0A0A;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    flex-grow 0.55s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.3s ease,
+    transform 0.3s ease;
+}
+
+.lineup-card.is-active {
+  flex-grow: 1.9;
+  box-shadow: 6px 6px 0 #0A0A0A;
+  transform: translate(-3px, -3px);
+}
+
+.lineup-card:focus-visible {
+  outline: 3px solid #0A0A0A;
+  outline-offset: 3px;
+}
+
+.lineup-card__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  position: relative;
+  z-index: 2;
+}
+
+.lineup-card__num {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  opacity: 0.55;
+}
+
+.lineup-card__arrow {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #0A0A0A;
+  color: #FFFFFF;
+  flex-shrink: 0;
+  transition: transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease;
+}
+
+.lineup-card.is-active .lineup-card__arrow {
+  transform: rotate(45deg) scale(1.1);
+  background: var(--accent);
+  color: #0A0A0A;
+  box-shadow: 0 0 0 2px #0A0A0A;
+}
+
+.lineup-card__label {
+  position: relative;
+  z-index: 2;
+  margin-top: 14px;
+  font-size: clamp(1.1rem, 2vw, 1.6rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.lineup-card__tagline {
+  position: relative;
+  z-index: 2;
+  margin-top: 10px;
+  padding: 5px 10px;
+  border: 2px solid #0A0A0A;
+  border-radius: var(--radius-full);
+  background: var(--accent);
+  font-size: 0.68rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Spotlight disc behind the character */
+.lineup-card__spot {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--top) + 8px);
+  width: 92%;
+  aspect-ratio: 1;
+  margin-left: -46%;
+  border-radius: 50%;
+  background: var(--accent);
+  transition: transform 0.55s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+}
+
+.lineup-card.is-active .lineup-card__spot {
+  transform: scale(1.35);
+}
+
+.lineup-card.is-dimmed .lineup-card__spot {
+  transform: scale(0.8);
+  opacity: 0.5;
+}
+
+/* Full-body character, feet on the card's bottom edge */
+.lineup-card__figure {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: calc(100% - var(--top));
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  transform-origin: center bottom;
+}
+
+.lineup-card__figure img {
+  display: block;
+  height: 100%;
+  width: auto;
+  max-width: none;
+  object-fit: contain;
+  user-select: none;
+  filter: drop-shadow(0 10px 14px rgba(10, 10, 10, 0.12));
+}
+
+/* Two stickers straddling the panel edges */
+.lineup-sticker {
+  position: absolute;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 13px;
+  border: 2px solid #0A0A0A;
+  border-radius: var(--radius-full);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.lineup-sticker--top {
+  top: -14px;
+  left: -18px;
+  background: #FFFFFF;
+  box-shadow: 3px 3px 0 #FF3344;
+  transform: rotate(-8deg);
+}
+
+.lineup-sticker--bottom {
+  bottom: -14px;
+  right: -12px;
+  background: #FFE500;
+  box-shadow: 3px 3px 0 #0A0A0A;
+  transform: rotate(5deg);
+}
+
+@media (max-width: 860px) {
+  .lineup {
+    --top: 78px;
+    gap: 8px;
+    aspect-ratio: 3 / 3.4;
+  }
+
+  .lineup-card {
+    padding: 12px 10px 0;
+    border-radius: 16px;
+  }
+
+  .lineup-card__label {
+    font-size: 1rem;
+    margin-top: 10px;
+  }
+
+  .lineup-card__arrow {
+    width: 24px;
+    height: 24px;
+  }
+
+  .lineup-sticker--top {
+    left: -6px;
+  }
+
+  .lineup-sticker--bottom {
+    right: -4px;
+  }
+}
+
+@media (max-width: 480px) {
+  .lineup-card__num {
+    display: none;
+  }
+
+  .lineup-card__tagline {
+    display: none;
+  }
+
+  .lineup-sticker {
+    padding: 5px 9px;
+    font-size: 0.6rem;
+  }
+}
+
+/* ---- Full-screen welcome gateway ---- */
+.gateway-screen.gw-full {
+  padding: 0;
+  align-items: stretch;
+  justify-content: flex-start;
+  background: #F4F5F7;
+}
+
+.gw-full__bar {
+  display: flex;
+  align-items: center;
+  padding: 22px clamp(20px, 4vw, 56px);
+  flex-shrink: 0;
+}
+
+.gw-full__bar .gateway-logo {
+  height: 32px;
+}
+
+.gw-full__grid {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(320px, 0.8fr) 1.25fr;
+  align-items: center;
+  gap: clamp(32px, 4vw, 72px);
+  padding: 0 clamp(20px, 4vw, 56px) clamp(24px, 4vh, 48px);
+}
+
+.gw-full__copy h1 {
+  font-size: clamp(2.8rem, 5.2vw, 5.6rem);
+  line-height: 1;
+}
+
+.gw-full__stage {
+  height: 100%;
+  min-height: 0;
+  display: flex;
+  align-items: stretch;
+}
+
+.gw-full .lineup {
+  --top: 128px;
+  height: 100%;
+  max-height: 760px;
+  aspect-ratio: auto;
+  gap: 16px;
+}
+
+.gw-full .lineup-card {
+  padding: 22px 22px 0;
+  border-radius: 26px;
+}
+
+.gw-full .lineup-card__label {
+  font-size: clamp(1.3rem, 2.2vw, 2.1rem);
+}
+
+@media (max-width: 860px) {
+  .gw-full__grid {
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: 28px;
+  }
+
+  .gw-full .lineup {
+    --top: 72px;
+    height: clamp(330px, 50vh, 460px);
+    gap: 8px;
+  }
+
+  .gw-full .lineup-card {
+    padding: 12px 10px 0;
+    border-radius: 16px;
+  }
+
+  .gw-full .lineup-card__label {
+    font-size: 1rem;
+  }
+}
+
+/* ---- Welcome lineup on phones: no cards, an overlapping "family" group ----
+   Woman left, man right, kid in front in the middle. Each figure is still
+   its own button, labelled with a pill at its feet. */
+@media (max-width: 860px) {
+  .gw-full .lineup {
+    position: relative;
+    display: block;
+    height: clamp(360px, 56vh, 500px);
+    margin: 48px 0 56px;
+  }
+
+  /* Labels sit in one row under the family, evenly spread at ~18% / 50% / 82%
+     of the group width (left is relative to each figure's own box). */
+  .gw-full .lineup-card--women .lineup-card__label {
+    left: 21%;
+  }
+
+  .gw-full .lineup-card--kids .lineup-card__label {
+    left: 50%;
+  }
+
+  .gw-full .lineup-card--men .lineup-card__label {
+    left: 75%;
+  }
+
+  /* one soft glow behind the whole family */
+  .gw-full .lineup::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 6%;
+    width: 86%;
+    aspect-ratio: 1;
+    transform: translateX(-50%);
+    border-radius: 50%;
+    background: linear-gradient(120deg, #EDB6AA 0%, #BCD5EC 50%, #F3DB93 100%);
+    opacity: 0.55;
+  }
+
+  .gw-full .lineup-card,
+  .gw-full .lineup-card.is-active {
+    position: absolute;
+    bottom: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: none;
+    overflow: visible;
+    box-shadow: none;
+    transform: none;
+    flex: none;
+  }
+
+  .gw-full .lineup-card:focus-visible {
+    outline-offset: 0;
+  }
+
+  /* ~9% of her image is the raised fist above her head, so she is drawn
+     taller than the man to put their heads at the same height */
+  .gw-full .lineup-card--women {
+    left: 8%;
+    width: 48%;
+    height: 109%;
+    z-index: 1;
+  }
+
+  .gw-full .lineup-card--men {
+    right: 7%;
+    width: 44%;
+    height: 100%;
+    z-index: 1;
+  }
+
+  .gw-full .lineup-card--kids {
+    left: 29%;
+    width: 42%;
+    height: 76%;
+    z-index: 2;
+  }
+
+  .gw-full .lineup-card__top,
+  .gw-full .lineup-card__spot,
+  .gw-full .lineup-card__tagline {
+    display: none;
+  }
+
+  .gw-full .lineup-card__figure {
+    height: 100%;
+  }
+
+  .gw-full .lineup-card__label {
+    position: absolute;
+    left: 50%;
+    bottom: -46px;
+    z-index: 3;
+    margin: 0;
+    padding: 6px 12px;
+    transform: translateX(-50%);
+    border: 2px solid #0A0A0A;
+    border-radius: var(--radius-full);
+    background: var(--accent);
+    box-shadow: 2px 2px 0 #0A0A0A;
+    font-size: 0.72rem;
+    letter-spacing: 0.04em;
+  }
+
+  .gw-full .lineup-sticker--bottom {
+    display: none;
+  }
+
+  /* clear of her raised fist: sits above the man's head instead */
+  .gw-full .lineup-sticker--top {
+    top: -30px;
+    left: auto;
+    right: 4px;
+    transform: rotate(6deg);
+  }
+}
+
+/* After a pick, the other two cards/figures fade away before navigating */
+.lineup-card.is-leaving {
+  pointer-events: none;
+}
+
+.lineup-card.is-leaving .lineup-card__label,
+.lineup-card.is-leaving .lineup-card__top,
+.lineup-card.is-leaving .lineup-card__spot {
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.lineup-card.is-leaving {
+  opacity: 0.3;
+  transition: opacity 0.35s ease, flex-grow 0.55s cubic-bezier(0.2, 0.8, 0.2, 1);
+}

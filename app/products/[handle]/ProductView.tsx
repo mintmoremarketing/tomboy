@@ -248,14 +248,7 @@ export default function ProductView({ product }: { product: any }) {
 
         {/* Right: Product Info & Actions */}
         <div className="pdp-info">
-          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "8px" }}>
-            <span className="streetwear-sticker sticker-inline-cyan" style={{ padding: "4px 10px", fontSize: "0.75rem" }}>
-              ⚡ 100% PURE COTTON
-            </span>
-            <p className="eyebrow" style={{ margin: 0 }}>
-              {product.productType || "Everyday Essential"}
-            </p>
-          </div>
+
 
           <h1 className="pdp-title">{product.title}</h1>
           <div className="pdp-price">Rs. {price}</div>

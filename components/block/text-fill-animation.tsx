@@ -5,6 +5,7 @@ import { motion, useScroll, useTransform } from "motion/react";
 import { Sparkles, CheckCircle2, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { PointerHighlight } from "@/components/ui/pointer-highlight";
 import "./text-fill-animation.css";
 
 interface CharProps {
@@ -128,7 +129,15 @@ export function CraftStorySection({
             />
             <div className="scroll-story-badge-top">
               <Sparkles size={14} className="text-[#00F5D4]" />
-              <span>Zero Synthetic Blends</span>
+              
+              <PointerHighlight
+                rectangleClassName="bg-cyan-100 border-cyan-300"
+                pointerClassName="text-cyan-500 h-3 w-3"
+                containerClassName="inline-block"
+              >
+                <span className="relative z-10 text-cyan-900 font-bold">Zero Synthetic Blends</span>
+              </PointerHighlight>
+
             </div>
             <div className="scroll-story-badge-bottom">
               <span>🇮🇳 100% Super Combed Pure Cotton</span>

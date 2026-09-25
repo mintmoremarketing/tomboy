@@ -4,9 +4,9 @@ import {
   ArrowRight,
   ChevronDown,
   ChevronLeft,
-  ChevronRight,
   CircleUserRound,
   Menu,
+  Maximize2,
   RotateCw,
   Search,
   ShoppingBag,
@@ -16,9 +16,12 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { FlipText } from "@/components/block/flip-text";
+import { StretchHeadline, type HeadlineMood } from "@/components/block/stretch-headline";
 import { CraftStorySection } from "@/components/block/text-fill-animation";
 import { MagneticImageTrail } from "@/components/block/magnetic-image-trail";
+import { PointerHighlight } from "@/components/ui/pointer-highlight";
+import { LiveOrb } from "@/components/ui/live-orb";
+import { StartingGateway } from "@/components/block/starting-gateway";
 import {
   audienceContent,
   brandCards,
@@ -34,9 +37,12 @@ type Audience = "men" | "women" | "kids";
 
 export default function Home() {
   const [audience, setAudience] = useState<Audience>("men");
+  // false until the saved audience is read, so the hero doesn't flash Men first
+  const [audienceReady, setAudienceReady] = useState(false);
   const [showGateway, setShowGateway] = useState<boolean>(false);
   const [openFooter, setOpenFooter] = useState<string>("Shop");
-  const [realProducts, setRealProducts] = useState<any[]>([]);
+  // Live Shopify products, fetched per audience collection and cached
+  const [realProducts, setRealProducts] = useState<Partial<Record<Audience, any[]>>>({});
 
   useEffect(() => {
     const saved = window.localStorage.getItem("tomboy-audience") as Audience | null;
@@ -46,27 +52,25 @@ export default function Home() {
     } else {
       setShowGateway(true);
     }
+    setAudienceReady(true);
   }, []);
 
   useEffect(() => {
-    fetch("/api/products")
+    if (!audienceReady || realProducts[audience]) return;
+    const collection = audienceContent[audience].collectionHandle;
+    fetch(`/api/products?collection=${encodeURIComponent(collection)}`)
       .then((res) => res.json())
       .then((data) => {
         if (Array.isArray(data)) {
-          setRealProducts(data);
+          setRealProducts((prev) => ({ ...prev, [audience]: data }));
         }
       })
       .catch(console.error);
-  }, []);
+  }, [audience, audienceReady, realProducts]);
 
   function switchAudience(value: Audience) {
     setAudience(value);
     window.localStorage.setItem("tomboy-audience", value);
-  }
-
-  function handleNextAudience() {
-    const next: Audience = audience === "men" ? "women" : audience === "women" ? "kids" : "men";
-    switchAudience(next);
   }
 
   function handleGatewayChoice(value: Audience) {
@@ -76,9 +80,10 @@ export default function Home() {
   }
 
   const products = useMemo(() => {
-    if (realProducts.length > 0) {
-      return realProducts.map((p) => ({
-        audience: "all",
+    const live = realProducts[audience];
+    if (live && live.length > 0) {
+      return live.map((p) => ({
+        audience,
         title: p.node.title,
         handle: p.node.handle,
         type: p.node.productType || "Product",
@@ -97,11 +102,11 @@ export default function Home() {
       <AnnouncementTicker />
       <Header
         audience={audience}
-        onToggleAudience={handleNextAudience}
+        onSelectAudience={switchAudience}
         onOpenGateway={() => setShowGateway(true)}
         products={products}
       />
-      <Hero audience={audience} />
+      <Hero audience={audience} ready={audienceReady} />
       <Essentials audience={audience} />
       <CraftStorySection audience={audience} />
       <ProductCarousel products={products} audience={audience} />
@@ -119,69 +124,6 @@ export default function Home() {
   );
 }
 
-function StartingGateway({
-  isOpen,
-  onSelectAudience,
-}: {
-  isOpen: boolean;
-  onSelectAudience: (val: Audience) => void;
-}) {
-  if (!isOpen) return null;
-
-  return (
-    <div className="gateway-screen">
-      <div className="gateway-header">
-        <img src="/logo.webp" alt="Tomboy India" className="gateway-logo" />
-      </div>
-
-      <div className="gateway-content">
-        <div className="welcome-card">
-          <div className="welcome-grid">
-            <div className="welcome-copy">
-              <p className="eyebrow">Tomboy India</p>
-              <h1>
-                TOO SOFT<br />
-                TO TAKE OFF.
-              </h1>
-              <p>
-                100% Super Combed Cotton essentials designed for all-day freedom. Pick your fit to explore:
-              </p>
-            </div>
-
-            <div className="welcome-visual">
-              <div className="welcome-image-slot">
-                <div className="welcome-image-placeholder">
-                  <span>[ Model / Campaign Photo Placeholder ]</span>
-                </div>
-
-                <div className="welcome-floating-buttons">
-                  <button
-                    className="welcome-pill-btn welcome-pill--women"
-                    onClick={() => onSelectAudience("women")}
-                  >
-                    Women <ChevronRight size={16} />
-                  </button>
-                  <button
-                    className="welcome-pill-btn welcome-pill--men"
-                    onClick={() => onSelectAudience("men")}
-                  >
-                    Men <ChevronRight size={16} />
-                  </button>
-                  <button
-                    className="welcome-pill-btn welcome-pill--kids"
-                    onClick={() => onSelectAudience("kids")}
-                  >
-                    Kids <ChevronRight size={16} />
-                  </button>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
 
 interface StickerItem {
   id: string;
@@ -194,6 +136,9 @@ interface StickerItem {
   shadowColor: string;
   defaultLeft: string;
   defaultTop: string;
+  /** Position inside the phone-width sticker board (see globals.css). */
+  mobileLeft: string;
+  mobileTop: string;
   rotation: number;
 }
 
@@ -208,6 +153,8 @@ const initialStickers: StickerItem[] = [
     shadowColor: "#FF3344",
     defaultLeft: "48%",
     defaultTop: "12%",
+    mobileLeft: "2%",
+    mobileTop: "4%",
     rotation: -18,
   },
   {
@@ -220,6 +167,8 @@ const initialStickers: StickerItem[] = [
     shadowColor: "#0A0A0A",
     defaultLeft: "80%",
     defaultTop: "8%",
+    mobileLeft: "36%",
+    mobileTop: "0%",
     rotation: -4,
   },
   {
@@ -232,6 +181,8 @@ const initialStickers: StickerItem[] = [
     shadowColor: "#0A0A0A",
     defaultLeft: "62%",
     defaultTop: "32%",
+    mobileLeft: "3%",
+    mobileTop: "36%",
     rotation: -18,
   },
   {
@@ -244,6 +195,8 @@ const initialStickers: StickerItem[] = [
     shadowColor: "#0A0A0A",
     defaultLeft: "48%",
     defaultTop: "70%",
+    mobileLeft: "0%",
+    mobileTop: "72%",
     rotation: 0,
   },
   {
@@ -256,6 +209,8 @@ const initialStickers: StickerItem[] = [
     shadowColor: "#0A0A0A",
     defaultLeft: "82%",
     defaultTop: "58%",
+    mobileLeft: "63%",
+    mobileTop: "38%",
     rotation: -2,
   },
   {
@@ -268,6 +223,8 @@ const initialStickers: StickerItem[] = [
     shadowColor: "#00F5D4",
     defaultLeft: "69%",
     defaultTop: "74%",
+    mobileLeft: "47%",
+    mobileTop: "70%",
     rotation: 18,
   },
 ];
@@ -285,15 +242,18 @@ function DraggableSticker({
   const [rotation, setRotation] = useState(sticker.rotation);
   const [isDragging, setIsDragging] = useState(false);
   const [isRotating, setIsRotating] = useState(false);
+  const [scale, setScale] = useState(1);
+  const [isTransforming, setIsTransforming] = useState(false);
   const [zIndex, setZIndex] = useState(15);
 
   const stickerRef = useRef<HTMLDivElement>(null);
   const dragOriginRef = useRef({ mouseX: 0, mouseY: 0, startDx: 0, startDy: 0 });
   const rotateOriginRef = useRef({ cx: 0, cy: 0 });
+  const transformOriginRef = useRef({ cx: 0, cy: 0, startDist: 0, startScale: 1, startAngle: 0, startRotation: 0 });
 
   // Drag Sticker Body
   const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    if ((e.target as HTMLElement).closest(".sticker-rotate-handle-wrapper")) return;
+    if ((e.target as HTMLElement).closest(".sticker-rotate-handle-wrapper") || (e.target as HTMLElement).closest(".sticker-scale-handle-wrapper")) return;
 
     e.preventDefault();
     e.stopPropagation();
@@ -328,35 +288,42 @@ function DraggableSticker({
     }
   };
 
-  // Rotate Sticker via Handle
-  const onRotatePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    // Transform Sticker via Handle (Scale & Rotate)
+  const onTransformPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     e.preventDefault();
     e.stopPropagation();
     onSelect(sticker.id);
-    setIsRotating(true);
+    setIsTransforming(true);
     setZIndex(100 + (Date.now() % 1000));
 
     if (stickerRef.current) {
       const rect = stickerRef.current.getBoundingClientRect();
-      rotateOriginRef.current = {
-        cx: rect.left + rect.width / 2,
-        cy: rect.top + rect.height / 2,
-      };
+      const cx = rect.left + rect.width / 2;
+      const cy = rect.top + rect.height / 2;
+      const startDist = Math.hypot(e.clientX - cx, e.clientY - cy);
+      const startAngle = Math.atan2(e.clientY - cy, e.clientX - cx);
+      transformOriginRef.current = { cx, cy, startDist, startScale: scale, startAngle, startRotation: rotation };
     }
     (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
   };
 
-  const onRotatePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (!isRotating) return;
-    const { cx, cy } = rotateOriginRef.current;
-    const rad = Math.atan2(e.clientY - cy, e.clientX - cx);
-    const deg = Math.round(rad * (180 / Math.PI) + 90);
-    setRotation(deg);
+  const onTransformPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (!isTransforming) return;
+    const { cx, cy, startDist, startScale, startAngle, startRotation } = transformOriginRef.current;
+    if (startDist === 0) return;
+    
+    const currentDist = Math.hypot(e.clientX - cx, e.clientY - cy);
+    const newScale = startScale * (currentDist / startDist);
+    setScale(Math.max(0.3, Math.min(newScale, 3.5)));
+    
+    const currentAngle = Math.atan2(e.clientY - cy, e.clientX - cx);
+    const angleDelta = (currentAngle - startAngle) * (180 / Math.PI);
+    setRotation(startRotation + angleDelta);
   };
 
-  const onRotatePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (isRotating) {
-      setIsRotating(false);
+  const onTransformPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (isTransforming) {
+      setIsTransforming(false);
       try {
         (e.currentTarget as HTMLElement).releasePointerCapture(e.pointerId);
       } catch (_) {}
@@ -366,17 +333,19 @@ function DraggableSticker({
   return (
     <div
       ref={stickerRef}
-      className={`draggable-sticker ${isDragging ? "is-dragging" : ""} ${isSelected || isRotating ? "is-selected" : ""}`}
+      className={`draggable-sticker ${isDragging ? "is-dragging" : ""} ${isSelected || isTransforming ? "is-selected" : ""}`}
       style={{
-        left: sticker.defaultLeft,
-        top: sticker.defaultTop,
-        transform: `translate3d(${delta.x}px, ${delta.y}px, 0) rotate(${rotation}deg) scale(${isDragging ? 1.08 : 1})`,
+        "--x": sticker.defaultLeft,
+        "--y": sticker.defaultTop,
+        "--mx": sticker.mobileLeft,
+        "--my": sticker.mobileTop,
+        transform: `translate3d(${delta.x}px, ${delta.y}px, 0) rotate(${rotation}deg) scale(${isDragging ? scale * 1.05 : scale})`,
         backgroundColor: sticker.bgColor,
         color: sticker.textColor,
         boxShadow: `4px 4px 0px ${sticker.shadowColor}`,
-        zIndex: isDragging || isRotating ? 999 : isSelected ? 60 : zIndex,
+        zIndex: isDragging || isTransforming ? 999 : isSelected ? 60 : zIndex,
         touchAction: "none",
-      }}
+      } as React.CSSProperties}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
@@ -386,19 +355,19 @@ function DraggableSticker({
         onSelect(sticker.id);
       }}
     >
-      {/* 360° Rotation Handle */}
+      
       <div
-        className="sticker-rotate-handle-wrapper"
-        onPointerDown={onRotatePointerDown}
-        onPointerMove={onRotatePointerMove}
-        onPointerUp={onRotatePointerUp}
-        onPointerCancel={onRotatePointerUp}
+        className="sticker-scale-handle-wrapper"
+        onPointerDown={onTransformPointerDown}
+        onPointerMove={onTransformPointerMove}
+        onPointerUp={onTransformPointerUp}
+        onPointerCancel={onTransformPointerUp}
       >
-        <div className={`sticker-rotate-knob ${isRotating ? "is-rotating" : ""}`} title="Drag handle to rotate sticker in any direction">
-          <RotateCw size={12} strokeWidth={2.5} />
+        <div className={`sticker-scale-knob ${isTransforming ? "is-scaling" : ""}`} title="Drag to transform">
+          <Maximize2 size={12} strokeWidth={2.5} style={{ transform: "rotate(90deg)" }} />
         </div>
-        <div className="sticker-rotate-stem"></div>
       </div>
+
 
       {sticker.imageUrl ? (
         <img src={sticker.imageUrl} alt={sticker.content || "Sticker"} draggable={false} />
@@ -412,7 +381,45 @@ function DraggableSticker({
   );
 }
 
-function Hero({ audience }: { audience: Audience }) {
+const heroHighlightColor: Record<Audience, string> = {
+  men: "#00F5D4",
+  women: "#FF8AD8",
+  kids: "#52F264",
+};
+
+const headlineMood: Record<Audience, HeadlineMood> = {
+  men: "snap",
+  women: "settle",
+  kids: "bounce",
+};
+
+// Wraps the first occurrence of `phrase` inside `text` in a PointerHighlight.
+function HighlightedText({
+  text,
+  phrase,
+  color,
+  delay,
+}: {
+  text: string;
+  phrase?: string;
+  color: string;
+  delay?: number;
+}) {
+  const index = phrase ? text.indexOf(phrase) : -1;
+  if (!phrase || index === -1) return <>{text}</>;
+
+  return (
+    <>
+      {text.slice(0, index)}
+      <PointerHighlight color={color} delay={delay} containerClassName="ph-inline">
+        {phrase}
+      </PointerHighlight>
+      {text.slice(index + phrase.length)}
+    </>
+  );
+}
+
+function Hero({ audience, ready }: { audience: Audience; ready: boolean }) {
   const content = audienceContent[audience];
   const [selectedStickerId, setSelectedStickerId] = useState<string | null>(null);
 
@@ -421,42 +428,60 @@ function Hero({ audience }: { audience: Audience }) {
       className="hero-section-wrapper"
       onClick={() => setSelectedStickerId(null)}
     >
-      <MagneticImageTrail className="hero-trail-container">
-        <div className="hero">
-          {/* Free-floating stickers spread across the entire hero */}
-          <div className="hero-stickers-layer" aria-label="Draggable Stickers">
-            {initialStickers.map((sticker) => (
-              <DraggableSticker
-                key={sticker.id}
-                sticker={sticker}
-                isSelected={selectedStickerId === sticker.id}
-                onSelect={(id) => setSelectedStickerId(id)}
-              />
-            ))}
+      <div className="hero">
+        {/* Free-floating stickers spread across the entire hero */}
+        <div className="hero-stickers-layer" aria-label="Draggable Stickers">
+          {initialStickers.map((sticker) => (
+            <DraggableSticker
+              key={sticker.id}
+              sticker={sticker}
+              isSelected={selectedStickerId === sticker.id}
+              onSelect={(id) => setSelectedStickerId(id)}
+            />
+          ))}
+        </div>
+
+        <div className="hero__copy">
+          <div className="hero__pill">
+            <span aria-hidden="true">⚡</span>
+            100% Unisex Energy
+          </div>
+          <p className="eyebrow">{content.kicker}</p>
+          {ready ? (
+            <StretchHeadline
+              text={content.headline}
+              mood={headlineMood[audience]}
+              accent={heroHighlightColor[audience]}
+            />
+          ) : (
+            // holds the space (and keeps the heading in the server HTML) until the audience is known
+            <h1 className="stretch-headline" style={{ visibility: "hidden" }}>
+              {content.headline.split("\n").map((line) => (
+                <span className="sh-line" key={line}>{line}</span>
+              ))}
+              <span className="sh-band" />
+            </h1>
+          )}
+          <div className="hero__body-text">
+            {/* key replays the draw + drag when the audience toggles */}
+            <HighlightedText
+              key={audience}
+              text={content.body}
+              phrase={content.highlight}
+              color={heroHighlightColor[audience]}
+            />
           </div>
 
-          <div className="hero__copy">
-            <span className="streetwear-sticker sticker-inline-cyan">
-              ⚡ 100% UNISEX ENERGY
-            </span>
-
-            <p className="eyebrow">{content.kicker}</p>
-            <h1>
-              <FlipText>{content.headline}</FlipText>
-            </h1>
-            <p>{content.body}</p>
-
-            <div className="hero__actions">
-              <Link className="button button--dark" href={`/collections/${content.collectionHandle}`}>
-                Shop {content.label} <ArrowRight size={18} />
-              </Link>
-              <Link className="button button--light" href="#story">
-                Know the Fit
-              </Link>
-            </div>
+          <div className="hero__actions">
+            <Link className="button button--dark" href={`/collections/${content.collectionHandle}`}>
+              Shop {content.label} <ArrowRight size={18} />
+            </Link>
+            <Link className="button button--light" href="#story">
+              Know the Fit
+            </Link>
           </div>
         </div>
-      </MagneticImageTrail>
+      </div>
     </section>
   );
 }
@@ -475,14 +500,80 @@ function AnnouncementTicker() {
   );
 }
 
+const audienceOptions: Audience[] = ["men", "women", "kids"];
+
+function AudienceMenu({
+  audience,
+  onSelect,
+}: {
+  audience: Audience;
+  onSelect: (value: Audience) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  // Small grace period so moving the mouse from the pill into the menu doesn't close it.
+  function openNow() {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    setOpen(true);
+  }
+  function closeSoon() {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    closeTimer.current = setTimeout(() => setOpen(false), 150);
+  }
+
+  useEffect(() => () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+  }, []);
+
+  return (
+    <div
+      className={`audience-menu ${open ? "is-open" : ""}`}
+      onMouseEnter={openNow}
+      onMouseLeave={closeSoon}
+      onKeyDown={(e) => e.key === "Escape" && setOpen(false)}
+    >
+      <button
+        className="audience-pill"
+        onClick={() => setOpen((v) => !v)}
+        aria-haspopup="menu"
+        aria-expanded={open}
+        aria-label={`Shopping for ${audienceContent[audience].label}. Change lineup`}
+      >
+        <span>{audienceContent[audience].label}</span>
+        <ChevronDown size={14} className="audience-pill__chevron" />
+      </button>
+      {open && (
+        <div className="audience-menu__list" role="menu">
+          {audienceOptions.map((option) => (
+            <button
+              key={option}
+              role="menuitemradio"
+              aria-checked={option === audience}
+              className={`audience-menu__item ${option === audience ? "is-active" : ""}`}
+              onClick={() => {
+                onSelect(option);
+                setOpen(false);
+              }}
+            >
+              <span className="audience-menu__dot" style={{ background: heroHighlightColor[option] }} />
+              {audienceContent[option].label}
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function Header({
   audience,
-  onToggleAudience,
+  onSelectAudience,
   onOpenGateway,
   products = [],
 }: {
   audience: Audience;
-  onToggleAudience: () => void;
+  onSelectAudience: (value: Audience) => void;
   onOpenGateway?: () => void;
   products?: any[];
 }) {
@@ -516,15 +607,7 @@ function Header({
         </nav>
 
         <div className="header-actions">
-          <button
-            className="audience-pill"
-            onClick={onToggleAudience}
-            aria-label="Switch between Men, Women, and Kids"
-            title="Switch lineup between Men, Women, and Kids"
-          >
-            <span>{audience === "men" ? "Men" : audience === "women" ? "Women" : "Kids"}</span>
-            <ChevronDown size={14} />
-          </button>
+          <AudienceMenu audience={audience} onSelect={onSelectAudience} />
           <button
             className="icon-button"
             onClick={() => setSearchOpen(true)}
@@ -544,6 +627,10 @@ function Header({
           <Link className="icon-button" href="/collections/best-sellers" aria-label="Shop">
             <ShoppingBag size={20} />
           </Link>
+          {/* Entry point for the upcoming AI assistant sidebar — no action wired yet */}
+          <button className="orb-button" aria-label="Ask Tomboy AI" title="Ask Tomboy AI">
+            <LiveOrb variant="custom" color="#FF3333" eyeColor="#FAFAFA" size={34} />
+          </button>
         </div>
       </header>
 
@@ -676,7 +763,7 @@ function SearchModal({
                 {filtered.map((item) => (
                   <Link
                     href={`/products/${item.handle || "boxer"}`}
-                    key={item.title}
+                    key={item.handle ?? item.title}
                     className="search-result-item"
                     onClick={onClose}
                   >
@@ -823,7 +910,7 @@ function ProductCarousel({
         {products.map((product) => {
           const productHref = product.handle ? `/products/${product.handle}` : `/collections/${audience}`;
           return (
-            <Link href={productHref} className="product-card" key={product.title}>
+            <Link href={productHref} className="product-card" key={product.handle ?? product.title}>
               <div
                 className={`product-card__art product-card__art--${product.color}`}
                 style={
@@ -897,7 +984,7 @@ function BrandStory() {
         <h2>A closer look at Tomboy.</h2>
       </div>
       <div className="pop-story-grid">
-        {brandCards.map((card) => (
+        {brandCards.map((card, index) => (
           <article
             className="pop-story-card"
             key={card.title}
@@ -914,7 +1001,14 @@ function BrandStory() {
 
             <div className="pop-story-card__body">
               <h3>{card.title}</h3>
-              <p>{card.body}</p>
+              <p>
+                <HighlightedText
+                  text={card.body}
+                  phrase={card.highlight}
+                  color={card.color}
+                  delay={index * 0.7}
+                />
+              </p>
             </div>
 
             <div className="pop-story-card__footer">

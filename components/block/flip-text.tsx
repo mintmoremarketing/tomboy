@@ -16,17 +16,22 @@ export function LensDriftText({
     <div
       className={className ? `fx-focus ${className}` : "fx-focus"}
       role="img"
-      aria-label={text}
+      aria-label={text.replace(/\n/g, " ")}
     >
-      {chars.map((char, index) => (
-        <b
-          key={index}
-          aria-hidden="true"
-          style={{ "--i": index } as React.CSSProperties}
-        >
-          {char === " " ? "\u00A0" : char}
-        </b>
-      ))}
+      {chars.map((char, index) => {
+        if (char === "\n") {
+          return <br key={index} />;
+        }
+        return (
+          <b
+            key={index}
+            aria-hidden="true"
+            style={{ "--i": index } as React.CSSProperties}
+          >
+            {char === " " ? "\u00A0" : char}
+          </b>
+        );
+      })}
     </div>
   );
 }
