@@ -20,6 +20,13 @@ export const audienceContent = {
     body: "Comfort-first bras, panties & basics designed to move with you.",
     collectionHandle: "women",
   },
+  kids: {
+    label: "Kids",
+    kicker: "Kids Lineup",
+    headline: "PLAY HARD. STAY COZY.",
+    body: "Skin-safe, breathable 100% Super Combed Cotton essentials for non-stop comfort and zero itch.",
+    collectionHandle: "kids",
+  },
 };
 
 export const shopEssentials = {
@@ -38,6 +45,15 @@ export const shopEssentials = {
     { title: "Shorts & Tracks", note: "Easy movement", href: "/collections/shorts-and-pant", bg: "#52F264", textColor: "#0a0a0a", noteColor: "rgba(0,0,0,0.7)" },
     { title: "All Women", note: "Browse full lineup", href: "/collections/women", bg: "#FF3344", textColor: "#ffffff", noteColor: "rgba(255,255,255,0.92)" },
   ],
+  kids: [
+    { title: "Kids Briefs", note: "Anti-pinch comfort", href: "/collections/kids-brief", bg: "#00F5D4", textColor: "#0a0a0a", noteColor: "rgba(0,0,0,0.7)" },
+    { title: "Kids Boxers", note: "Relaxed play fit", href: "/collections/kids-boxer", bg: "#FFE500", textColor: "#0a0a0a", noteColor: "rgba(0,0,0,0.7)" },
+    { title: "Kids Vests", note: "Super soft cotton", href: "/collections/kids-vest", bg: "#52F264", textColor: "#0a0a0a", noteColor: "rgba(0,0,0,0.7)" },
+    { title: "Kids Shorts", note: "Active daily wear", href: "/collections/kids-shorts", bg: "#FF3344", textColor: "#ffffff", noteColor: "rgba(255,255,255,0.92)" },
+    { title: "Kids Pants", note: "Cozy stretch lounge", href: "/collections/kids-pants", bg: "#2E7CF6", textColor: "#ffffff", noteColor: "rgba(255,255,255,0.92)" },
+    { title: "Kids Socks", note: "Soft ankle pairs", href: "/collections/kids-socks", bg: "#FF3399", textColor: "#ffffff", noteColor: "rgba(255,255,255,0.92)" },
+    { title: "All Kids", note: "Browse full lineup", href: "/collections/kids", bg: "#00F5D4", textColor: "#0a0a0a", noteColor: "rgba(0,0,0,0.7)" },
+  ],
 };
 
 export const productPlaceholders = [
@@ -46,6 +62,9 @@ export const productPlaceholders = [
   { audience: "men", title: "Everyday Vest", type: "Vest", price: "Rs. 189", color: "cream", handle: "vest" },
   { audience: "women", title: "Cloudfit Bra", type: "Bra", price: "Rs. 399", color: "red", handle: "bra" },
   { audience: "women", title: "Panty Fit", type: "Panty", price: "Rs. 199", color: "black", handle: "panties" },
+  { audience: "kids", title: "Kids Super Combed Brief", type: "Kids Brief", price: "Rs. 179", color: "yellow", handle: "kids-brief" },
+  { audience: "kids", title: "Kids Pure Cotton Vest", type: "Kids Vest", price: "Rs. 169", color: "cream", handle: "kids-vest" },
+  { audience: "kids", title: "Kids Active Boxer", type: "Kids Boxer", price: "Rs. 199", color: "red", handle: "kids-boxer" },
   { audience: "all", title: "Everyday Socks", type: "Socks", price: "Rs. 129", color: "yellow", handle: "socks" },
 ];
 

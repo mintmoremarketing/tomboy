@@ -30,7 +30,7 @@ import {
   shopEssentials,
 } from "@/data/homepage";
 
-type Audience = "men" | "women";
+type Audience = "men" | "women" | "kids";
 
 export default function Home() {
   const [audience, setAudience] = useState<Audience>("men");
@@ -40,7 +40,7 @@ export default function Home() {
 
   useEffect(() => {
     const saved = window.localStorage.getItem("tomboy-audience") as Audience | null;
-    if (saved === "men" || saved === "women") {
+    if (saved === "men" || saved === "women" || saved === "kids") {
       setAudience(saved);
       setShowGateway(false);
     } else {
@@ -62,6 +62,11 @@ export default function Home() {
   function switchAudience(value: Audience) {
     setAudience(value);
     window.localStorage.setItem("tomboy-audience", value);
+  }
+
+  function handleNextAudience() {
+    const next: Audience = audience === "men" ? "women" : audience === "women" ? "kids" : "men";
+    switchAudience(next);
   }
 
   function handleGatewayChoice(value: Audience) {
@@ -92,7 +97,7 @@ export default function Home() {
       <AnnouncementTicker />
       <Header
         audience={audience}
-        onToggleAudience={() => switchAudience(audience === "men" ? "women" : "men")}
+        onToggleAudience={handleNextAudience}
         onOpenGateway={() => setShowGateway(true)}
         products={products}
       />
@@ -161,6 +166,12 @@ function StartingGateway({
                     onClick={() => onSelectAudience("men")}
                   >
                     Men <ChevronRight size={16} />
+                  </button>
+                  <button
+                    className="welcome-pill-btn welcome-pill--kids"
+                    onClick={() => onSelectAudience("kids")}
+                  >
+                    Kids <ChevronRight size={16} />
                   </button>
                 </div>
               </div>
@@ -498,6 +509,7 @@ function Header({
         <nav className="desktop-nav" aria-label="Primary navigation">
           <Link href="/collections/men">Men</Link>
           <Link href="/collections/women">Women</Link>
+          <Link href="/collections/kids">Kids</Link>
           <Link href="/collections/best-sellers">Best Sellers</Link>
           <a href="#story">Story</a>
           <a href="#reviews">Reviews</a>
@@ -507,10 +519,10 @@ function Header({
           <button
             className="audience-pill"
             onClick={onToggleAudience}
-            aria-label="Switch between Men and Women"
-            title="Switch between Men and Women"
+            aria-label="Switch between Men, Women, and Kids"
+            title="Switch lineup between Men, Women, and Kids"
           >
-            <span>{audience === "men" ? "Men" : "Women"}</span>
+            <span>{audience === "men" ? "Men" : audience === "women" ? "Women" : "Kids"}</span>
             <ChevronDown size={14} />
           </button>
           <button
@@ -752,7 +764,13 @@ function Essentials({ audience }: { audience: Audience }) {
     <section className="section" id="essentials">
       <div className="section-heading">
         <p className="eyebrow">Shop essentials</p>
-        <h2>{audience === "men" ? "Built around everyday men’s comfort." : "Comfort-led women’s essentials."}</h2>
+        <h2>
+          {audience === "men"
+            ? "Built around everyday men’s comfort."
+            : audience === "women"
+            ? "Comfort-led women’s essentials."
+            : "Pure cotton everyday kids’ essentials."}
+        </h2>
       </div>
       <div className="essentials-grid">
         {items.map((item: any) => (
@@ -789,7 +807,13 @@ function ProductCarousel({
       <div className="section-heading section-heading--inline">
         <div>
           <p className="eyebrow">Shopify Live Collection</p>
-          <h2>{audience === "men" ? "Men’s Lineup" : "Women’s Lineup"}</h2>
+          <h2>
+            {audience === "men"
+              ? "Men’s Lineup"
+              : audience === "women"
+              ? "Women’s Lineup"
+              : "Kids’ Lineup"}
+          </h2>
         </div>
         <Link href={`/collections/${audience}`} className="text-link">
           View all <ArrowRight size={16} aria-hidden />
