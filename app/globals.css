@@ -5225,3 +5225,214 @@ button {
     grid-template-columns: 1fr;
   }
 }
+
+/* ---- Comfort band: colour burst under the hero (components/block/comfort-band.tsx) ---- */
+.comfort-band {
+  width: min(var(--max), calc(100% - 48px));
+  margin: 8px auto 24px;
+}
+
+.comfort-band__inner {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 18px;
+  padding: 10px 6px 16px;
+}
+
+.comfort-tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-height: 176px;
+  padding: 18px 18px 20px;
+  border: 2.5px solid #0A0A0A;
+  border-radius: 20px;
+  rotate: var(--tilt, 0deg);
+  transition: rotate 0.35s cubic-bezier(0.34, 1.56, 0.64, 1), translate 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  cursor: default;
+}
+
+.comfort-tile:hover {
+  rotate: 0deg;
+  translate: 0 -6px;
+}
+
+.comfort-tile__icon {
+  margin-bottom: auto;
+}
+
+.comfort-tile__big {
+  margin-top: 18px;
+  font-size: clamp(2rem, 3.1vw, 2.75rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.comfort-tile__label {
+  font-size: 0.95rem;
+  font-weight: 900;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.comfort-tile__sub {
+  font-size: 0.82rem;
+  font-weight: 600;
+  line-height: 1.35;
+  opacity: 0.85;
+}
+
+@media (max-width: 1024px) {
+  .comfort-band__inner {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .comfort-band {
+    width: calc(100% - 32px);
+    margin: 4px auto 8px;
+  }
+
+  .comfort-band__inner {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    padding: 6px 4px 12px;
+  }
+
+  .comfort-tile {
+    min-height: 150px;
+    padding: 14px 14px 16px;
+    border-radius: 16px;
+  }
+
+  /* odd one out spans the row, so the grid ends clean */
+  .comfort-tile:last-child {
+    grid-column: 1 / -1;
+    min-height: 120px;
+  }
+
+  .comfort-tile__big {
+    font-size: 1.9rem;
+    margin-top: 12px;
+  }
+
+  .comfort-tile__label {
+    font-size: 0.82rem;
+  }
+
+  .comfort-tile__sub {
+    font-size: 0.74rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .comfort-tile {
+    transition: none;
+  }
+}
+
+/* ---- Phone hero: the character stands on a colourful poster card ----
+   --stage-bg is the audience colour (set on .hero-stickers-layer in the Hero). */
+.hero-stage-word {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .hero-stickers-layer {
+    overflow: hidden;
+    border: 2.5px solid #0A0A0A;
+    border-radius: 24px;
+    background-color: var(--stage-bg, #00F5D4);
+    background-image: radial-gradient(rgba(10, 10, 10, 0.12) 1.4px, transparent 1.6px);
+    background-size: 16px 16px;
+    box-shadow: 5px 5px 0 #0A0A0A;
+    transition: background-color 0.45s ease;
+  }
+
+  .hero-stage-word {
+    display: block;
+    position: absolute;
+    left: 50%;
+    top: 10px;
+    transform: translateX(-50%);
+    font-size: clamp(3.2rem, 18.5vw, 5rem);
+    font-weight: 900;
+    line-height: 1;
+    letter-spacing: -0.04em;
+    color: transparent;
+    -webkit-text-stroke: 2px rgba(10, 10, 10, 0.16);
+    white-space: nowrap;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* soft white glow keeps the figure readable on the colour */
+  .hero-character__halo {
+    background: rgba(255, 255, 255, 0.6) !important;
+  }
+
+  .hero-swipe-dot {
+    background-color: rgba(10, 10, 10, 0.25);
+  }
+
+  .hero-swipe-dot.is-active {
+    background-color: #0A0A0A;
+  }
+}
+
+/* ---- Hero headline: always reserve two lines ----
+   Women's headline is one line while Men's/Kids' are two; without this the
+   phone card (and everything below) jumped when switching audience.
+   2 lines x 1.1 line-height + the elastic underline (margin + height). */
+.hero .stretch-headline {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: calc(2.2em + 22px);
+}
+
+@media (max-width: 768px) {
+  .hero .stretch-headline {
+    min-height: calc(2.2em + 16px);
+  }
+}
+
+/* Phones: Shop Essentials cards start grey and light up in their colour one by one
+   as they scroll into view (set by Essentials in app/page.tsx). */
+@media (max-width: 768px) {
+  .essential-card--photo .essential-card__media img {
+    filter: grayscale(1);
+    transition: filter 0.6s ease, opacity 0.4s ease, transform 0.4s ease;
+  }
+
+  .essential-card.is-lit {
+    background-color: var(--hover-bg, var(--black));
+    border-color: transparent;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    transition-duration: 0.6s;
+  }
+
+  .essential-card.is-lit .essential-card__media img {
+    filter: none;
+  }
+
+  .essential-card.is-lit span {
+    color: var(--hover-color, var(--black));
+  }
+
+  .essential-card.is-lit small {
+    color: var(--hover-note, var(--muted));
+  }
+}
+
+/* two cards share a row on phones: the right one lights a beat after the left */
+@media (max-width: 768px) {
+  .essential-card.is-lit:nth-child(2n),
+  .essential-card.is-lit:nth-child(2n) * {
+    transition-delay: 0.2s;
+  }
+}

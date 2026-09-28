@@ -34,6 +34,7 @@ import {
 } from "@/components/assistant/client";
 import { ProductPickSheet, ShoppingForSheet, SizesSheet } from "@/components/assistant/sheets";
 import { TryOnDialog, type TryOnProduct } from "@/components/assistant/try-on-dialog";
+import { TRY_ON_ENABLED } from "@/lib/try-on";
 
 // Scout — Tomboy's shopping assistant. A port of KeepUp's Bouncy AssistantPanel
 // (same layout, orb moods, thought bubble, @tags, attachments, history), with
@@ -694,7 +695,7 @@ export function AssistantPanel({
                               </span>
                               <span className="ap-result__action">View</span>
                             </Link>
-                            {p.tryOn && (
+                            {TRY_ON_ENABLED && p.tryOn && (
                               <button
                                 type="button"
                                 className="ap-result__tryon"

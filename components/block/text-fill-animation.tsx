@@ -1,11 +1,10 @@
 "use client";
 
-import React, { useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
-import { Sparkles, CheckCircle2, ArrowRight } from "lucide-react";
+import { CheckCircle2, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
-import { PointerHighlight } from "@/components/ui/pointer-highlight";
 import "./text-fill-animation.css";
 
 interface CharProps {
@@ -111,11 +110,54 @@ export function TextFillAnimation({
   );
 }
 
+type StoryAudience = "men" | "women" | "kids";
+
+const STORY: Record<StoryAudience, { kicker: string; text: string; perks: [string, string, string]; cta: string; fallback: string }> = {
+  men: {
+    kicker: "The Tomboy Standard",
+    text: "We stripped away itchy tags, tight restrictive bands, and stiff seams. Every single piece is crafted with 100% super combed cotton that moves naturally with your body — breathable, chafe-free, and effortlessly soft from sunrise to midnight.",
+    perks: ["Anti-Pinch Ergonomic Waistband", "2X Breathability Micro-Knit", "Pre-Shrunk Long-Staple Fibers"],
+    cta: "Explore Men's Collection",
+    fallback: "https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=80",
+  },
+  women: {
+    kicker: "Made For Her",
+    text: "No digging elastic, no scratchy lace, no seams that show through. Every piece is cut from 100% super combed cotton that stays soft on your skin and shapes to you — lightweight, breathable, and comfortable from your first meeting to your last stretch of the day.",
+    perks: ["Soft-Touch Covered Waistband", "Seam-Smooth Everyday Fit", "Skin-Friendly Breathable Cotton"],
+    cta: "Explore Women's Collection",
+    fallback: "/gateway/women.webp",
+  },
+  kids: {
+    kicker: "Made For Little Ones",
+    text: "Kids climb, run, tumble and nap in the same clothes, so we made them gentle. Tag-free, with soft waistbands that never pinch, and 100% super combed cotton that's kind to sensitive skin — built to survive the playground and a hundred washes after it.",
+    perks: ["Tag-Free, Zero-Itch Comfort", "Non-Pinch Soft Waistband", "Gentle On Sensitive Skin"],
+    cta: "Explore Kids' Collection",
+    fallback: "/gateway/kids.webp",
+  },
+};
+
 export function CraftStorySection({
   audience = "men",
 }: {
-  audience?: "men" | "women";
+  audience?: StoryAudience;
 }) {
+  const story = STORY[audience];
+  // a real product photo for this audience (first one from the essentials collections)
+  const [photos, setPhotos] = useState<Partial<Record<StoryAudience, string | null>>>({});
+  useEffect(() => {
+    if (audience in photos) return;
+    fetch(`/api/essentials?audience=${audience}`)
+      .then((res) => res.json())
+      .then((data) => {
+        const first = data && !data.error ? (Object.values(data).find((v) => typeof v === "string") as string | undefined) : undefined;
+        setPhotos((prev) => ({ ...prev, [audience]: first ?? null }));
+      })
+      .catch(() => setPhotos((prev) => ({ ...prev, [audience]: null })));
+  }, [audience, photos]);
+  // men keep the original portrait; women and kids use their product photo at a larger size
+  const photo = audience === "men" ? null : photos[audience]?.replace(/width=\d+/, "width=900");
+  const image = photo || story.fallback;
+
   return (
     <section className="scroll-story-section">
       <div className="scroll-story-container">
@@ -123,22 +165,11 @@ export function CraftStorySection({
         <div className="scroll-story-visual">
           <div className="scroll-story-image-card">
             <img
-              src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?w=800&auto=format&fit=crop&q=80"
+              key={image}
+              src={image}
               alt="Tomboy super combed cotton craftsmanship"
               className="scroll-story-img"
             />
-            <div className="scroll-story-badge-top">
-              <Sparkles size={14} className="text-[#00F5D4]" />
-              
-              <PointerHighlight
-                rectangleClassName="bg-cyan-100 border-cyan-300"
-                pointerClassName="text-cyan-500 h-3 w-3"
-                containerClassName="inline-block"
-              >
-                <span className="relative z-10 text-cyan-900 font-bold">Zero Synthetic Blends</span>
-              </PointerHighlight>
-
-            </div>
             <div className="scroll-story-badge-bottom">
               <span>🇮🇳 100% Super Combed Pure Cotton</span>
             </div>
@@ -148,30 +179,25 @@ export function CraftStorySection({
         {/* Right Side: Scroll Text Fill */}
         <div className="scroll-story-copy">
           <div className="scroll-story-kicker">
-            <span className="kicker-pill">The Tomboy Standard</span>
+            <span className="kicker-pill">{story.kicker}</span>
             <small>Scroll to reveal ↓</small>
           </div>
 
           <TextFillAnimation
-            text="We stripped away itchy tags, tight restrictive bands, and stiff seams. Every single piece is crafted with 100% super combed cotton that moves naturally with your body — breathable, chafe-free, and effortlessly soft from sunrise to midnight."
+            key={audience}
+            text={story.text}
             dimColor="rgba(10, 10, 10, 0.18)"
             primaryColor="#FF3344"
             textColor="#0A0A0A"
           />
 
           <div className="scroll-story-perks">
-            <div className="story-perk">
-              <CheckCircle2 size={18} className="text-[#00F5D4]" />
-              <span>Anti-Pinch Ergonomic Waistband</span>
-            </div>
-            <div className="story-perk">
-              <CheckCircle2 size={18} className="text-[#FFE500]" />
-              <span>2X Breathability Micro-Knit</span>
-            </div>
-            <div className="story-perk">
-              <CheckCircle2 size={18} className="text-[#52F264]" />
-              <span>Pre-Shrunk Long-Staple Fibers</span>
-            </div>
+            {story.perks.map((perk, i) => (
+              <div className="story-perk" key={perk}>
+                <CheckCircle2 size={18} className={["text-[#00F5D4]", "text-[#FFE500]", "text-[#52F264]"][i]} />
+                <span>{perk}</span>
+              </div>
+            ))}
           </div>
 
           <div className="scroll-story-action">
@@ -179,8 +205,7 @@ export function CraftStorySection({
               href={`/collections/${audience}`}
               className="button button--dark button--pop"
             >
-              Explore {audience === "men" ? "Men's" : "Women's"} Collection{" "}
-              <ArrowRight size={18} />
+              {story.cta} <ArrowRight size={18} />
             </Link>
           </div>
         </div>

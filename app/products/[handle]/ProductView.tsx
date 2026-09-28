@@ -7,7 +7,7 @@ import { LiveOrb } from "@/components/ui/live-orb";
 import { AssistantPanel } from "@/components/assistant/assistant-panel";
 import { recordRecentlyViewed } from "@/components/assistant/client";
 import { TryOnDialog } from "@/components/assistant/try-on-dialog";
-import { isTryOnEligible } from "@/lib/try-on";
+import { isTryOnEligible, TRY_ON_ENABLED } from "@/lib/try-on";
 
 // Smart CSS color mapping for Tomboy colorways
 const colorSwatchMap: Record<string, string> = {
@@ -47,7 +47,7 @@ export default function ProductView({ product }: { product: any }) {
   const [audience, setAudience] = useState<"men" | "women" | "kids">("men");
   const [tryOnOpen, setTryOnOpen] = useState(false);
   // AI try-on is offered for adult outerwear only (see lib/try-on.ts)
-  const canTryOn = isTryOnEligible({ title: product.title, productType: product.productType });
+  const canTryOn = TRY_ON_ENABLED && isTryOnEligible({ title: product.title, productType: product.productType });
   useEffect(() => {
     recordRecentlyViewed(product.handle);
     const saved = window.localStorage.getItem("tomboy-audience");

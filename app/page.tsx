@@ -24,6 +24,7 @@ import { PointerHighlight } from "@/components/ui/pointer-highlight";
 import { LiveOrb } from "@/components/ui/live-orb";
 import { StartingGateway } from "@/components/block/starting-gateway";
 import { HeroCharacter } from "@/components/block/hero-character";
+import { ComfortBand } from "@/components/block/comfort-band";
 import { AssistantPanel } from "@/components/assistant/assistant-panel";
 import {
   audienceContent,
@@ -110,6 +111,7 @@ export default function Home() {
         products={products}
       />
       <Hero audience={audience} ready={audienceReady} onSelectAudience={switchAudience} />
+      <ComfortBand />
       <Essentials audience={audience} />
       <CraftStorySection audience={audience} />
       <ProductCarousel products={products} audience={audience} />
@@ -385,6 +387,14 @@ function DraggableSticker({
   );
 }
 
+// Phone hero poster card: chosen to contrast with each character's outfit
+// (the kid's green shirt would vanish on the green accent, so Kids gets yellow).
+const heroStageColor: Record<Audience, string> = {
+  men: "#00F5D4",
+  women: "#FF8AD8",
+  kids: "#FFE500",
+};
+
 const heroHighlightColor: Record<Audience, string> = {
   men: "#00F5D4",
   women: "#FF8AD8",
@@ -513,7 +523,12 @@ function Hero({
           onPointerDown={onStagePointerDown}
           onPointerUp={onStagePointerUp}
           onPointerCancel={() => (pointerStart.current = null)}
+          style={{ "--stage-bg": heroStageColor[audience] } as React.CSSProperties}
         >
+          {/* phones: big watermark behind the character on the coloured poster card */}
+          <span className="hero-stage-word" aria-hidden="true">
+            TOMBOY
+          </span>
           <HeroCharacter audience={audience} ready={ready} direction={direction} />
           {initialStickers.map((sticker) => (
             <DraggableSticker
@@ -1036,6 +1051,27 @@ function Essentials({ audience }: { audience: Audience }) {
       .catch(console.error);
   }, [audience, photos]);
 
+  // phones have no hover, so each card lights up in its colour as it scrolls into the middle of the screen
+  const gridRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const grid = gridRef.current;
+    if (!grid || !window.matchMedia("(max-width: 768px)").matches) return;
+    const cards = Array.from(grid.querySelectorAll<HTMLElement>(".essential-card"));
+    cards.forEach((card) => card.classList.remove("is-lit"));
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          entry.target.classList.add("is-lit");
+          observer.unobserve(entry.target);
+        });
+      },
+      { rootMargin: "0px 0px -35% 0px", threshold: 0.6 },
+    );
+    cards.forEach((card) => observer.observe(card));
+    return () => observer.disconnect();
+  }, [audience]);
+
   return (
     <section className="section" id="essentials">
       <div className="section-heading">
@@ -1048,7 +1084,7 @@ function Essentials({ audience }: { audience: Audience }) {
             : "Pure cotton everyday kids’ essentials."}
         </h2>
       </div>
-      <div className="essentials-grid">
+      <div className="essentials-grid" ref={gridRef}>
         {items.map((item: any) => (
           <Link
             className="essential-card essential-card--photo"

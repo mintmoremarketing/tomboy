@@ -1,7 +1,7 @@
 import { ApiError as GeminiApiError, GoogleGenAI } from '@google/genai';
 import { NextResponse } from 'next/server';
 import { loadCatalog } from '@/lib/assistant-catalog';
-import { garmentSlot } from '@/lib/try-on';
+import { garmentSlot, TRY_ON_ENABLED } from '@/lib/try-on';
 
 // AI try-on: the shopper's own photo + a product photo → a preview of them wearing it.
 //
@@ -25,6 +25,7 @@ const noStore = { 'Cache-Control': 'no-store, max-age=0' };
 const fail = (error: string, status: number) => NextResponse.json({ error }, { status, headers: noStore });
 
 export async function POST(request: Request) {
+  if (!TRY_ON_ENABLED) return fail("Try-on isn't available right now.", 403);
   const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) return fail('Try-on is not set up yet (no API key).', 500);
 

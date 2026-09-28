@@ -6,6 +6,10 @@
 // child, is open to abuse. The server enforces this; the UI only uses it to
 // decide where to show the button.
 
+// Off unless NEXT_PUBLIC_TRY_ON_ENABLED=true (image generation needs a Gemini key with
+// billing enabled; until then the buttons stay hidden instead of failing).
+export const TRY_ON_ENABLED = process.env.NEXT_PUBLIC_TRY_ON_ENABLED === 'true';
+
 const OUTERWEAR = /\b(t-?shirts?|tees?|track(s| pants?)?|joggers?|shorts|pants)\b/i;
 const EXCLUDED = /\b(boys?|girls?|kids?|socks?|brief|briefs|boxer|boxers|bra|bras|pant(y|ies)|vests?|trunks?|innerwear|underwear)\b|[’']s\s+(boy|girl)/i;
 const OUTERWEAR_TYPES = new Set(['t-shirt', 'shorts', 'track pants', 'pants']);
