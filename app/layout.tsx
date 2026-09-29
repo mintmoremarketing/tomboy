@@ -1,10 +1,46 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
+import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 import "./globals.css";
+import { CartDrawer } from "@/components/cart/cart-drawer";
+import { ResumePill } from "@/components/cart/resume-pill";
 
 export const metadata: Metadata = {
-  title: "Tomboy India | Homepage Prototype",
-  description:
-    "A custom-coded Tomboy India homepage prototype with a gender-first shopping entry.",
+  metadataBase: new URL(SITE_URL),
+  title: {
+    default: "Tomboy India | 100% Cotton Innerwear & Essentials for Men, Women & Kids",
+    template: `%s | ${SITE_NAME}`,
+  },
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  keywords: [
+    "cotton innerwear",
+    "men's briefs",
+    "men's boxers",
+    "women's innerwear",
+    "kids innerwear",
+    "super combed cotton",
+    "anti-pinch waistband",
+    "Tomboy India",
+  ],
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    locale: "en_IN",
+    url: "/",
+    title: "Tomboy India | Everyday cotton comfort",
+    description: SITE_DESCRIPTION,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Tomboy India | Everyday cotton comfort",
+    description: SITE_DESCRIPTION,
+  },
+  robots: { index: true, follow: true },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#0A0A0A",
 };
 
 export default function RootLayout({
@@ -16,7 +52,12 @@ export default function RootLayout({
     <html lang="en">
       {/* Browser extensions (e.g. ColorZilla's cz-shortcut-listen) add attributes to <body>
           before React loads; this ignores those on <body> only, not on anything inside it. */}
-      <body suppressHydrationWarning>{children}</body>
+      <body suppressHydrationWarning>
+        {children}
+        {/* site-wide: the cart drawer and the "continue with this product" pill */}
+        <CartDrawer />
+        <ResumePill />
+      </body>
     </html>
   );
 }

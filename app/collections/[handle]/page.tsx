@@ -1,15 +1,39 @@
+import { cache } from "react";
+import type { Metadata } from "next";
 import { getCollectionByHandle } from "@/lib/shopify";
+import { metaDescription } from "@/lib/site";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { ArrowLeft, Sparkles } from "lucide-react";
+import { PageTopbar } from "@/components/layout/page-topbar";
+import { Sparkles } from "lucide-react";
 
-export default async function CollectionPage({
-  params,
-}: {
-  params: Promise<{ handle: string }>;
-}) {
+// one Shopify request shared by the metadata and the page
+const loadCollection = cache((handle: string) => getCollectionByHandle(handle));
+
+type Props = { params: Promise<{ handle: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { handle } = await params;
-  const collection = await getCollectionByHandle(handle);
+  const collection = await loadCollection(handle);
+  if (!collection) return { title: "Collection not found", robots: { index: false } };
+
+  const title = collection.seo?.title || collection.title;
+  const description = metaDescription(
+    collection.seo?.description || collection.description,
+    `Shop ${collection.title} at Tomboy India: 100% super combed cotton, anti-pinch comfort, free shipping over ₹899.`,
+  );
+  const image = collection.image?.url || collection.products?.edges?.[0]?.node?.images?.edges?.[0]?.node?.url;
+  return {
+    title,
+    description,
+    alternates: { canonical: `/collections/${collection.handle}` },
+    openGraph: { title, description, url: `/collections/${collection.handle}`, images: image ? [image] : undefined },
+  };
+}
+
+export default async function CollectionPage({ params }: Props) {
+  const { handle } = await params;
+  const collection = await loadCollection(handle);
 
   if (!collection) {
     notFound();
@@ -20,14 +44,7 @@ export default async function CollectionPage({
   return (
     <div className="collection-page">
       {/* Top Banner */}
-      <div className="collection-topbar">
-        <Link href="/" className="brand" aria-label="Tomboy homepage">
-          <img src="/logo.webp" alt="Tomboy India" className="brand-logo" />
-        </Link>
-        <Link href="/" className="back-link">
-          <ArrowLeft size={16} /> Back to Homepage
-        </Link>
-      </div>
+      <PageTopbar />
 
       {/* Hero Header */}
       <header className="collection-header">
@@ -73,7 +90,7 @@ export default async function CollectionPage({
                   </div>
                   <div className="product-card__details">
                     <h3>{node.title}</h3>
-                    <p>Rs. {node.priceRange?.minVariantPrice?.amount}</p>
+                    <p>₹{Math.round(Number(node.priceRange?.minVariantPrice?.amount) || 0).toLocaleString("en-IN")}</p>
                   </div>
                 </Link>
               );

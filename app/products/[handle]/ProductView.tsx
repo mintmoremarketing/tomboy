@@ -1,13 +1,19 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowLeft, Check, ShieldCheck, Truck, RefreshCw, ShoppingBag, Sparkles } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { ArrowLeft, ChevronLeft, Check, ShieldCheck, Truck, RefreshCw, ShoppingBag, Sparkles } from "lucide-react";
 import { LiveOrb } from "@/components/ui/live-orb";
 import { AssistantPanel } from "@/components/assistant/assistant-panel";
 import { recordRecentlyViewed } from "@/components/assistant/client";
 import { TryOnDialog } from "@/components/assistant/try-on-dialog";
 import { isTryOnEligible, TRY_ON_ENABLED } from "@/lib/try-on";
+import { HighlightedDescription } from "@/components/product/highlighted-description";
+import { looksLikeCode, useSwatches } from "@/lib/swatch-colors";
+import { addToCart, openCart, useCart } from "@/lib/cart";
+import { CartButton } from "@/components/cart/cart-drawer";
+import { rememberProduct } from "@/components/cart/resume-pill";
 
 // Smart CSS color mapping for Tomboy colorways
 const colorSwatchMap: Record<string, string> = {
@@ -128,7 +134,6 @@ export default function ProductView({ product }: { product: any }) {
   const [selectedImage, setSelectedImage] = useState<string>(
     (selectedColor && colorImages[selectedColor]) || images[0]?.url || ""
   );
-  const [isCheckingOut, setIsCheckingOut] = useState(false);
 
   // Find exact matching variant
   const currentVariant = useMemo(() => {
@@ -175,6 +180,27 @@ export default function ProductView({ product }: { product: any }) {
     return match ? match.availableForSale !== false : true;
   }
 
+  // Swatch dots and names: Shopify's name when it's a real colour, otherwise the colour read
+  // from that variant's photo ("B AOP 3" -> "Teal"); repeats get numbered ("Navy 2").
+  const swatches = useSwatches(colorImages);
+  const colorLabels = useMemo(() => {
+    const labels: Record<string, string> = {};
+    const used: Record<string, number> = {};
+    for (const color of colors) {
+      const name = looksLikeCode(color) && swatches[color] ? swatches[color].name : color;
+      used[name] = (used[name] ?? 0) + 1;
+      labels[color] = used[name] > 1 ? `${name} ${used[name]}` : name;
+    }
+    return labels;
+  }, [colors, swatches]);
+  const colorHex = (color: string) => {
+    const named = getColorHex(color);
+    return named === "#222222" && swatches[color] ? swatches[color].hex : named;
+  };
+
+  // photos are matched by file, not full URL (variant and gallery URLs carry different query strings)
+  const photoKey = (url?: string) => (url ?? "").split("?")[0];
+
   function handleColorSelect(color: string) {
     setSelectedColor(color);
     if (colorImages[color]) {
@@ -196,44 +222,89 @@ export default function ProductView({ product }: { product: any }) {
 
   const isAvailable = currentVariant?.availableForSale !== false;
 
-  async function handleBuyNow() {
+  const cartItems = useCart();
+  const [justAdded, setJustAdded] = useState(false);
+  const cartLine = () => ({
+    variantId: currentVariant.id,
+    handle: product.handle,
+    title: product.title,
+    variantTitle: selectedColor && colorLabels[selectedColor]
+      ? currentVariant.title?.replace(selectedColor, colorLabels[selectedColor])
+      : currentVariant.title,
+    image: currentVariant.image?.url || selectedImage || images[0]?.url || null,
+    price: Number(price) || 0,
+  });
+
+  // Add to cart: just adds it, with a brief "Added" on the button
+  function handleAddToCart() {
     if (!currentVariant?.id) return;
-    setIsCheckingOut(true);
+    addToCart(cartLine());
+    setJustAdded(true);
+    window.setTimeout(() => setJustAdded(false), 1600);
+  }
 
-    try {
-      const res = await fetch("/api/cart", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          lines: [{ merchandiseId: currentVariant.id, quantity: 1 }],
-        }),
-      });
+  // remember this product (with the chosen size) for the "continue" pill on other pages
+  useEffect(() => {
+    if (!currentVariant?.id || currentVariant.availableForSale === false) return;
+    rememberProduct({
+      handle: product.handle,
+      title: product.title,
+      variantId: currentVariant.id,
+      variantTitle: currentVariant.title,
+      size: selectedSize || undefined,
+      price: Number(price) || 0,
+      images: [currentVariant.image?.url, ...images.map((img: any) => img.url)]
+        .filter((u, i, all): u is string => !!u && all.indexOf(u) === i)
+        .slice(0, 3),
+    });
+  }, [currentVariant, product.handle, product.title, selectedSize, price, images]);
 
-      const data = await res.json();
-      if (data.checkoutUrl) {
-        window.location.href = data.checkoutUrl;
-      } else {
-        alert("Unable to reach checkout. Please try again.");
-      }
-    } catch (err) {
-      console.error("Checkout error:", err);
-      alert("Error initiating checkout.");
-    } finally {
-      setIsCheckingOut(false);
-    }
+  // Phone back button: one step back like the system gesture, or home if they landed here directly
+  const router = useRouter();
+  function goBack() {
+    const cameFromSite =
+      window.sessionStorage.getItem("tomboy-navigated") === "1" || document.referrer.startsWith(window.location.origin);
+    if (cameFromSite && window.history.length > 1) router.back();
+    else router.push("/");
+  }
+
+  // Phones: a floating Add to cart / Buy now bar once the main buttons scroll out of view
+  const actionsRef = useRef<HTMLDivElement>(null);
+  const [showFloatingBar, setShowFloatingBar] = useState(false);
+  useEffect(() => {
+    const update = () => {
+      const el = actionsRef.current;
+      setShowFloatingBar(!!el && el.getBoundingClientRect().bottom < 0);
+    };
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    return () => window.removeEventListener("scroll", update);
+  }, []);
+
+  // Buy now: makes sure it's in the cart (without doubling it), then opens the cart to check out
+  function handleBuyNow() {
+    if (!currentVariant?.id) return;
+    if (!cartItems.some((i) => i.variantId === currentVariant.id)) addToCart(cartLine());
+    openCart();
   }
 
   return (
     <div className="pdp-container">
       {/* Top Breadcrumb */}
       <div className="pdp-topbar">
-        <Link href="/" className="brand" aria-label="Tomboy homepage">
-          <img src="/logo.webp" alt="Tomboy India" className="brand-logo" />
-        </Link>
+        <div className="pdp-topbar__start">
+          <button className="pdp-back" onClick={goBack} aria-label="Go back">
+            <ChevronLeft size={22} />
+          </button>
+          <Link href="/" className="brand" aria-label="Tomboy homepage">
+            <img src="/logo.webp" alt="Tomboy India" className="brand-logo" />
+          </Link>
+        </div>
         <div className="pdp-topbar__actions">
-          <Link href="/" className="back-link">
+          <Link href="/" className="back-link hide-mobile">
             <ArrowLeft size={16} /> Back to store
           </Link>
+          <CartButton />
           <button
             className="orb-button"
             aria-label="Ask Scout about this product"
@@ -246,6 +317,21 @@ export default function ProductView({ product }: { product: any }) {
           </button>
         </div>
       </div>
+      {isAvailable && (
+        <div className={`pdp-floating-bar${showFloatingBar ? " is-visible" : ""}`} aria-hidden={!showFloatingBar} inert={!showFloatingBar}>
+          <div className="pdp-floating-bar__price">
+            {/* just the size: the full "1-2 years / B AOP 1" variant name doesn't fit */}
+            <small>{selectedSize || selectedColor || "Price"}</small>
+            <strong>₹{Math.round(Number(price) || 0).toLocaleString("en-IN")}</strong>
+          </div>
+          <button className="pdp-floating-bar__add" onClick={handleAddToCart} aria-label="Add to cart">
+            {justAdded ? <Check size={20} /> : <ShoppingBag size={20} />}
+          </button>
+          <button className="button button--dark pdp-floating-bar__buy" onClick={handleBuyNow}>
+            Buy Now
+          </button>
+        </div>
+      )}
       <AssistantPanel
         open={assistantOpen}
         onOpenChange={setAssistantOpen}
@@ -272,8 +358,13 @@ export default function ProductView({ product }: { product: any }) {
               {images.map((img: any, index: number) => (
                 <button
                   key={index}
-                  className={`pdp-thumb ${selectedImage === img.url ? "is-active" : ""}`}
-                  onClick={() => setSelectedImage(img.url)}
+                  className={`pdp-thumb ${photoKey(selectedImage) === photoKey(img.url) ? "is-active" : ""}`}
+                  onClick={() => {
+                    setSelectedImage(img.url);
+                    // a photo of another colour selects that colour too
+                    const color = Object.keys(colorImages).find((c) => photoKey(colorImages[c]) === photoKey(img.url));
+                    if (color && color !== selectedColor) setSelectedColor(color);
+                  }}
                   style={{ backgroundImage: `url(${img.url})` }}
                   aria-label={`View photo ${index + 1}`}
                 />
@@ -296,12 +387,12 @@ export default function ProductView({ product }: { product: any }) {
               <div className="pdp-option-group">
                 <div className="pdp-variants__label">
                   <span>Choose Colour:</span>
-                  <strong>{selectedColor}</strong>
+                  <strong>{colorLabels[selectedColor] ?? selectedColor}</strong>
                 </div>
                 <div className="pdp-color-swatches">
                   {colors.map((color) => {
                     const isSelected = selectedColor === color;
-                    const hex = getColorHex(color);
+                    const hex = colorHex(color);
                     return (
                       <button
                         key={color}
@@ -313,7 +404,7 @@ export default function ProductView({ product }: { product: any }) {
                           className="pdp-color-dot"
                           style={{ backgroundColor: hex }}
                         />
-                        <span>{color}</span>
+                        <span>{colorLabels[color] ?? color}</span>
                         {isSelected && <Check size={14} strokeWidth={3} />}
                       </button>
                     );
@@ -353,21 +444,25 @@ export default function ProductView({ product }: { product: any }) {
           </div>
 
           {/* Action Buttons */}
-          <div className="pdp-actions">
+          <div className="pdp-actions" ref={actionsRef}>
             <button
               className="button button--dark button--full"
-              onClick={handleBuyNow}
-              disabled={isCheckingOut || !isAvailable}
+              onClick={handleAddToCart}
+              disabled={!isAvailable}
               style={{
                 boxShadow: isAvailable ? "4px 4px 0px #00F5D4" : "none",
               }}
             >
-              <ShoppingBag size={18} />
-              {isCheckingOut
-                ? "Securing Checkout..."
-                : isAvailable
-                ? "Buy Now – Instant Checkout"
-                : "Out of Stock for this Selection"}
+              {justAdded ? <Check size={18} /> : <ShoppingBag size={18} />}
+              {!isAvailable ? "Out of Stock for this Selection" : justAdded ? "Added to Cart" : "Add to Cart"}
+            </button>
+            <button
+              className="button button--light button--full"
+              onClick={handleBuyNow}
+              disabled={!isAvailable}
+              hidden={!isAvailable}
+            >
+              Buy Now<span className="hide-mobile">&nbsp;– Instant Checkout</span>
             </button>
             {canTryOn && (
               <button className="button button--light button--full pdp-tryon" onClick={() => setTryOnOpen(true)}>
@@ -402,7 +497,7 @@ export default function ProductView({ product }: { product: any }) {
           {product.description && (
             <div className="pdp-description">
               <h3>Product Details</h3>
-              <p>{product.description}</p>
+              <HighlightedDescription text={product.description} extraTerms={colors} />
             </div>
           )}
         </div>

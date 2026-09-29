@@ -9,7 +9,6 @@ import {
   Maximize2,
   RotateCw,
   Search,
-  ShoppingBag,
   Sparkles,
   Star,
   X,
@@ -25,6 +24,8 @@ import { LiveOrb } from "@/components/ui/live-orb";
 import { StartingGateway } from "@/components/block/starting-gateway";
 import { HeroCharacter } from "@/components/block/hero-character";
 import { ComfortBand } from "@/components/block/comfort-band";
+import { SwipeDots } from "@/components/block/swipe-dots";
+import { CartButton } from "@/components/cart/cart-drawer";
 import { AssistantPanel } from "@/components/assistant/assistant-panel";
 import {
   audienceContent,
@@ -784,9 +785,7 @@ function Header({
           >
             <CircleUserRound size={20} />
           </button>
-          <Link className="icon-button" href="/collections/best-sellers" aria-label="Shop">
-            <ShoppingBag size={20} />
-          </Link>
+          <CartButton />
           {/* Entry point for the upcoming AI assistant sidebar — no action wired yet */}
           {/* Scout, the shopping assistant (press / anywhere) */}
           <button
@@ -1219,13 +1218,14 @@ function ActionStrip() {
 }
 
 function BrandStory() {
+  const rowRef = useRef<HTMLDivElement>(null);
   return (
     <section className="section brand-story" id="story">
       <div className="section-heading">
         <p className="eyebrow">Get to know us better</p>
         <h2>A closer look at Tomboy.</h2>
       </div>
-      <div className="pop-story-grid">
+      <div className="pop-story-grid" ref={rowRef}>
         {brandCards.map((card, index) => (
           <article
             className="pop-story-card"
@@ -1262,11 +1262,13 @@ function BrandStory() {
           </article>
         ))}
       </div>
+      <SwipeDots rowRef={rowRef} count={brandCards.length} />
     </section>
   );
 }
 
 function ReviewTemplates() {
+  const rowRef = useRef<HTMLDivElement>(null);
   return (
     <section className="section section--cream" id="reviews">
       <div className="section-heading">
@@ -1274,7 +1276,7 @@ function ReviewTemplates() {
         <h2>Customer Comfort Reviews</h2>
         <p>Authentic feedback on fit, soft breathable fabric, and durability.</p>
       </div>
-      <div className="review-grid">
+      <div className="review-grid" ref={rowRef}>
         {reviewPlaceholders.map((review) => (
           <article className="review-card" key={review.title}>
             <div className="stars" aria-label="Review placeholder stars">
@@ -1288,6 +1290,7 @@ function ReviewTemplates() {
           </article>
         ))}
       </div>
+      <SwipeDots rowRef={rowRef} count={reviewPlaceholders.length} />
     </section>
   );
 }
@@ -1323,14 +1326,17 @@ function Footer({
               aria-expanded={open}
             >
               {group.title}
-              {open ? <X size={24} aria-hidden /> : <span aria-hidden>+</span>}
+              {/* one + that turns 45° into an × when the group opens */}
+              <span className="footer-group__icon" aria-hidden />
             </button>
-            <div className={open ? "footer-group__content is-open" : "footer-group__content"}>
-              {group.links.map((link) => (
-                <Link href={link.href} key={link.name}>
-                  {link.name}
-                </Link>
-              ))}
+            <div className={open ? "footer-group__content is-open" : "footer-group__content"} inert={!open}>
+              <div className="footer-group__links">
+                {group.links.map((link) => (
+                  <Link href={link.href} key={link.name}>
+                    {link.name}
+                  </Link>
+                ))}
+              </div>
             </div>
           </section>
         );

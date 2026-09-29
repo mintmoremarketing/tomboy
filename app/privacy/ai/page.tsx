@@ -4,7 +4,7 @@ import { ArrowLeft } from "lucide-react";
 import { ClearDataButton } from "./clear-data-button";
 
 export const metadata: Metadata = {
-  title: "Scout, Try-on & your privacy | Tomboy India",
+  title: "Scout, Try-on & your privacy",
   description: "What happens to your messages and photos when you use Scout, Tomboy's shopping assistant, and AI try-on.",
 };
 

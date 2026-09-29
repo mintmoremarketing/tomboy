@@ -1,9 +1,11 @@
 import { getCollectionByHandle } from "@/lib/shopify";
 import Link from "next/link";
-import { ArrowLeft, Sparkles, ShieldCheck, Feather, RefreshCw, Heart } from "lucide-react";
+import { PageTopbar } from "@/components/layout/page-topbar";
+import { Sparkles, ShieldCheck, Feather, RefreshCw, Heart } from "lucide-react";
 
 export const metadata = {
-  title: "Kids & Children Essentials | Tomboy India",
+  title: "Kids & Children Essentials",
+  alternates: { canonical: "/children" },
   description: "100% Super Combed Cotton essentials for children. Anti-pinch waistbands, breathable fabric, zero-chafe comfort.",
 };
 
@@ -47,14 +49,7 @@ export default async function ChildrenPage() {
   return (
     <div className="collection-page">
       {/* Top Banner */}
-      <div className="collection-topbar">
-        <Link href="/" className="brand" aria-label="Tomboy homepage">
-          <img src="/logo.webp" alt="Tomboy India" className="brand-logo" />
-        </Link>
-        <Link href="/" className="back-link">
-          <ArrowLeft size={16} /> Back to Homepage
-        </Link>
-      </div>
+      <PageTopbar />
 
       {/* Hero Header */}
       <header className="collection-header" style={{ borderBottom: "none", paddingBottom: "16px" }}>
@@ -133,7 +128,7 @@ export default async function ChildrenPage() {
                   </div>
                   <div className="product-card__details">
                     <h3>{node.title}</h3>
-                    <p>Rs. {node.priceRange?.minVariantPrice?.amount}</p>
+                    <p>₹{Math.round(Number(node.priceRange?.minVariantPrice?.amount) || 0).toLocaleString("en-IN")}</p>
                   </div>
                 </Link>
               );

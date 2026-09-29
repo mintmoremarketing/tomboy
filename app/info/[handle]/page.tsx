@@ -1,15 +1,30 @@
+import { cache } from "react";
+import type { Metadata } from "next";
 import { getPageByHandle } from "@/lib/shopify";
+import { metaDescription } from "@/lib/site";
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 
-export default async function Page({
-  params,
-}: {
-  params: Promise<{ handle: string }>;
-}) {
+const loadPage = cache((handle: string) => getPageByHandle(handle));
+
+type Props = { params: Promise<{ handle: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { handle } = await params;
-  const page = await getPageByHandle(handle);
+  const page = await loadPage(handle);
+  if (!page) return { title: "Page not found", robots: { index: false } };
+  const text = (page.body || "").replace(/<[^>]+>/g, " ");
+  return {
+    title: page.title,
+    description: metaDescription(text),
+    alternates: { canonical: `/info/${page.handle}` },
+  };
+}
+
+export default async function Page({ params }: Props) {
+  const { handle } = await params;
+  const page = await loadPage(handle);
 
   if (!page) {
     notFound();

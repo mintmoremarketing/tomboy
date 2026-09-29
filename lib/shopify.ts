@@ -77,6 +77,26 @@ export async function getProducts(first = 20) {
   return response.body?.data?.products?.edges || [];
 }
 
+// Handles for the sitemap: every product and collection, with when it last changed
+export async function getSitemapEntries() {
+  const query = `
+    query sitemap {
+      products(first: 250, sortKey: UPDATED_AT, reverse: true) {
+        edges { node { handle updatedAt } }
+      }
+      collections(first: 100) {
+        edges { node { handle updatedAt } }
+      }
+    }
+  `;
+  const response = await shopifyFetch({ query });
+  const data = response.body?.data;
+  return {
+    products: (data?.products?.edges ?? []).map((e: any) => e.node as { handle: string; updatedAt: string }),
+    collections: (data?.collections?.edges ?? []).map((e: any) => e.node as { handle: string; updatedAt: string }),
+  };
+}
+
 // 2. Fetch Single Product by Handle
 export async function getProductByHandle(handle: string) {
   const query = `
@@ -89,6 +109,12 @@ export async function getProductByHandle(handle: string) {
         descriptionHtml
         productType
         vendor
+        availableForSale
+        updatedAt
+        seo {
+          title
+          description
+        }
         options {
           id
           name
@@ -146,6 +172,10 @@ export async function getCollectionByHandle(handle: string, first = 50) {
         title
         handle
         description
+        seo {
+          title
+          description
+        }
         image {
           url
           altText
