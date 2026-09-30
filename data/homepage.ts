@@ -34,10 +34,10 @@ export const audienceContent = {
 
 export const shopEssentials = {
   men: [
-    { title: "Briefs", note: "Core innerwear", href: "/collections/brief", bg: "#00F5D4", textColor: "#0a0a0a", noteColor: "rgba(0,0,0,0.7)" },
-    { title: "Boxers", note: "Relaxed daily comfort", href: "/collections/boxer", bg: "#FF3344", textColor: "#ffffff", noteColor: "rgba(255,255,255,0.92)" },
-    { title: "Vests", note: "Layering basics", href: "/collections/vest", bg: "#52F264", textColor: "#0a0a0a", noteColor: "rgba(0,0,0,0.7)" },
-    { title: "Socks", note: "Everyday pairs", href: "/collections/socks", bg: "#FFE500", textColor: "#0a0a0a", noteColor: "rgba(0,0,0,0.7)" },
+    { title: "Briefs", note: "Core innerwear", href: "/collections/tomboy-brief", bg: "#00F5D4", textColor: "#0a0a0a", noteColor: "rgba(0,0,0,0.7)" },
+    { title: "Boxers", note: "Relaxed daily comfort", href: "/collections/tomboy-boxer", bg: "#FF3344", textColor: "#ffffff", noteColor: "rgba(255,255,255,0.92)" },
+    { title: "Vests", note: "Layering basics", href: "/collections/tomboy-vest", bg: "#52F264", textColor: "#0a0a0a", noteColor: "rgba(0,0,0,0.7)" },
+    { title: "Socks", note: "Everyday pairs", href: "/collections/men-socks", bg: "#FFE500", textColor: "#0a0a0a", noteColor: "rgba(0,0,0,0.7)" },
     { title: "T-Shirts", note: "Graphic & basics", href: "/collections/t-shirt", bg: "#FF3399", textColor: "#ffffff", noteColor: "rgba(255,255,255,0.92)" },
     { title: "Tracks & Shorts", note: "Lounge & active", href: "/collections/track-pants", bg: "#2E7CF6", textColor: "#ffffff", noteColor: "rgba(255,255,255,0.92)" },
   ],

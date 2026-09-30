@@ -8,7 +8,8 @@ export async function shopifyFetch<T = any>({
   query: string;
   variables?: any;
 }): Promise<{ status: number; body?: { data?: T; errors?: any[] }; error?: string }> {
-  const endpoint = `https://${domain}/api/2024-01/graphql.json`;
+  // 2025-01: needed for option swatches (optionValues.swatch); everything else is unchanged
+  const endpoint = `https://${domain}/api/2025-01/graphql.json`;
 
   try {
     const result = await fetch(endpoint, {
@@ -57,6 +58,11 @@ export async function getProducts(first = 20) {
               minVariantPrice {
                 amount
                 currencyCode
+              }
+            }
+            compareAtPriceRange {
+              minVariantPrice {
+                amount
               }
             }
             images(first: 2) {
@@ -119,11 +125,23 @@ export async function getProductByHandle(handle: string) {
           id
           name
           values
+          # swatch colours set in Shopify admin (Products → variant option → swatch)
+          optionValues {
+            name
+            swatch {
+              color
+            }
+          }
         }
         priceRange {
           minVariantPrice {
             amount
             currencyCode
+          }
+        }
+        compareAtPriceRange {
+          minVariantPrice {
+            amount
           }
         }
         images(first: 50) {
@@ -143,6 +161,9 @@ export async function getProductByHandle(handle: string) {
               price {
                 amount
                 currencyCode
+              }
+              compareAtPrice {
+                amount
               }
               selectedOptions {
                 name
@@ -191,6 +212,11 @@ export async function getCollectionByHandle(handle: string, first = 50) {
                 minVariantPrice {
                   amount
                   currencyCode
+                }
+              }
+              compareAtPriceRange {
+                minVariantPrice {
+                  amount
                 }
               }
               images(first: 2) {

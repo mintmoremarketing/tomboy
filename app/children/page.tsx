@@ -1,6 +1,7 @@
 import { getCollectionByHandle } from "@/lib/shopify";
 import Link from "next/link";
-import { PageTopbar } from "@/components/layout/page-topbar";
+import { Price } from "@/components/product/price";
+import { SiteHeader } from "@/components/layout/site-header";
 import { Sparkles, ShieldCheck, Feather, RefreshCw, Heart } from "lucide-react";
 
 export const metadata = {
@@ -47,9 +48,9 @@ export default async function ChildrenPage() {
   const products = collection?.products?.edges || [];
 
   return (
+    <>
+      <SiteHeader />
     <div className="collection-page">
-      {/* Top Banner */}
-      <PageTopbar />
 
       {/* Hero Header */}
       <header className="collection-header" style={{ borderBottom: "none", paddingBottom: "16px" }}>
@@ -128,7 +129,13 @@ export default async function ChildrenPage() {
                   </div>
                   <div className="product-card__details">
                     <h3>{node.title}</h3>
-                    <p>₹{Math.round(Number(node.priceRange?.minVariantPrice?.amount) || 0).toLocaleString("en-IN")}</p>
+                    <p>
+                      <Price
+                        amount={node.priceRange?.minVariantPrice?.amount}
+                        compareAt={node.compareAtPriceRange?.minVariantPrice?.amount}
+                        size="sm"
+                      />
+                    </p>
                   </div>
                 </Link>
               );
@@ -183,5 +190,6 @@ export default async function ChildrenPage() {
         </div>
       </section>
     </div>
+    </>
   );
 }

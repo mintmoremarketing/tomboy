@@ -16,10 +16,12 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!product) return { title: "Product not found", robots: { index: false } };
 
   const title = product.seo?.title || product.title;
+  // Shopify SEO titles often already end in "| Tomboy India": don't add it twice
+  const pageTitle = /tomboy/i.test(title) ? { absolute: title } : title;
   const description = metaDescription(product.seo?.description || product.description);
   const image = product.images?.edges?.[0]?.node;
   return {
-    title,
+    title: pageTitle,
     description,
     alternates: { canonical: `/products/${product.handle}` },
     openGraph: {

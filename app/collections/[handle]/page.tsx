@@ -4,7 +4,8 @@ import { getCollectionByHandle } from "@/lib/shopify";
 import { metaDescription } from "@/lib/site";
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import { PageTopbar } from "@/components/layout/page-topbar";
+import { Price } from "@/components/product/price";
+import { SiteHeader } from "@/components/layout/site-header";
 import { Sparkles } from "lucide-react";
 
 // one Shopify request shared by the metadata and the page
@@ -18,13 +19,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!collection) return { title: "Collection not found", robots: { index: false } };
 
   const title = collection.seo?.title || collection.title;
+  // Shopify SEO titles often already end in "| Tomboy India": don't add it twice
+  const pageTitle = /tomboy/i.test(title) ? { absolute: title } : title;
   const description = metaDescription(
     collection.seo?.description || collection.description,
     `Shop ${collection.title} at Tomboy India: 100% super combed cotton, anti-pinch comfort, free shipping over ₹899.`,
   );
   const image = collection.image?.url || collection.products?.edges?.[0]?.node?.images?.edges?.[0]?.node?.url;
   return {
-    title,
+    title: pageTitle,
     description,
     alternates: { canonical: `/collections/${collection.handle}` },
     openGraph: { title, description, url: `/collections/${collection.handle}`, images: image ? [image] : undefined },
@@ -42,9 +45,9 @@ export default async function CollectionPage({ params }: Props) {
   const products = collection.products?.edges || [];
 
   return (
+    <>
+      <SiteHeader />
     <div className="collection-page">
-      {/* Top Banner */}
-      <PageTopbar />
 
       {/* Hero Header */}
       <header className="collection-header">
@@ -90,7 +93,13 @@ export default async function CollectionPage({ params }: Props) {
                   </div>
                   <div className="product-card__details">
                     <h3>{node.title}</h3>
-                    <p>₹{Math.round(Number(node.priceRange?.minVariantPrice?.amount) || 0).toLocaleString("en-IN")}</p>
+                    <p>
+                      <Price
+                        amount={node.priceRange?.minVariantPrice?.amount}
+                        compareAt={node.compareAtPriceRange?.minVariantPrice?.amount}
+                        size="sm"
+                      />
+                    </p>
                   </div>
                 </Link>
               );
@@ -99,5 +108,6 @@ export default async function CollectionPage({ params }: Props) {
         )}
       </main>
     </div>
+    </>
   );
 }

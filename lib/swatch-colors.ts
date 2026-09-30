@@ -6,7 +6,9 @@ import { useEffect, useState } from "react";
 // Reads the garment's main colour from each variant's photo (centre of the frame, ignoring the
 // white background and skin tones) and names it from a small palette.
 
-export type Swatch = { hex: string; name: string };
+// hex/name: the garment's colour from the middle of the photo.
+// thirds: colours of the left, middle and right third (a 3-pack photo shows the pieces side by side).
+export type Swatch = { hex: string; name: string; thirds: (string | null)[] };
 
 const PALETTE: [string, [number, number, number]][] = [
   ["Black", [20, 20, 22]],
@@ -88,6 +90,26 @@ function family(r: number, g: number, b: number) {
   return `h${Math.round(((h * 60 + 360) % 360) / 30)}`;
 }
 
+// The fabric's own colour in a block of pixels: most common hue family (ignoring the white
+// background and skin), then its mid-to-light tones (darkest = fold shadows, lightest = prints).
+function fabricColor(data: Uint8ClampedArray): [number, number, number] | null {
+  const pixels: [number, number, number][] = [];
+  const families = new Map<string, number>();
+  for (let i = 0; i < data.length; i += 4) {
+    const r = data[i], g = data[i + 1], b = data[i + 2];
+    if (isSkinOrBackground(r, g, b)) continue;
+    pixels.push([r, g, b]);
+    const key = family(r, g, b);
+    families.set(key, (families.get(key) ?? 0) + 1);
+  }
+  const top = [...families.entries()].sort((x, y) => y[1] - x[1])[0]?.[0];
+  if (!top || pixels.length < 12) return null;
+  const fabric = pixels.filter(([r, g, b]) => family(r, g, b) === top).sort((x, y) => luma(x) - luma(y));
+  const band = fabric.slice(Math.floor(fabric.length * 0.5), Math.ceil(fabric.length * 0.85));
+  const avg = (k: number) => band.reduce((sum, px) => sum + px[k], 0) / band.length;
+  return [avg(0), avg(1), avg(2)];
+}
+
 const cache = new Map<string, Swatch | null>();
 
 async function sample(url: string): Promise<Swatch | null> {
@@ -106,28 +128,15 @@ async function sample(url: string): Promise<Swatch | null> {
         const ctx = canvas.getContext("2d", { willReadFrequently: true });
         if (!ctx) return resolve(null);
         ctx.drawImage(img, 0, 0, w, h);
+        const fabricIn = (x0: number, x1: number) => {
+          const data = ctx.getImageData(Math.round(w * x0), Math.round(h * 0.2), Math.max(1, Math.round(w * (x1 - x0))), Math.round(h * 0.6)).data;
+          return fabricColor(data);
+        };
         // centre band, where the garment is in product shots
-        const data = ctx.getImageData(Math.round(w * 0.25), Math.round(h * 0.2), Math.round(w * 0.5), Math.round(h * 0.6)).data;
-        // the fabric's own colour: most common hue family, then its mid-to-light tones
-        // (the darkest pixels are shadows in the folds, the lightest are prints and highlights)
-        const pixels: [number, number, number][] = [];
-        const families = new Map<string, number>();
-        for (let i = 0; i < data.length; i += 4) {
-          const r = data[i], g = data[i + 1], b = data[i + 2];
-          if (isSkinOrBackground(r, g, b)) continue;
-          pixels.push([r, g, b]);
-          const key = family(r, g, b);
-          families.set(key, (families.get(key) ?? 0) + 1);
-        }
-        const top = [...families.entries()].sort((x, y) => y[1] - x[1])[0]?.[0];
-        if (!top) return resolve(null);
-        const fabric = pixels
-          .filter(([r, g, b]) => family(r, g, b) === top)
-          .sort((x, y) => luma(x) - luma(y));
-        const band = fabric.slice(Math.floor(fabric.length * 0.5), Math.ceil(fabric.length * 0.85));
-        const avg = (k: number) => band.reduce((sum, px) => sum + px[k], 0) / band.length;
-        const rgb: [number, number, number] = [avg(0), avg(1), avg(2)];
-        resolve({ hex: toHex(rgb), name: nearestName(rgb) });
+        const rgb = fabricIn(0.25, 0.75);
+        if (!rgb) return resolve(null);
+        const thirds = [fabricIn(0, 1 / 3), fabricIn(1 / 3, 2 / 3), fabricIn(2 / 3, 1)].map((c) => (c ? toHex(c) : null));
+        resolve({ hex: toHex(rgb), name: nearestName(rgb), thirds });
       } catch {
         resolve(null); // canvas blocked: fall back to the name-based colour
       }

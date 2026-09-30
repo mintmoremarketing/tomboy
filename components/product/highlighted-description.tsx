@@ -1,68 +1,78 @@
 import { Fragment } from "react";
 
-// Makes long Shopify descriptions easier to skim: splits them into short paragraphs
-// and highlights the words shoppers look for (fabric, fit, features, colour, numbers).
+// Makes long Shopify descriptions easier to skim: splits them into short paragraphs and
+// highlights the selling points: whole feature phrases ("mid-rise fit", "breathable cotton
+// blend", "fabric-covered waistband"), not single generic words like "fit" or "everyday".
 
-const KEY_PHRASES = [
-  // fabric
-  "super combed cotton", "combed cotton", "pure cotton", "organic cotton", "cotton", "modal", "spandex", "elastane",
-  "lycra", "polyester", "synthetic blend", "blend", "micro-knit", "jersey", "fleece", "ribbed", "rib-knit",
-  "french terry", "terry", "knit", "fabric",
-  // feel & performance
-  "moisture-wicking", "breathable", "breathability", "lightweight", "quick-dry", "stretch", "stretchy", "soft",
-  "super soft", "ultra-soft", "anti-odour", "anti-odor", "anti-pinch", "chafe-free", "tag-free", "tagless",
-  "non-pinch", "pre-shrunk", "durable", "durability", "hypoallergenic", "comfort", "comfortable", "cooling",
-  "odour-free", "itch-free", "gentle", "long-lasting", "colourfast", "fade-resistant", "wrinkle-free",
-  "premium", "high-quality", "bold color", "bold colour", "grip", "gripper",
-  // fit & build
-  "mid-length", "regular fit", "slim fit", "relaxed fit", "elastic waistband", "waistband", "drawstring",
-  "pockets", "pocket", "seamless", "flatlock seams", "athletic fit", "ankle cuff", "cuffs", "cuff",
-  "silhouette", "tapered", "full-length", "coverage", "mobility", "fit",
-  // use
-  "all-day", "everyday", "high-intensity", "high-energy", "gym", "running", "training", "lounging", "sleep",
-  "school", "sports", "play", "workout", "yoga", "travel", "casual", "weekend", "summer", "winter",
+const FEATURE_PATTERNS: RegExp[] = [
+  // fabric, with its quality words: "breathable cotton blend", "100% super combed cotton"
+  /\b(?:\d+%\s*)?(?:(?:super|ultra|extra|premium|pure|organic|breathable|lightweight|soft|stretchy?|combed|long-staple)[\s-]+){1,3}(?:cotton|modal|fabric|jersey|knit|fleece)(?:[\s-]+(?:blend|stretch))?\b/i,
+  // rise and fit: "mid-rise fit", "athletic fit", "relaxed fit"
+  /\b(?:low|mid|high)[\s-]rise(?:\s+fit)?\b/i,
+  /\b(?:athletic|relaxed|regular|slim|snug|secure|flattering|tapered|contoured|ergonomic|comfort)\s+fit\b/i,
+  // waistbands, cuffs, seams
+  /\b(?:[a-z]+-)?covered\s+waistband\b/i,
+  /\b(?:elastic|soft|anti-pinch|non-pinch|ribbed|wide|brushed|comfort|signature|branded)\s+waistband\b/i,
+  /\b(?:ribbed|elastic)\s+(?:ankle\s+)?cuffs?\b/i,
+  /\bflat-?lock\s+seams\b/i,
+  // coverage and length
+  /\b(?:full|moderate|medium)\s+(?:rear\s+)?coverage\b/i,
+  /\bmid-length\b/i,
+  // finish and colour
+  /\b(?:vibrant|rich|fade-resistant|colou?r-?fast)\s+colou?r(?:\s+finish)?\b/i,
+  // stand-alone performance and comfort features
+  /\b(?:moisture-wicking|quick-dry(?:ing)?|anti-odou?r|anti-bacterial|chafe-free|tag-?free|tagless|seamless|pre-shrunk|hypoallergenic|no-fuss|itch-free|4-way stretch)\b/i,
+  /\ball[\s-]day\s+comfort\b/i,
+  /\bpremium\b/i,
+  // percentages ("100%")
+  /\b\d+(?:\.\d+)?\s?%/,
 ];
 
+const COMBINED = new RegExp(FEATURE_PATTERNS.map((r) => `(?:${r.source})`).join("|"), "gi");
+const MAX_PER_PARAGRAPH = 4;
+
 function paragraphs(text: string) {
-  const sentences = text.replace(/([.!?])(?=[A-Z])/g, "$1 ").replace(/\s+/g, " ").trim().match(/[^.!?]+[.!?]+["”’)]?|[^.!?]+$/g) ?? [text];
+  const sentences = text
+    .replace(/([.!?])(?=[A-Z])/g, "$1 ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .match(/[^.!?]+[.!?]+["”’)]?|[^.!?]+$/g) ?? [text];
   const out: string[] = [];
   for (let i = 0; i < sentences.length; i += 2) out.push(sentences.slice(i, i + 2).join(" ").trim());
   return out;
 }
 
-const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-
-export function HighlightedDescription({ text, extraTerms = [] }: { text: string; extraTerms?: string[] }) {
-  // longest first so "super combed cotton" wins over "cotton"; colour names etc. come from the product
-  const terms = [...new Set([...extraTerms.filter((t) => t && t.length > 2 && t !== "Default Title"), ...KEY_PHRASES])]
-    .sort((a, b) => b.length - a.length)
-    .map(escape);
-  const pattern = new RegExp(`(\\d+(?:\\.\\d+)?\\s?%|\\b(?:${terms.join("|")})\\b)`, "gi");
-
-  // each word is highlighted once, and at most 4 per paragraph, so highlights stay meaningful
+export function HighlightedDescription({ text }: { text: string; extraTerms?: string[] }) {
+  // each phrase is highlighted once, at most 4 per paragraph, so highlights stay meaningful
   const seen = new Set<string>();
   let count = 0;
+
   return (
     <div className="pdp-description__text">
       {paragraphs(text).map((para, p) => {
+        const pieces: React.ReactNode[] = [];
+        let last = 0;
         let inParagraph = 0;
-        return (
-        <p key={p}>
-          {para.split(pattern).map((part, i) => {
-            if (i % 2 === 0) return <Fragment key={i}>{part}</Fragment>;
-            const key = part.toLowerCase();
-            if (seen.has(key) || inParagraph >= 4) return <Fragment key={i}>{part}</Fragment>;
-            seen.add(key);
-            inParagraph++;
-            // rotate three brand colours so highlights don't all look the same
-            return (
-              <mark key={i} className={`pdp-hl pdp-hl--${count++ % 3}`}>
-                {part}
-              </mark>
-            );
-          })}
-        </p>
-        );
+        for (const match of para.matchAll(COMBINED)) {
+          const phrase = match[0];
+          const key = phrase.toLowerCase().replace(/[\s-]+/g, " ");
+          if (seen.has(key) || inParagraph >= MAX_PER_PARAGRAPH) continue;
+          // Capitalised mid-sentence ("our Soft Cotton-Stretch Bikini") is the product's name, not a feature
+          const before = para.slice(0, match.index).trimEnd();
+          if (/^[A-Z]/.test(phrase) && before && !/[.!?:]$/.test(before)) continue;
+          seen.add(key);
+          inParagraph++;
+          pieces.push(<Fragment key={`t${match.index}`}>{para.slice(last, match.index)}</Fragment>);
+          // rotate three brand colours so highlights don't all look the same
+          pieces.push(
+            <mark key={`m${match.index}`} className={`pdp-hl pdp-hl--${count++ % 3}`}>
+              {phrase}
+            </mark>,
+          );
+          last = (match.index ?? 0) + phrase.length;
+        }
+        pieces.push(<Fragment key="end">{para.slice(last)}</Fragment>);
+        return <p key={p}>{pieces}</p>;
       })}
     </div>
   );

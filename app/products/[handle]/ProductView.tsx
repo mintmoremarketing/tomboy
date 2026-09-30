@@ -1,63 +1,90 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import Link from "next/link";
-import { useRouter } from "next/navigation";
-import { ArrowLeft, ChevronLeft, Check, ShieldCheck, Truck, RefreshCw, ShoppingBag, Sparkles } from "lucide-react";
-import { LiveOrb } from "@/components/ui/live-orb";
-import { AssistantPanel } from "@/components/assistant/assistant-panel";
+import { Check, ChevronDown, ShieldCheck, X, Truck, RefreshCw, ShoppingBag, Sparkles } from "lucide-react";
 import { recordRecentlyViewed } from "@/components/assistant/client";
 import { TryOnDialog } from "@/components/assistant/try-on-dialog";
 import { isTryOnEligible, TRY_ON_ENABLED } from "@/lib/try-on";
 import { HighlightedDescription } from "@/components/product/highlighted-description";
+import { Price } from "@/components/product/price";
 import { looksLikeCode, useSwatches } from "@/lib/swatch-colors";
 import { addToCart, openCart, useCart } from "@/lib/cart";
-import { CartButton } from "@/components/cart/cart-drawer";
+import { SiteHeader } from "@/components/layout/site-header";
 import { rememberProduct } from "@/components/cart/resume-pill";
 
-// Smart CSS color mapping for Tomboy colorways
+// Swatch colours for colour names used in the catalogue. Multi-word names are matched
+// before single words, so "Light Grey" doesn't fall back to plain "Grey".
 const colorSwatchMap: Record<string, string> = {
-  black: "#111111",
-  "navy blue": "#1B2A4A",
-  navy: "#1B2A4A",
-  "deep green": "#1B4332",
-  green: "#1B4332",
   "deep slate purple": "#3C1F48",
+  "navy blue": "#1B2A4A",
+  "royal blue": "#2E5BD8",
+  "deep blue": "#1E4FD6",
+  "sky blue": "#7CB8EC",
+  "deep green": "#1B4332",
+  "bottle green": "#1E4B3C",
+  "olive green": "#556B2F",
+  "dark grey": "#4B5058",
+  "dark gray": "#4B5058",
+  "light grey": "#C9CCD1",
+  "light gray": "#C9CCD1",
+  black: "#111111",
+  navy: "#1B2A4A",
+  green: "#1B4332",
   purple: "#5B21B6",
+  lavender: "#B9A5DC",
   white: "#FFFFFF",
-  grey: "#6B7280",
-  gray: "#6B7280",
+  grey: "#8A8F98",
+  gray: "#8A8F98",
+  charcoal: "#2B2D42",
+  burgundy: "#7A1F34",
+  maroon: "#6E1626",
+  wine: "#6B1E3A",
   red: "#DC2626",
+  coral: "#F06E5A",
+  peach: "#F6B89A",
+  pink: "#FF7AB6",
   yellow: "#FFE500",
+  mustard: "#CDA028",
   olive: "#556B2F",
+  khaki: "#B5A77A",
+  beige: "#D8C3A5",
+  cream: "#F7F4EA",
+  skin: "#E3B899",
+  nude: "#E3B899",
   brown: "#5C4033",
-  pink: "#FF3399",
+  teal: "#14697A",
+  mint: "#A0E1BE",
   cyan: "#00F5D4",
   blue: "#2E7CF6",
-  cream: "#F7F4EA",
-  charcoal: "#2B2D42",
 };
+const SWATCH_KEYS = Object.keys(colorSwatchMap).sort((a, b) => b.length - a.length);
+
+// The colour names inside an option: "Burgundy Red Dark-Grey" -> ["Burgundy", "Red", "Dark Grey"]
+function colorParts(name: string): string[] {
+  let rest = ` ${name.toLowerCase().replace(/[-_/&,+]/g, " ").replace(/\s+/g, " ")} `;
+  const found: { at: number; key: string }[] = [];
+  for (const key of SWATCH_KEYS) {
+    let i = rest.indexOf(` ${key} `);
+    while (i !== -1) {
+      found.push({ at: i, key });
+      rest = rest.slice(0, i + 1) + "#".repeat(key.length) + rest.slice(i + 1 + key.length);
+      i = rest.indexOf(` ${key} `);
+    }
+  }
+  return found.sort((x, y) => x.at - y.at).map((f) => f.key.replace(/\b\w/g, (ch) => ch.toUpperCase()));
+}
 
 function getColorHex(name: string): string {
-  const clean = name.trim().toLowerCase();
-  for (const [key, val] of Object.entries(colorSwatchMap)) {
-    if (clean.includes(key) || key.includes(clean)) return val;
-  }
-  return "#222222";
+  const [first] = colorParts(name);
+  return first ? colorSwatchMap[first.toLowerCase()] : "#222222";
 }
 
 export default function ProductView({ product }: { product: any }) {
-  // Scout on product pages: "This product" in its + menu attaches the one being viewed
-  const [assistantOpen, setAssistantOpen] = useState(false);
-  const [orbDancing, setOrbDancing] = useState(false);
-  const [audience, setAudience] = useState<"men" | "women" | "kids">("men");
   const [tryOnOpen, setTryOnOpen] = useState(false);
   // AI try-on is offered for adult outerwear only (see lib/try-on.ts)
   const canTryOn = TRY_ON_ENABLED && isTryOnEligible({ title: product.title, productType: product.productType });
   useEffect(() => {
     recordRecentlyViewed(product.handle);
-    const saved = window.localStorage.getItem("tomboy-audience");
-    if (saved === "men" || saved === "women" || saved === "kids") setAudience(saved);
   }, [product.handle]);
 
   const images = useMemo(
@@ -82,7 +109,8 @@ export default function ProductView({ product }: { product: any }) {
     let parsedColors: string[] = colorOpt?.values || [];
     let parsedSizes: string[] = sizeOpt?.values || [];
 
-    const imgMap: Record<string, string> = {};
+    // every photo each colour's variants use, with how many sizes use it
+    const colorPhotos: Record<string, Record<string, number>> = {};
 
     // Map each variant's image to its color
     variants.forEach((v: any) => {
@@ -112,10 +140,23 @@ export default function ProductView({ product }: { product: any }) {
         parsedSizes.push(vSize);
       }
 
-      if (vColor && v.image?.url && !imgMap[vColor]) {
-        imgMap[vColor] = v.image.url;
+      if (vColor && v.image?.url) {
+        const photos = (colorPhotos[vColor] ??= {});
+        photos[v.image.url] = (photos[v.image.url] ?? 0) + 1;
       }
     });
+
+    // One photo per colour. Shopify variants are sometimes linked to the wrong photo
+    // (e.g. a "Royal Blue" size pointing at the Navy picture), so prefer the photo whose
+    // file name matches the colour, then the one most sizes use.
+    const squash = (t: string) => t.toLowerCase().replace(/[^a-z0-9]/g, "");
+    const imgMap: Record<string, string> = {};
+    for (const [color, photos] of Object.entries(colorPhotos)) {
+      const urls = Object.keys(photos);
+      const fileOf = (url: string) => squash(url.split("?")[0].split("/").pop() ?? "");
+      const named = urls.find((u) => squash(color).length > 2 && fileOf(u).includes(squash(color)));
+      imgMap[color] = named ?? urls.sort((a, b) => photos[b] - photos[a])[0];
+    }
 
     return {
       colors: parsedColors.length > 0 ? parsedColors : [],
@@ -187,19 +228,104 @@ export default function ProductView({ product }: { product: any }) {
     const labels: Record<string, string> = {};
     const used: Record<string, number> = {};
     for (const color of colors) {
-      const name = looksLikeCode(color) && swatches[color] ? swatches[color].name : color;
+      // rename only true codes ("B AOP 1"): anything with a colour word we know keeps its name
+      const isCode = looksLikeCode(color) && colorParts(color).length === 0;
+      const name = isCode && swatches[color] ? swatches[color].name : color;
       used[name] = (used[name] ?? 0) + 1;
       labels[color] = used[name] > 1 ? `${name} ${used[name]}` : name;
     }
     return labels;
   }, [colors, swatches]);
+  const colorName = (color: string) => {
+    const parts = colorParts(color);
+    if (parts.length > 1) return parts.join(" · ");
+    const name = colorLabels[color] ?? color;
+    return packSize > 1 ? `${packSize} × ${name}` : name;
+  };
+
+  // Swatch colour: the colour name when we know it. Photos are only read for coded names
+  // ("B AOP 1"): on model shots the photo reader can't tell skin from brown/tan fabric,
+  // so it isn't trusted over a real colour name (checked across all 110 multi-colour products).
+  // Swatch colours the store set in Shopify win over everything else
+  const shopifySwatch = useMemo(() => {
+    const map: Record<string, string> = {};
+    for (const option of product.options ?? []) {
+      if (!/colou?r/i.test(option.name)) continue;
+      for (const value of option.optionValues ?? []) if (value.swatch?.color) map[value.name] = value.swatch.color;
+    }
+    return map;
+  }, [product.options]);
+
   const colorHex = (color: string) => {
+    if (shopifySwatch[color]) return shopifySwatch[color];
     const named = getColorHex(color);
     return named === "#222222" && swatches[color] ? swatches[color].hex : named;
   };
+  // Mixed pack: one stripe per colour in its name
+  const packColors = (color: string) => colorParts(color).map((part) => colorSwatchMap[part.toLowerCase()]);
+
+  // Multi-piece packs ("3 Pcs Pack", "Pack of 3"): every colour option is that many pieces,
+  // so say it plainly: "3 × Red", or the three colours of a mixed pack.
+  const packSize = useMemo(() => {
+    const m = product.title.match(/(\d+)\s*(?:pcs|pieces|pc|pack)\b|pack\s*of\s*(\d+)/i);
+    const n = Number(m?.[1] ?? m?.[2]);
+    return n > 1 && n <= 12 ? n : 1;
+  }, [product.title]);
+
+  // Options that name several colours ("Blue Black Burgundy") are mixed packs; list them
+  // after the single colours under their own heading instead of one long jumbled list.
+  const colorGroups = useMemo(() => {
+    const mixed = colors.filter((c) => colorParts(c).length > 1);
+    const single = colors.filter((c) => colorParts(c).length <= 1);
+    const singleTitle = packSize > 1 ? `All ${packSize} in one colour` : "Single colour";
+    if (mixed.length === 0) return [{ title: packSize > 1 ? singleTitle : null, colors }];
+    return [
+      ...(single.length ? [{ title: singleTitle as string | null, colors: single }] : []),
+      { title: (packSize > 1 ? `Mixed packs (${packSize} colours)` : "Mixed colour packs") as string | null, colors: mixed },
+    ];
+  }, [colors, packSize]);
 
   // photos are matched by file, not full URL (variant and gallery URLs carry different query strings)
   const photoKey = (url?: string) => (url ?? "").split("?")[0];
+
+  // Thumbnails in the same order as the colour buttons (Shopify's gallery order is just
+  // upload order); photos that aren't a colour's main photo, like close-ups, follow after.
+  const galleryImages = useMemo(() => {
+    const colorOrder = colors.map((c) => photoKey(colorImages[c])).filter(Boolean);
+    const rank = (img: any) => {
+      const i = colorOrder.indexOf(photoKey(img.url));
+      return i === -1 ? colorOrder.length : i;
+    };
+    return [...images].sort((a: any, b: any) => rank(a) - rank(b));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [images, colors, colorImages]);
+
+  // keep the highlighted thumbnail visible in the scrolling row
+  const thumbsRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const row = thumbsRef.current;
+    const active = row?.querySelector<HTMLElement>(".pdp-thumb.is-active");
+    if (!row || !active) return;
+    const box = row.getBoundingClientRect();
+    const r = active.getBoundingClientRect();
+    row.scrollBy({ left: r.left + r.width / 2 - (box.left + box.width / 2), behavior: "smooth" });
+  }, [selectedImage]);
+
+  // phones: the picked colour's tile slides into view in its swipe row
+  // (e.g. when the colour was chosen by tapping a photo thumbnail)
+  // (same for the size row)
+  useEffect(() => {
+    for (const selector of [".pdp-colour-tile.is-selected", ".pdp-size-btn.is-selected"]) {
+      const tile = document.querySelector<HTMLElement>(selector);
+      const row = tile?.parentElement;
+      if (!tile || !row || row.scrollWidth <= row.clientWidth) continue;
+      const box = row.getBoundingClientRect();
+      const r = tile.getBoundingClientRect();
+      if (r.left < box.left || r.right > box.right) {
+        row.scrollBy({ left: r.left + r.width / 2 - (box.left + box.width / 2), behavior: "smooth" });
+      }
+    }
+  }, [selectedColor, selectedSize]);
 
   function handleColorSelect(color: string) {
     setSelectedColor(color);
@@ -221,6 +347,9 @@ export default function ProductView({ product }: { product: any }) {
     product.priceRange?.minVariantPrice?.amount;
 
   const isAvailable = currentVariant?.availableForSale !== false;
+  // Shopify's compare-at ("original") price for the struck-through price
+  const compareAt =
+    currentVariant?.compareAtPrice?.amount ?? product.compareAtPriceRange?.minVariantPrice?.amount ?? null;
 
   const cartItems = useCart();
   const [justAdded, setJustAdded] = useState(false);
@@ -228,10 +357,10 @@ export default function ProductView({ product }: { product: any }) {
     variantId: currentVariant.id,
     handle: product.handle,
     title: product.title,
-    variantTitle: selectedColor && colorLabels[selectedColor]
-      ? currentVariant.title?.replace(selectedColor, colorLabels[selectedColor])
+    variantTitle: selectedColor
+      ? currentVariant.title?.replace(selectedColor, colorName(selectedColor))
       : currentVariant.title,
-    image: currentVariant.image?.url || selectedImage || images[0]?.url || null,
+    image: colorImages[selectedColor] || currentVariant.image?.url || selectedImage || images[0]?.url || null,
     price: Number(price) || 0,
   });
 
@@ -253,32 +382,46 @@ export default function ProductView({ product }: { product: any }) {
       variantTitle: currentVariant.title,
       size: selectedSize || undefined,
       price: Number(price) || 0,
-      images: [currentVariant.image?.url, ...images.map((img: any) => img.url)]
+      images: [colorImages[selectedColor], currentVariant.image?.url, ...images.map((img: any) => img.url)]
         .filter((u, i, all): u is string => !!u && all.indexOf(u) === i)
         .slice(0, 3),
     });
-  }, [currentVariant, product.handle, product.title, selectedSize, price, images]);
+  }, [currentVariant, product.handle, product.title, selectedSize, selectedColor, colorImages, price, images]);
 
-  // Phone back button: one step back like the system gesture, or home if they landed here directly
-  const router = useRouter();
-  function goBack() {
-    const cameFromSite =
-      window.sessionStorage.getItem("tomboy-navigated") === "1" || document.referrer.startsWith(window.location.origin);
-    if (cameFromSite && window.history.length > 1) router.back();
-    else router.push("/");
-  }
+  // Phones: bottom sheet to change colour/size from the floating bar
+  const [pickerOpen, setPickerOpen] = useState(false);
+  useEffect(() => {
+    if (!pickerOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setPickerOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    document.body.style.overflow = "hidden";
+    return () => {
+      window.removeEventListener("keydown", onKey);
+      document.body.style.overflow = "";
+    };
+  }, [pickerOpen]);
 
-  // Phones: a floating Add to cart / Buy now bar once the main buttons scroll out of view
+  // Phones: a floating Add to cart / Buy now bar whenever the main buttons aren't comfortably in view
   const actionsRef = useRef<HTMLDivElement>(null);
   const [showFloatingBar, setShowFloatingBar] = useState(false);
   useEffect(() => {
     const update = () => {
       const el = actionsRef.current;
-      setShowFloatingBar(!!el && el.getBoundingClientRect().bottom < 0);
+      if (!el) return setShowFloatingBar(false);
+      // judge by the Add to Cart button itself: show the bar while it's below the fold, and again
+      // once it has scrolled up into the top 30% of the screen
+      const r = (el.firstElementChild ?? el).getBoundingClientRect();
+      setShowFloatingBar(r.top < window.innerHeight * 0.3 || r.top > window.innerHeight - 40);
     };
     update();
     window.addEventListener("scroll", update, { passive: true });
-    return () => window.removeEventListener("scroll", update);
+    window.addEventListener("resize", update);
+    return () => {
+      window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+    };
   }, []);
 
   // Buy now: makes sure it's in the cart (without doubling it), then opens the cart to check out
@@ -288,41 +431,107 @@ export default function ProductView({ product }: { product: any }) {
     openCart();
   }
 
+  // Colour + size pickers: on the page, and again in the phone bottom sheet
+  const variantPickers = (
+    <div className="pdp-variants">
+      {/* 1. Choose Colour */}
+      {colors.length > 0 && (
+        <div className="pdp-option-group">
+          <div className="pdp-variants__label">
+            <span>Choose Colour:</span>
+
+          </div>
+          {colorGroups.map((group) => (
+            <div key={group.title ?? "all"}>
+              {group.title && <p className="pdp-color-group__title">{group.title}</p>}
+              <div className="pdp-colour-grid" role="radiogroup" aria-label={group.title ?? "Colour"}>
+                {group.colors.map((color) => {
+                  const isSelected = selectedColor === color;
+                  const parts = colorParts(color);
+                  const isPack = parts.length > 1 && !shopifySwatch[color];
+                  return (
+                    <button
+                      key={color}
+                      type="button"
+                      role="radio"
+                      aria-checked={isSelected}
+                      className={`pdp-colour-tile${isSelected ? " is-selected" : ""}`}
+                      onClick={() => handleColorSelect(color)}
+                      // where the swatch colour came from, for checking the catalogue (photo vs name)
+                      data-source={getColorHex(color) === "#222222" && swatches[color] ? "photo" : "name"}
+                    >
+                      {/* colour + name side by side, so it works without telling colours apart */}
+                      <span className="pdp-colour-tile__dots" aria-hidden>
+                        {(isPack ? packColors(color) : [colorHex(color)]).map((hex, i) => (
+                          <span key={i} className="pdp-colour-tile__dot" style={{ backgroundColor: hex }} />
+                        ))}
+                      </span>
+                      <span className="pdp-colour-tile__name">{colorName(color)}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* 2. Choose Size */}
+      {sizes.length > 0 && (
+        <div className="pdp-option-group">
+          <div className="pdp-variants__label">
+            <span>Choose Size:</span>
+            <strong>{selectedSize}</strong>
+          </div>
+          <div className="pdp-size-grid">
+            {sizes.map((size) => {
+              const isSelected = selectedSize === size;
+              const available = isSizeAvailable(size);
+              return (
+                <button
+                  key={size}
+                  type="button"
+                  className={`pdp-size-btn ${isSelected ? "is-selected" : ""} ${
+                    !available ? "is-soldout" : ""
+                  }`}
+                  onClick={() => available && setSelectedSize(size)}
+                  title={available ? `Size ${size}` : `Size ${size} (Sold Out)`}
+                >
+                  {size}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+
+  const optionSummary =
+    [selectedColor && colorName(selectedColor).replace(/ · /g, "/"), selectedSize && `Size ${selectedSize}`]
+      .filter(Boolean)
+      .join(" · ") || "Choose options";
+
   return (
+    <>
+    <SiteHeader currentProduct={{ handle: product.handle }} />
     <div className="pdp-container">
-      {/* Top Breadcrumb */}
-      <div className="pdp-topbar">
-        <div className="pdp-topbar__start">
-          <button className="pdp-back" onClick={goBack} aria-label="Go back">
-            <ChevronLeft size={22} />
-          </button>
-          <Link href="/" className="brand" aria-label="Tomboy homepage">
-            <img src="/logo.webp" alt="Tomboy India" className="brand-logo" />
-          </Link>
-        </div>
-        <div className="pdp-topbar__actions">
-          <Link href="/" className="back-link hide-mobile">
-            <ArrowLeft size={16} /> Back to store
-          </Link>
-          <CartButton />
-          <button
-            className="orb-button"
-            aria-label="Ask Scout about this product"
-            title="Ask Scout (press /)"
-            onClick={() => setAssistantOpen(true)}
-            onMouseEnter={() => setOrbDancing(true)}
-            onMouseLeave={() => setOrbDancing(false)}
-          >
-            <LiveOrb variant="custom" color="#FF3333" eyeColor="#FAFAFA" size={34} dance={orbDancing} />
-          </button>
-        </div>
-      </div>
       {isAvailable && (
         <div className={`pdp-floating-bar${showFloatingBar ? " is-visible" : ""}`} aria-hidden={!showFloatingBar} inert={!showFloatingBar}>
           <div className="pdp-floating-bar__price">
-            {/* just the size: the full "1-2 years / B AOP 1" variant name doesn't fit */}
-            <small>{selectedSize || selectedColor || "Price"}</small>
-            <strong>₹{Math.round(Number(price) || 0).toLocaleString("en-IN")}</strong>
+            {/* what they're buying ("3 × Red · Size S"); tap to change it without scrolling */}
+            <button
+              type="button"
+              className="pdp-floating-bar__options"
+              onClick={() => setPickerOpen(true)}
+              aria-label={`${optionSummary}. Change colour or size`}
+            >
+              <span>{optionSummary}</span>
+              <ChevronDown size={12} strokeWidth={3} aria-hidden />
+            </button>
+            <strong>
+              <Price amount={price} compareAt={compareAt} size="sm" showBadge={false} />
+            </strong>
           </div>
           <button className="pdp-floating-bar__add" onClick={handleAddToCart} aria-label="Add to cart">
             {justAdded ? <Check size={20} /> : <ShoppingBag size={20} />}
@@ -332,12 +541,49 @@ export default function ProductView({ product }: { product: any }) {
           </button>
         </div>
       )}
-      <AssistantPanel
-        open={assistantOpen}
-        onOpenChange={setAssistantOpen}
-        audience={audience}
-        currentProduct={{ handle: product.handle }}
-      />
+
+      {pickerOpen && (
+        <div className="pdp-sheet" role="dialog" aria-modal="true" aria-label="Choose colour and size">
+          <button className="pdp-sheet__backdrop" aria-label="Close" onClick={() => setPickerOpen(false)} />
+          <div className="pdp-sheet__panel">
+            {/* the photo stays in view while picking, so a colour change shows straight away */}
+            <div className="pdp-sheet__head">
+              <span className="pdp-sheet__photo" style={selectedImage ? { backgroundImage: `url(${selectedImage})` } : {}} />
+              <div className="pdp-sheet__info">
+                <p className="pdp-sheet__title">{product.title}</p>
+                <Price amount={price} compareAt={compareAt} size="sm" />
+                <p className="pdp-sheet__summary">{optionSummary}</p>
+              </div>
+              <button className="icon-button" aria-label="Close" onClick={() => setPickerOpen(false)}>
+                <X size={20} />
+              </button>
+            </div>
+            <div className="pdp-sheet__body">{variantPickers}</div>
+            <div className="pdp-sheet__foot">
+              <button
+                className="button button--light"
+                onClick={() => {
+                  handleAddToCart();
+                  setPickerOpen(false);
+                }}
+                disabled={!isAvailable}
+              >
+                <ShoppingBag size={18} /> Add to Cart
+              </button>
+              <button
+                className="button button--dark"
+                onClick={() => {
+                  setPickerOpen(false);
+                  handleBuyNow();
+                }}
+                disabled={!isAvailable}
+              >
+                Buy Now
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <div className="pdp-grid">
         {/* Left: Gallery */}
@@ -353,9 +599,9 @@ export default function ProductView({ product }: { product: any }) {
             {!selectedImage && <div className="pdp-no-image">No Image</div>}
           </div>
 
-          {images.length > 1 && (
-            <div className="pdp-thumbnails">
-              {images.map((img: any, index: number) => (
+          {galleryImages.length > 1 && (
+            <div className="pdp-thumbnails" ref={thumbsRef}>
+              {galleryImages.map((img: any, index: number) => (
                 <button
                   key={index}
                   className={`pdp-thumb ${photoKey(selectedImage) === photoKey(img.url) ? "is-active" : ""}`}
@@ -378,70 +624,12 @@ export default function ProductView({ product }: { product: any }) {
 
 
           <h1 className="pdp-title">{product.title}</h1>
-          <div className="pdp-price">Rs. {price}</div>
-
-          {/* Option Selectors: Clean Separated Color & Size */}
-          <div className="pdp-variants">
-            {/* 1. Choose Colour */}
-            {colors.length > 0 && (
-              <div className="pdp-option-group">
-                <div className="pdp-variants__label">
-                  <span>Choose Colour:</span>
-                  <strong>{colorLabels[selectedColor] ?? selectedColor}</strong>
-                </div>
-                <div className="pdp-color-swatches">
-                  {colors.map((color) => {
-                    const isSelected = selectedColor === color;
-                    const hex = colorHex(color);
-                    return (
-                      <button
-                        key={color}
-                        type="button"
-                        className={`pdp-color-btn ${isSelected ? "is-selected" : ""}`}
-                        onClick={() => handleColorSelect(color)}
-                      >
-                        <span
-                          className="pdp-color-dot"
-                          style={{ backgroundColor: hex }}
-                        />
-                        <span>{colorLabels[color] ?? color}</span>
-                        {isSelected && <Check size={14} strokeWidth={3} />}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {/* 2. Choose Size */}
-            {sizes.length > 0 && (
-              <div className="pdp-option-group">
-                <div className="pdp-variants__label">
-                  <span>Choose Size:</span>
-                  <strong>{selectedSize}</strong>
-                </div>
-                <div className="pdp-size-grid">
-                  {sizes.map((size) => {
-                    const isSelected = selectedSize === size;
-                    const available = isSizeAvailable(size);
-                    return (
-                      <button
-                        key={size}
-                        type="button"
-                        className={`pdp-size-btn ${isSelected ? "is-selected" : ""} ${
-                          !available ? "is-soldout" : ""
-                        }`}
-                        onClick={() => available && setSelectedSize(size)}
-                        title={available ? `Size ${size}` : `Size ${size} (Sold Out)`}
-                      >
-                        {size}
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
+          <div className="pdp-price">
+            <Price amount={price} compareAt={compareAt} size="lg" />
           </div>
+
+          {variantPickers}
+
 
           {/* Action Buttons */}
           <div className="pdp-actions" ref={actionsRef}>
@@ -503,5 +691,6 @@ export default function ProductView({ product }: { product: any }) {
         </div>
       </div>
     </div>
+    </>
   );
 }
