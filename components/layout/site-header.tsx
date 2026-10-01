@@ -6,6 +6,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { LiveOrb } from "@/components/ui/live-orb";
 import { AssistantPanel } from "@/components/assistant/assistant-panel";
+import { ScoutNudge } from "@/components/assistant/scout-nudge";
+import { onNudge } from "@/components/assistant/nudges";
 import { CartButton } from "@/components/cart/cart-drawer";
 import { DesktopNavItem, MobileNavSection } from "@/components/layout/nav-menu";
 import { audienceContent } from "@/data/homepage";
@@ -152,6 +154,14 @@ export function SiteHeader({
   const [accountOpen, setAccountOpen] = useState(false);
   const [assistantOpen, setAssistantOpen] = useState(false);
   const [orbDancing, setOrbDancing] = useState(false);
+  // a Scout nudge was tapped: open Scout with its question or sheet
+  const [autoAsk, setAutoAsk] = useState<string | null>(null);
+  const [autoSheet, setAutoSheet] = useState<"sizes" | null>(null);
+  // the orb waves when Scout has something to say
+  useEffect(() => onNudge(() => {
+    setOrbDancing(true);
+    window.setTimeout(() => setOrbDancing(false), 1600);
+  }), []);
 
   return (
     <>
@@ -209,6 +219,17 @@ export function SiteHeader({
             <LiveOrb variant="custom" color="#FF3333" eyeColor="#FAFAFA" size={34} dance={orbDancing} />
           </button>
         </div>
+        <ScoutNudge
+          hidden={assistantOpen}
+          onAsk={(q) => {
+            setAutoAsk(q);
+            setAssistantOpen(true);
+          }}
+          onSheet={(sheet) => {
+            setAutoSheet(sheet);
+            setAssistantOpen(true);
+          }}
+        />
       </header>
 
       <AssistantPanel
@@ -216,6 +237,12 @@ export function SiteHeader({
         onOpenChange={setAssistantOpen}
         audience={audience}
         currentProduct={currentProduct}
+        autoAsk={autoAsk}
+        autoSheet={autoSheet}
+        onAutoHandled={() => {
+          setAutoAsk(null);
+          setAutoSheet(null);
+        }}
       />
 
       {mobileMenuOpen && (

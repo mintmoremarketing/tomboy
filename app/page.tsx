@@ -28,6 +28,9 @@ import { ComfortBand } from "@/components/block/comfort-band";
 import { SwipeDots } from "@/components/block/swipe-dots";
 import { CartButton } from "@/components/cart/cart-drawer";
 import { SiteHeader, heroHighlightColor } from "@/components/layout/site-header";
+import { openFitFinder } from "@/components/fit/fit-finder";
+import { nudge, type Nudge } from "@/components/assistant/nudges";
+import { useSectionNudges } from "@/components/assistant/section-nudges";
 import { AssistantPanel } from "@/components/assistant/assistant-panel";
 import {
   audienceContent,
@@ -41,6 +44,53 @@ import {
 } from "@/data/homepage";
 
 type Audience = "men" | "women" | "kids";
+
+// Scout's hello on the homepage, per lineup
+const GREETING: Record<Audience, Nudge> = {
+  men: {
+    id: "home-hello-men",
+    text: "Hey! I'm Scout. Shopping men's today? Tell me your size once and I'll pick the right fit on every product.",
+    actions: [
+      { label: "Find my size", fit: true },
+      { label: "What's popular?", ask: "What are the most popular men's picks right now?" },
+    ],
+  },
+  women: {
+    id: "home-hello-women",
+    text: "Hi! I'm Scout. Looking for comfy everyday innerwear? I can find your panty and bra size in under a minute.",
+    actions: [
+      { label: "Find my size", fit: true },
+      { label: "What's popular?", ask: "What are the most popular women's picks right now?" },
+    ],
+  },
+  kids: {
+    id: "home-hello-kids",
+    text: "Hi! I'm Scout. Shopping for a little one? Tell me their age and I'll pick sizes that fit.",
+    actions: [
+      { label: "Size by age", fit: true },
+      { label: "What's popular?", ask: "What are the most popular kids' picks right now?" },
+    ],
+  },
+};
+
+// Scout's reaction to switching Men / Women / Kids
+const SWITCH_NUDGE: Record<Audience, Nudge> = {
+  men: {
+    id: "home-switch-men",
+    text: "Men's it is. Briefs, trunks, boxers, tees and joggers: want me to find your size first?",
+    actions: [{ label: "Find my size", fit: true }],
+  },
+  women: {
+    id: "home-switch-women",
+    text: "Switched to women's. Want help finding your panty or bra size?",
+    actions: [{ label: "Find my size", fit: true }],
+  },
+  kids: {
+    id: "home-switch-kids",
+    text: "Kids' it is! Tell me their age and I'll suggest the right size.",
+    actions: [{ label: "Size by age", fit: true }],
+  },
+};
 
 export default function Home() {
   const [audience, setAudience] = useState<Audience>("men");
@@ -78,7 +128,66 @@ export default function Home() {
   function switchAudience(value: Audience) {
     setAudience(value);
     window.localStorage.setItem("tomboy-audience", value);
+    nudge(SWITCH_NUDGE[value]);
   }
+
+  // ---- Scout speaks up: on arrival, and as each section scrolls into view ----
+  useEffect(() => {
+    if (!audienceReady || showGateway) return;
+    const t = window.setTimeout(() => nudge(GREETING[audience]), 1000);
+    return () => window.clearTimeout(t);
+    // greet once, in the lineup they arrived in
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [audienceReady, showGateway]);
+
+  useSectionNudges(
+    [
+      {
+        selector: ".comfort-band",
+        nudge: {
+          id: "home-comfort",
+          text: "Everything here is soft cotton with waistbands that don't dig in. Ask me how any piece fits before you buy.",
+          actions: [{ label: "How does Tomboy fit?", ask: "How does Tomboy sizing fit compared to other brands?" }],
+        },
+      },
+      {
+        selector: "#essentials",
+        nudge: {
+          id: `home-essentials-${audience}`,
+          text: `Not sure where to start with ${audience === "kids" ? "kids'" : audience === "women" ? "women's" : "men's"} essentials? Tell me what you wear most and I'll pick the right ones.`,
+          actions: [{ label: "Pick for me", ask: `Help me pick everyday ${audience} essentials. Ask me what I need.` }],
+        },
+      },
+      {
+        selector: ".scroll-story-section",
+        nudge: {
+          id: "home-story",
+          text: "Want to know what makes the cotton feel different? Ask me anything about the fabric or how to wash it.",
+          actions: [{ label: "Tell me about the fabric", ask: "What makes Tomboy's cotton different, and how should I wash it?" }],
+        },
+      },
+      {
+        selector: "#live-products",
+        nudge: {
+          id: `home-products-${audience}`,
+          text: "These are live from the store. Want me to show only what's in your size?",
+          actions: [
+            { label: "Show my size", ask: `Show me ${audience} products available in my size.` },
+            { label: "Find my size", fit: true },
+          ],
+        },
+      },
+      {
+        selector: "#reviews",
+        nudge: {
+          id: "home-reviews",
+          text: "Any questions before you buy? I can help with sizing, delivery or returns.",
+          actions: [{ label: "Returns & delivery", ask: "How do returns, exchanges and delivery work?" }],
+        },
+      },
+    ],
+    [audience, audienceReady],
+  );
 
   function handleGatewayChoice(value: Audience) {
     setAudience(value);
@@ -605,9 +714,10 @@ function Hero({
             <Link className="button button--dark" href={`/collections/${content.collectionHandle}`}>
               Shop {content.label} <ArrowRight size={18} />
             </Link>
-            <Link className="button button--light" href="#story">
+            {/* opens the Fit Finder: sizes from a photo or measurements, saved for Scout */}
+            <button type="button" className="button button--light" onClick={() => openFitFinder(audience)}>
               Know the Fit
-            </Link>
+            </button>
           </div>
         </div>
       </div>
@@ -741,7 +851,7 @@ function ProductCarousel({
   audience: Audience;
 }) {
   return (
-    <section className="section section--cream">
+    <section className="section section--cream" id="live-products">
       <div className="section-heading section-heading--inline">
         <div>
           <p className="eyebrow">Shopify Live Collection</p>

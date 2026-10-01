@@ -81,9 +81,29 @@ export default function AiPrivacyPage() {
             </li>
           </ul>
 
+          <h2>When you use the Fit Finder</h2>
+          <ul>
+            <li>
+              You can type in your measurements, or upload one full-length photo of yourself in everyday clothes plus your height.
+              Your photo is shrunk and stripped of hidden details (like location) on your device first, then sent once to
+              Google&apos;s Gemini AI over an encrypted connection to estimate your chest, waist and hip.
+            </li>
+            <li>
+              <strong>We never save your photo.</strong> Only the estimated measurements come back, and the photo is cleared from
+              the page as soon as they arrive.
+            </li>
+            <li>
+              Your sizes and measurements are saved only if you tap &ldquo;Save to my sizes&rdquo;, and only on this device (in
+              &ldquo;My sizes&rdquo;), so Scout can give you sizing advice. You can change or delete them any time.
+            </li>
+            <li>
+              Photos are only for adults, fully clothed. For kids, the Fit Finder only asks for age and height: never a photo.
+            </li>
+          </ul>
+
           <h2>Google&apos;s role</h2>
           <p>
-            Google provides the AI (Gemini) that powers Scout and try-on. What you send is processed by Google to produce the
+            Google provides the AI (Gemini) that powers Scout, try-on and the Fit Finder. What you send is processed by Google to produce the
             answer or image, under the{" "}
             <a href="https://ai.google.dev/gemini-api/terms" target="_blank" rel="noreferrer">
               Gemini API Terms

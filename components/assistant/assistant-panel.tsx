@@ -153,12 +153,20 @@ export function AssistantPanel({
   onOpenChange,
   audience: siteAudience,
   currentProduct = null,
+  autoAsk = null,
+  autoSheet = null,
+  onAutoHandled,
 }: {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   audience: Audience;
   /** The product page being viewed, if any: "This product" in the + menu attaches it. */
   currentProduct?: { handle: string } | null;
+  /** A question to send as soon as the panel opens (from a Scout nudge); "{this}" becomes the product's @tag */
+  autoAsk?: string | null;
+  /** Open one of the + menu sheets straight away (e.g. "My sizes" from a nudge) */
+  autoSheet?: "sizes" | null;
+  onAutoHandled?: () => void;
 }) {
   // "Shopping for…" can point this chat at another audience (or a gift) without touching the site's.
   const [shoppingFor, setShoppingFor] = useState<ShoppingFor | null>(null);
@@ -200,6 +208,7 @@ export function AssistantPanel({
   const [pickerIndex, setPickerIndex] = useState(0);
   const [tagProducts, setTagProducts] = useState<TagProduct[]>([]);
   const [tagCategories, setTagCategories] = useState<TagCategory[]>([]);
+  const [tagsLoaded, setTagsLoaded] = useState(false);
   const textarea = useRef<HTMLTextAreaElement>(null);
   const backdrop = useRef<HTMLDivElement>(null);
   const fileInput = useRef<HTMLInputElement>(null);
@@ -219,7 +228,8 @@ export function AssistantPanel({
         if (Array.isArray(data.products)) setTagProducts(data.products);
         if (Array.isArray(data.categories)) setTagCategories(data.categories);
       })
-      .catch(() => {});
+      .catch(() => {})
+      .finally(() => setTagsLoaded(true));
   }, [open, tagProducts.length]);
 
   // "/" opens Scout from anywhere; Esc backs out of history or menus, then closes.
@@ -505,6 +515,22 @@ export function AssistantPanel({
   };
   const productByHandle = useMemo(() => new Map(tagProducts.map((p) => [p.handle, p])), [tagProducts]);
   const thisProduct = currentProduct ? productByHandle.get(currentProduct.handle) : undefined;
+
+  // A Scout nudge was tapped: ask its question (about this product) or open its sheet right away.
+  useEffect(() => {
+    if (!open) return;
+    if (autoSheet) {
+      setSheet(autoSheet);
+      onAutoHandled?.();
+      return;
+    }
+    if (!autoAsk || pending) return;
+    if (currentProduct && !tagsLoaded) return; // wait for the product's @tag
+    const question = autoAsk.replaceAll("{this}", thisProduct ? `@${thisProduct.tag}` : "this product");
+    onAutoHandled?.();
+    void send(question);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, autoAsk, autoSheet, tagsLoaded, thisProduct, pending]);
   const recentProducts = useMemo(
     () =>
       sheet === "recent"

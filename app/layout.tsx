@@ -3,6 +3,8 @@ import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 import "./globals.css";
 import { CartDrawer } from "@/components/cart/cart-drawer";
 import { ResumePill } from "@/components/cart/resume-pill";
+import { FitFinder } from "@/components/fit/fit-finder";
+import { ReturnReminder } from "@/components/assistant/return-reminder";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -57,6 +59,8 @@ export default function RootLayout({
         {/* site-wide: the cart drawer and the "continue with this product" pill */}
         <CartDrawer />
         <ResumePill />
+        <FitFinder />
+        <ReturnReminder />
       </body>
     </html>
   );

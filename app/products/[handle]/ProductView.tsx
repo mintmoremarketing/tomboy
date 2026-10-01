@@ -6,9 +6,16 @@ import { recordRecentlyViewed } from "@/components/assistant/client";
 import { TryOnDialog } from "@/components/assistant/try-on-dialog";
 import { isTryOnEligible, TRY_ON_ENABLED } from "@/lib/try-on";
 import { HighlightedDescription } from "@/components/product/highlighted-description";
-import { Price } from "@/components/product/price";
+import { Price, rupees } from "@/components/product/price";
+import { SizeChartLink } from "@/components/product/size-chart";
+import { openFitFinder } from "@/components/fit/fit-finder";
+import { chartFor, sizeKey } from "@/data/size-charts";
 import { looksLikeCode, useSwatches } from "@/lib/swatch-colors";
 import { addToCart, openCart, useCart } from "@/lib/cart";
+import { loadProfile } from "@/components/assistant/client";
+import { nudge } from "@/components/assistant/nudges";
+import { matchSize, pairProducts, pairingNudge, productKind, savedSizeFor } from "@/components/assistant/product-nudges";
+import { colourCompliment } from "@/components/assistant/compliments";
 import { SiteHeader } from "@/components/layout/site-header";
 import { rememberProduct } from "@/components/cart/resume-pill";
 
@@ -327,7 +334,35 @@ export default function ProductView({ product }: { product: any }) {
     }
   }, [selectedColor, selectedSize]);
 
+  // Scout on a colour pick: which sizes are in stock in it (and whether yours is)
+  function colourNudge(color: string) {
+    if (!sizes.length) return;
+    const inStock = sizes.filter((size) =>
+      variants.some((v: any) => v.availableForSale !== false && v.title?.includes(color) && v.title?.includes(size)),
+    );
+    const saved = savedSizeFor(kind, loadProfile());
+    const mine = saved && matchSize(saved.value, sizes);
+    const name = colorName(color);
+    // a compliment on the pick first, then the useful bit (sizes)
+    const praise = colourCompliment(name, product.handle);
+    const text = !inStock.length
+      ? `${name} is sold out right now, sadly. Want me to find you the closest colour?`
+      : mine
+        ? inStock.some((s) => sizeKey(s) === sizeKey(mine))
+          ? `${praise} And it's there in your size ${mine}.`
+          : `${praise} Only catch: your size ${mine} is sold out in it right now.`
+        : inStock.length === sizes.length
+          ? `${praise} Every size is in stock.`
+          : `${praise} It's in stock in ${inStock.join(", ")}.`;
+    nudge({
+      id: `colour-${product.handle}-${color}`,
+      text,
+      actions: [{ label: "Will this colour suit me?", ask: `Would ${name} suit me? What would I wear {this} with in that colour?` }],
+    });
+  }
+
   function handleColorSelect(color: string) {
+    colourNudge(color);
     setSelectedColor(color);
     if (colorImages[color]) {
       setSelectedImage(colorImages[color]);
@@ -365,9 +400,19 @@ export default function ProductView({ product }: { product: any }) {
   });
 
   // Add to cart: just adds it, with a brief "Added" on the button
+  // Scout: what goes with it, once it's in the cart
+  function suggestPairing() {
+    const pair = pairingNudge(productKind(product.title, product.productType));
+    if (!pair) return;
+    void pairProducts(kind, product.title, product.handle).then((products) =>
+      nudge({ id: `pair-${product.handle}`, ...pair, products: products.length ? products : undefined }),
+    );
+  }
+
   function handleAddToCart() {
     if (!currentVariant?.id) return;
     addToCart(cartLine());
+    suggestPairing();
     setJustAdded(true);
     window.setTimeout(() => setJustAdded(false), 1600);
   }
@@ -387,6 +432,127 @@ export default function ProductView({ product }: { product: any }) {
         .slice(0, 3),
     });
   }, [currentVariant, product.handle, product.title, selectedSize, selectedColor, colorImages, price, images]);
+
+  // ---- Scout talks: size help based on the shopper's saved sizes ----
+  const kind = productKind(product.title, product.productType);
+  // the size picked by hand (not by Scout), for the "different from usual" heads-up
+  const pickedByHand = useRef(false);
+
+  useEffect(() => {
+    if (sizes.length === 0) return;
+    const timer = window.setTimeout(() => {
+      const saved = savedSizeFor(kind, loadProfile());
+      const id = `size-${product.handle}`;
+      if (!saved) {
+        if (kind === "socks") return;
+        nudge({
+          id,
+          text: "Not sure about the size? Tell me what you usually wear and I'll check this one fits you.",
+          actions: [
+            { label: "Find my size", fit: true },
+            { label: "Which size fits me?", ask: "What size of {this} should I get? Ask me anything you need to know." },
+          ],
+        });
+        return;
+      }
+      const mine = matchSize(saved.value, sizes);
+      const colour = selectedColor ? colorName(selectedColor) : "";
+      if (!mine) {
+        nudge({
+          id,
+          text: `This one doesn't come in ${saved.value}, your usual size in ${saved.says}. Want help picking the closest fit?`,
+          actions: [{ label: "Find my closest size", ask: `I usually wear ${saved.value} in ${saved.says}. Which size of {this} is closest?` }],
+        });
+      } else if (isSizeAvailable(mine)) {
+        if (!pickedByHand.current && selectedSize !== mine) setSelectedSize(mine);
+        nudge({
+          id,
+          text: colour
+            ? `Your usual size ${mine} is in stock in ${colour}, so I've picked it for you.`
+            : `Your usual size ${mine} is in stock, so I've picked it for you.`,
+          actions: [
+            { label: "How does it fit?", ask: `I usually wear ${mine} in ${saved.says}. How does {this} fit, should I size up or down?` },
+            { label: "Will it suit me?", ask: "How would {this} look on me? What would you wear it with?" },
+          ],
+        });
+      } else {
+        const inStock = colors.filter((c) => variants.some((v: any) => v.availableForSale !== false && v.title?.includes(c) && v.title?.includes(mine)));
+        nudge({
+          id,
+          text: inStock.length
+            ? `Your size ${mine} is sold out in ${colour || "this colour"}, but it's in stock in ${inStock.slice(0, 3).map(colorName).join(", ")}.`
+            : `Your size ${mine} is sold out right now. Want me to suggest something similar?`,
+          actions: [{ label: inStock.length ? "Which colour suits me?" : "Show similar", ask: inStock.length ? `My size is ${mine}. Which colour of {this} would suit me best?` : `{this} is sold out in my size ${mine}. What's similar?` }],
+        });
+      }
+    }, 1200);
+    return () => window.clearTimeout(timer);
+    // once per product page; reads the latest picks when it fires
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product.handle, sizes.length]);
+
+  // picked a size: confirm it if it's your usual one, a gentle heads-up if it isn't
+  useEffect(() => {
+    if (!pickedByHand.current || !selectedSize) return;
+    const saved = savedSizeFor(kind, loadProfile());
+    const mine = saved && matchSize(saved.value, sizes);
+    if (!saved || !mine) {
+      nudge({
+        id: `size-pick-${product.handle}-${selectedSize}`,
+        text: `${selectedSize} it is! Want me to double-check it'll fit you? It takes 20 seconds.`,
+        actions: [{ label: "Check my size", fit: true }],
+      });
+      return;
+    }
+    if (sizeKey(mine) === sizeKey(selectedSize)) {
+      nudge({
+        id: `size-ok-${product.handle}-${selectedSize}`,
+        text: `${selectedSize}, your usual. This one's going to fit you just right.`,
+        actions: [{ label: "How does it fit?", ask: `I usually wear ${selectedSize} in ${saved.says}. How does {this} fit?` }],
+      });
+      return;
+    }
+    nudge(
+      {
+        id: `size-diff-${product.handle}-${selectedSize}`,
+        text: `Heads up: you usually wear ${mine} in ${saved.says}, and you've picked ${selectedSize}. Buying for someone else, or want a different fit?`,
+        actions: [{ label: `Will ${selectedSize} fit me?`, ask: `I usually wear ${mine} in ${saved.says}. Will ${selectedSize} in {this} fit me?` }],
+      },
+      { urgent: true },
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selectedSize]);
+
+  // #1 honest low stock: only when Shopify tracks a real count for this variant
+  const stockLeft: number | null =
+    typeof currentVariant?.quantityAvailable === "number" && currentVariant.quantityAvailable > 0 ? currentVariant.quantityAvailable : null;
+  const lowStock = stockLeft !== null && stockLeft <= 5 ? stockLeft : null;
+  useEffect(() => {
+    if (lowStock === null) return;
+    nudge({
+      id: `low-${currentVariant?.id}`,
+      text: `Heads up: only ${lowStock} left in ${selectedSize || "this size"}${selectedColor ? `, ${colorName(selectedColor)}` : ""}.`,
+      actions: [{ label: "Is it worth it?", ask: "Is {this} worth getting? Anything I should know before I buy?" }],
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lowStock, currentVariant?.id]);
+
+  // #6 a little reassurance at the moment of deciding: hovering the buy buttons, or a while
+  // on the page without adding anything
+  const reassure = () =>
+    nudge({
+      id: `reassure-${product.handle}`,
+      text: "Not 100% sure? Exchanges are easy within 7 days, so if the size isn't right, swapping it is simple.",
+      actions: [
+        { label: "Check my size", fit: true },
+        { label: "How do exchanges work?", ask: "How do exchanges and returns work?" },
+      ],
+    });
+  useEffect(() => {
+    const t = window.setTimeout(reassure, 30_000);
+    return () => window.clearTimeout(t);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product.handle]);
 
   // Phones: bottom sheet to change colour/size from the floating bar
   const [pickerOpen, setPickerOpen] = useState(false);
@@ -455,7 +621,7 @@ export default function ProductView({ product }: { product: any }) {
                       type="button"
                       role="radio"
                       aria-checked={isSelected}
-                      className={`pdp-colour-tile${isSelected ? " is-selected" : ""}`}
+                      className={`pdp-colour-tile${isPack ? " pdp-colour-tile--pack" : ""}${isSelected ? " is-selected" : ""}`}
                       onClick={() => handleColorSelect(color)}
                       // where the swatch colour came from, for checking the catalogue (photo vs name)
                       data-source={getColorHex(color) === "#222222" && swatches[color] ? "photo" : "name"}
@@ -481,7 +647,18 @@ export default function ProductView({ product }: { product: any }) {
         <div className="pdp-option-group">
           <div className="pdp-variants__label">
             <span>Choose Size:</span>
-            <strong>{selectedSize}</strong>
+            {/* the picked size is already highlighted below, so this spot holds the size chart */}
+            <span className="pdp-size-links">
+            <button type="button" className="size-chart-link" onClick={() => openFitFinder(kind === "kids" ? "kids" : /women|bra|pant(y|ies)/i.test(product.title) ? "women" : "men")}>
+              Find my size
+            </button>
+            <SizeChartLink
+              chart={chartFor(product.title, product.productType)}
+              imageUrl={product.sizeChart?.reference?.image?.url}
+              sizes={sizes}
+              selectedSize={selectedSize}
+            />
+            </span>
           </div>
           <div className="pdp-size-grid">
             {sizes.map((size) => {
@@ -494,7 +671,11 @@ export default function ProductView({ product }: { product: any }) {
                   className={`pdp-size-btn ${isSelected ? "is-selected" : ""} ${
                     !available ? "is-soldout" : ""
                   }`}
-                  onClick={() => available && setSelectedSize(size)}
+                  onClick={() => {
+                    if (!available) return;
+                    pickedByHand.current = true;
+                    setSelectedSize(size);
+                  }}
                   title={available ? `Size ${size}` : `Size ${size} (Sold Out)`}
                 >
                   {size}
@@ -627,12 +808,24 @@ export default function ProductView({ product }: { product: any }) {
           <div className="pdp-price">
             <Price amount={price} compareAt={compareAt} size="lg" />
           </div>
+          {(packSize > 1 || lowStock !== null) && (
+            <p className="pdp-price-notes">
+              {/* #2 packs: what each piece works out to (real price ÷ pieces) */}
+              {packSize > 1 && Number(price) > 0 && (
+                <span className="pdp-per-piece">
+                  Just {rupees(Number(price) / packSize)} a piece
+                  {Number(compareAt) > Number(price) ? ` · you save ${rupees(Number(compareAt) - Number(price))}` : ""}
+                </span>
+              )}
+              {lowStock !== null && <span className="pdp-low-stock">Only {lowStock} left in this size</span>}
+            </p>
+          )}
 
           {variantPickers}
 
 
           {/* Action Buttons */}
-          <div className="pdp-actions" ref={actionsRef}>
+          <div className="pdp-actions" ref={actionsRef} onMouseEnter={reassure}>
             <button
               className="button button--dark button--full"
               onClick={handleAddToCart}

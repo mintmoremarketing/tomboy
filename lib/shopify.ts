@@ -117,6 +117,16 @@ export async function getProductByHandle(handle: string) {
         vendor
         availableForSale
         updatedAt
+        # optional size chart image the store can attach in Shopify (product metafield custom.size_chart, file)
+        sizeChart: metafield(namespace: "custom", key: "size_chart") {
+          reference {
+            ... on MediaImage {
+              image {
+                url
+              }
+            }
+          }
+        }
         seo {
           title
           description
@@ -165,6 +175,8 @@ export async function getProductByHandle(handle: string) {
               compareAtPrice {
                 amount
               }
+              # stock count; only meaningful once the store tracks inventory (used for honest low-stock notes)
+              quantityAvailable
               selectedOptions {
                 name
                 value

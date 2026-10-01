@@ -1,9 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { Minus, Plus, ShoppingBag, Trash2, X } from "lucide-react";
 import { onCartOpen, openCart, setQuantity, useCart } from "@/lib/cart";
+import { nudge } from "@/components/assistant/nudges";
 
 const FREE_SHIPPING = 899;
 const rupees = (n: number) => `₹${Math.round(n).toLocaleString("en-IN")}`;
@@ -44,6 +45,32 @@ export function CartDrawer() {
   const subtotal = items.reduce((sum, i) => sum + i.price * i.quantity, 0);
   const count = items.reduce((sum, i) => sum + i.quantity, 0);
   const toFree = FREE_SHIPPING - subtotal;
+  // Scout, as the cart closes: how far from free shipping, or that it's unlocked
+  const wasOpen = useRef(false);
+  useEffect(() => {
+    if (open) {
+      wasOpen.current = true;
+      return;
+    }
+    if (!wasOpen.current || items.length === 0) return;
+    wasOpen.current = false;
+    const short = FREE_SHIPPING - subtotal;
+    nudge(
+      short > 0
+        ? {
+            id: `cart-free-${Math.ceil(short / 50)}`,
+            text: `You're ${rupees(short)} away from free shipping. Want something small that goes with your order?`,
+            actions: [{ label: "Suggest something", ask: `Suggest something under ${rupees(short + 100)} that goes with what's in my cart.` }],
+          }
+        : {
+            id: "cart-free-unlocked",
+            text: "You've unlocked free shipping. Want me to double-check the sizes in your cart before you check out?",
+            actions: [{ label: "Check my sizes", ask: "Can you double-check the sizes of the items in my cart for me?" }],
+          },
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open]);
+
   // closing with X / backdrop / Esc undoes the history step added on open
   const close = () => {
     if (window.history.state?.tomboyCart) window.history.back();
@@ -139,6 +166,10 @@ export function CartDrawer() {
                 <strong>{rupees(subtotal)}</strong>
               </div>
               <small>Shipping and taxes calculated at checkout.</small>
+              {/* the last worry before paying: what if it doesn't fit */}
+              <p className="cart-drawer__reassure">
+                <span>Scout</span> Wrong size? No stress: exchanges are easy within 7 days.
+              </p>
               {error && <p className="cart-drawer__error">{error}</p>}
               <button className="button button--dark button--full" onClick={checkout} disabled={checkingOut}>
                 {checkingOut ? "Opening checkout…" : "Checkout"}

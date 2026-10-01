@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { Price } from "@/components/product/price";
 import { SiteHeader } from "@/components/layout/site-header";
+import { CollectionNudge } from "@/components/assistant/collection-nudge";
 import { Sparkles } from "lucide-react";
 
 // one Shopify request shared by the metadata and the page
@@ -47,6 +48,7 @@ export default async function CollectionPage({ params }: Props) {
   return (
     <>
       <SiteHeader />
+      <CollectionNudge handle={collection.handle} title={collection.title} />
     <div className="collection-page">
 
       {/* Hero Header */}
