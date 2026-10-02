@@ -5,6 +5,7 @@ import { CartDrawer } from "@/components/cart/cart-drawer";
 import { ResumePill } from "@/components/cart/resume-pill";
 import { FitFinder } from "@/components/fit/fit-finder";
 import { ReturnReminder } from "@/components/assistant/return-reminder";
+import { SiteFooter } from "@/components/layout/site-footer";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
@@ -56,6 +57,7 @@ export default function RootLayout({
           before React loads; this ignores those on <body> only, not on anything inside it. */}
       <body suppressHydrationWarning>
         {children}
+        <SiteFooter />
         {/* site-wide: the cart drawer and the "continue with this product" pill */}
         <CartDrawer />
         <ResumePill />

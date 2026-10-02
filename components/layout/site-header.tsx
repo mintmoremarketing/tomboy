@@ -462,7 +462,7 @@ function AccountModal({
           >
             Create New Account →
           </a>
-          <Link href="/pages/contact" className="text-link" onClick={onClose}>
+          <Link href="/info/contact" className="text-link" onClick={onClose}>
             Need Help? Contact Us
           </Link>
         </div>

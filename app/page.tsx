@@ -2,6 +2,8 @@
 
 import {
   ArrowRight,
+  BellRing,
+  Tag,
   ChevronDown,
   ChevronLeft,
   CircleUserRound,
@@ -36,7 +38,6 @@ import {
   audienceContent,
   brandCards,
   creatorPlaceholders,
-  footerGroups,
   offerTicker,
   productPlaceholders,
   reviewPlaceholders,
@@ -97,7 +98,6 @@ export default function Home() {
   // false until the saved audience is read, so the hero doesn't flash Men first
   const [audienceReady, setAudienceReady] = useState(false);
   const [showGateway, setShowGateway] = useState<boolean>(false);
-  const [openFooter, setOpenFooter] = useState<string>("Shop");
   // Live Shopify products, fetched per audience collection and cached
   const [realProducts, setRealProducts] = useState<Partial<Record<Audience, any[]>>>({});
 
@@ -228,7 +228,6 @@ export default function Home() {
       <BrandStory />
       <ReviewTemplates />
       <StayUpdated />
-      <Footer openFooter={openFooter} setOpenFooter={setOpenFooter} />
 
       <StartingGateway
         isOpen={showGateway}
@@ -589,27 +588,29 @@ function Hero({
   }
 
   // Sticky "Shop …" pill (phones): shows once the hero buttons scroll away,
-  // hides again when the footer comes into view.
+  // hides again over the sign-up section and the footer (it would cover them).
   useEffect(() => {
     const actions = actionsRef.current;
-    const footer = document.querySelector("footer");
     if (!actions) return;
+    const endZones = [document.querySelector("#stay-updated"), document.querySelector("footer.site-footer")].filter(
+      (el): el is Element => !!el,
+    );
     let actionsVisible = true;
-    let footerVisible = false;
-    const update = () => setShowStickyShop(!actionsVisible && !footerVisible);
+    const zoneVisible = new Map<Element, boolean>();
+    const update = () => setShowStickyShop(!actionsVisible && ![...zoneVisible.values()].some(Boolean));
     const observer = new IntersectionObserver((entries) => {
       for (const entry of entries) {
         if (entry.target === actions) {
           // only count it as gone once it has scrolled up past the viewport
           actionsVisible = entry.isIntersecting || entry.boundingClientRect.top > 0;
         } else {
-          footerVisible = entry.isIntersecting;
+          zoneVisible.set(entry.target, entry.isIntersecting);
         }
       }
       update();
     });
     observer.observe(actions);
-    if (footer) observer.observe(footer);
+    endZones.forEach((el) => observer.observe(el));
     return () => observer.disconnect();
   }, []);
 
@@ -1015,55 +1016,95 @@ function ReviewTemplates() {
   );
 }
 
+// Newsletter sign-up: adds the email to the store's Shopify customers as subscribed to marketing
+const STAY_PERKS = [
+  { icon: Sparkles, label: "New drops first", bg: "#00F5D4", tilt: "-3deg" },
+  { icon: BellRing, label: "Your size back in stock", bg: "#FF3399", tilt: "2deg", light: true },
+  { icon: Tag, label: "Members-only offers", bg: "#52F264", tilt: "-1.5deg" },
+];
+
+// Newsletter sign-up in the site's sticker style; adds the email to the store's Shopify
+// customers as subscribed to marketing (/api/subscribe)
 function StayUpdated() {
+  const [email, setEmail] = useState("");
+  const [state, setState] = useState<"idle" | "sending" | "done" | "already" | "error">("idle");
+  const [error, setError] = useState("");
+
+  async function subscribe(e: React.FormEvent) {
+    e.preventDefault();
+    setState("sending");
+    setError("");
+    try {
+      const res = await fetch("/api/subscribe", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Something went wrong.");
+      setState(data.status === "already" ? "already" : "done");
+    } catch (err) {
+      setError((err as Error).message);
+      setState("error");
+    }
+  }
+
   return (
-    <section className="stay-updated">
-      <h2>Offers, new arrivals, restocks and more.</h2>
-      <Link className="button button--green" href="/pages/contact">
-        Stay Updated
-        <ArrowRight size={18} aria-hidden />
-      </Link>
+    <section className="tomboy-list" id="stay-updated" aria-labelledby="tomboy-list-title">
+      <motion.div
+        className="tomboy-list__inner"
+        initial={{ opacity: 0, y: 24 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, margin: "0px 0px -15% 0px" }}
+        transition={{ duration: 0.7, ease: [0.16, 1, 0.3, 1] }}
+      >
+        <p className="tomboy-list__eyebrow">The Tomboy list</p>
+        <h2 id="tomboy-list-title">Be first in line.</h2>
+        <p className="tomboy-list__lead">One email when it matters: new drops, your size back in stock, and offers we don&apos;t post anywhere else.</p>
+
+        <ul className="tomboy-list__perks">
+          {STAY_PERKS.map((p) => (
+            <li
+              key={p.label}
+              className={p.light ? "is-light" : undefined}
+              style={{ "--sticker": p.bg, "--tilt": p.tilt } as React.CSSProperties}
+            >
+              <p.icon size={18} strokeWidth={2.4} aria-hidden />
+              {p.label}
+            </li>
+          ))}
+        </ul>
+
+        {state === "done" || state === "already" ? (
+          <p className="tomboy-list__done" role="status">
+            {state === "done" ? "You're on the list! Watch your inbox." : "You're already on the list. Good stuff coming your way."}
+          </p>
+        ) : (
+          <form className="tomboy-list__form" onSubmit={subscribe} noValidate>
+            <label htmlFor="stay-email" className="sr-only">
+              Email address
+            </label>
+            <input
+              id="stay-email"
+              type="email"
+              inputMode="email"
+              autoComplete="email"
+              placeholder="Your email address"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+            <button type="submit" disabled={state === "sending"}>
+              {state === "sending" ? "Joining…" : "Join the list"}
+              <ArrowRight size={18} aria-hidden />
+            </button>
+          </form>
+        )}
+        {state === "error" && <p className="tomboy-list__error">{error}</p>}
+        <p className="tomboy-list__fine">
+          No spam, unsubscribe any time. <Link href="/info/privacy-policy">Privacy policy</Link>
+        </p>
+      </motion.div>
     </section>
   );
 }
 
-function Footer({
-  openFooter,
-  setOpenFooter,
-}: {
-  openFooter: string;
-  setOpenFooter: (value: string) => void;
-}) {
-  return (
-    <footer className="footer">
-      {footerGroups.map((group) => {
-        const open = openFooter === group.title;
-        return (
-          <section className="footer-group" key={group.title}>
-            <button
-              className="footer-group__button"
-              onClick={() => setOpenFooter(open ? "" : group.title)}
-              aria-expanded={open}
-            >
-              {group.title}
-              {/* one + that turns 45° into an × when the group opens */}
-              <span className="footer-group__icon" aria-hidden />
-            </button>
-            <div className={open ? "footer-group__content is-open" : "footer-group__content"} inert={!open}>
-              <div className="footer-group__links">
-                {group.links.map((link) => (
-                  <Link href={link.href} key={link.name}>
-                    {link.name}
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </section>
-        );
-      })}
-      <div className="footer-brand">
-        <img src="/logo.webp" alt="Tomboy India" className="footer-logo" />
-      </div>
-    </footer>
-  );
-}

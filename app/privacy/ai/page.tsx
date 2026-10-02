@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { ArrowLeft } from "lucide-react";
+import { SiteHeader } from "@/components/layout/site-header";
 import { ClearDataButton } from "./clear-data-button";
 
 export const metadata: Metadata = {
@@ -12,15 +12,9 @@ export const metadata: Metadata = {
 // Privacy Policy (a Shopify page at /info/privacy-policy).
 export default function AiPrivacyPage() {
   return (
-    <div className="page-container">
-      <header className="page-header">
-        <Link href="/" className="brand" aria-label="Tomboy homepage">
-          <img src="/logo.webp" alt="Tomboy India" className="brand-logo" />
-        </Link>
-        <Link href="/" className="back-link">
-          <ArrowLeft size={16} /> Back to store
-        </Link>
-      </header>
+    <>
+    <SiteHeader />
+    <div className="page-container info-page">
 
       <main className="page-content privacy-page">
         <p className="eyebrow">Your privacy</p>
@@ -139,5 +133,6 @@ export default function AiPrivacyPage() {
         </p>
       </main>
     </div>
+    </>
   );
 }

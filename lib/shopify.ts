@@ -4,9 +4,12 @@ const storefrontAccessToken = process.env.NEXT_PUBLIC_SHOPIFY_STOREFRONT_ACCESS_
 export async function shopifyFetch<T = any>({
   query,
   variables,
+  noCache = false,
 }: {
   query: string;
   variables?: any;
+  /** for actions (sign-ups, carts): never reuse a cached response */
+  noCache?: boolean;
 }): Promise<{ status: number; body?: { data?: T; errors?: any[] }; error?: string }> {
   // 2025-01: needed for option swatches (optionValues.swatch); everything else is unchanged
   const endpoint = `https://${domain}/api/2025-01/graphql.json`;
@@ -19,7 +22,7 @@ export async function shopifyFetch<T = any>({
         "X-Shopify-Storefront-Access-Token": storefrontAccessToken as string,
       },
       body: JSON.stringify({ query, variables }),
-      next: { revalidate: 60 }, // Revalidate every minute
+      ...(noCache ? { cache: "no-store" as const } : { next: { revalidate: 60 } }), // reads: revalidate every minute
     });
 
     const body = await result.json();
@@ -323,6 +326,7 @@ export async function createCart(lines: { merchandiseId: string; quantity: numbe
     }
   `;
 
-  const response = await shopifyFetch({ query, variables: { lines } });
+  // never cached: two shoppers with the same items must each get their own cart
+  const response = await shopifyFetch({ query, variables: { lines }, noCache: true });
   return response.body?.data?.cartCreate?.cart || null;
 }
