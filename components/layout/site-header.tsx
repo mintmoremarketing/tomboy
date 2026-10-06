@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDown, CircleUserRound, Menu, Search, X } from "lucide-react";
+import { ChevronDown, Menu, Search, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
@@ -13,7 +13,7 @@ import { DesktopNavItem, MobileNavSection } from "@/components/layout/nav-menu";
 import { audienceContent } from "@/data/homepage";
 
 // The site header used on every page: logo, Men/Women/Kids menus, audience switch,
-// search, account, cart and Scout. Phones get the menu drawer; going back is left to the phone's own back gesture.
+// search, cart and Scout. Phones get the menu drawer; going back is left to the phone's own back gesture.
 
 type Audience = "men" | "women" | "kids";
 
@@ -151,7 +151,6 @@ export function SiteHeader({
 
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
-  const [accountOpen, setAccountOpen] = useState(false);
   const [assistantOpen, setAssistantOpen] = useState(false);
   const [orbDancing, setOrbDancing] = useState(false);
   // a Scout nudge was tapped: open Scout with its question or sheet
@@ -197,14 +196,6 @@ export function SiteHeader({
             title="Search products"
           >
             <Search size={20} />
-          </button>
-          <button
-            className="icon-button hide-mobile"
-            onClick={() => setAccountOpen(true)}
-            aria-label="Customer Account"
-            title="Customer Account"
-          >
-            <CircleUserRound size={20} />
           </button>
           <CartButton />
           {/* Scout, the shopping assistant (press / anywhere) */}
@@ -276,25 +267,9 @@ export function SiteHeader({
             <Link href="/collections/best-sellers" onClick={() => setMobileMenuOpen(false)}>
               Best Sellers
             </Link>
-            <button
-              style={{
-                textAlign: "left",
-                padding: "12px 0",
-                borderBottom: "1px solid var(--border)",
-                display: "flex",
-                alignItems: "center",
-                gap: "10px",
-                fontSize: "1.2rem",
-                fontWeight: 900,
-                textTransform: "uppercase",
-              }}
-              onClick={() => {
-                setMobileMenuOpen(false);
-                setAccountOpen(true);
-              }}
-            >
-              <CircleUserRound size={20} /> My Account
-            </button>
+            <Link href="/track-order" onClick={() => setMobileMenuOpen(false)}>
+              Track Order
+            </Link>
             <Link href="/info/about-us" onClick={() => setMobileMenuOpen(false)}>
               Our Story
             </Link>
@@ -309,11 +284,6 @@ export function SiteHeader({
         isOpen={searchOpen}
         onClose={() => setSearchOpen(false)}
         products={products}
-      />
-
-      <AccountModal
-        isOpen={accountOpen}
-        onClose={() => setAccountOpen(false)}
       />
     </>
   );
@@ -408,64 +378,6 @@ function SearchModal({
             )}
           </div>
         )}
-      </div>
-    </div>
-  );
-}
-
-function AccountModal({
-  isOpen,
-  onClose,
-}: {
-  isOpen: boolean;
-  onClose: () => void;
-}) {
-  if (!isOpen) return null;
-
-  return (
-    <div className="search-modal-backdrop" onClick={onClose}>
-      <div className="account-modal" onClick={(e) => e.stopPropagation()}>
-        <div className="account-modal__header">
-          <h2>Tomboy Account</h2>
-          <button className="icon-button" onClick={onClose} aria-label="Close account modal">
-            <X size={22} />
-          </button>
-        </div>
-        <p className="account-modal__subtitle">Log in to track orders, manage addresses, and save favorites.</p>
-
-        <form
-          className="account-form"
-          onSubmit={(e) => {
-            e.preventDefault();
-            window.location.href = "https://houseoftomboy.myshopify.com/account/login";
-          }}
-        >
-          <div className="form-field">
-            <label>Email Address</label>
-            <input type="email" placeholder="name@example.com" required />
-          </div>
-          <div className="form-field">
-            <label>Password</label>
-            <input type="password" placeholder="••••••••" required />
-          </div>
-          <button type="submit" className="button button--dark" style={{ width: "100%", marginTop: "10px" }}>
-            Sign In with Shopify
-          </button>
-        </form>
-
-        <div className="account-modal__footer">
-          <a
-            href="https://houseoftomboy.myshopify.com/account/register"
-            className="text-link"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Create New Account →
-          </a>
-          <Link href="/info/contact" className="text-link" onClick={onClose}>
-            Need Help? Contact Us
-          </Link>
-        </div>
       </div>
     </div>
   );

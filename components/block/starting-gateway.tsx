@@ -15,10 +15,10 @@ const lineups: {
   tint: string;
   image: string;
 }[] = [
-  // circle + tint colours are sampled to sit with each illustration's muted palette
-  { id: "women", label: "Women", tagline: "Insanely soft", accent: "#EDB6AA", tint: "#FBF1EE", image: "/gateway/women.webp" },
-  { id: "men", label: "Men", tagline: "Zero nonsense", accent: "#F3DB93", tint: "#FBF6E7", image: "/gateway/men.webp" },
-  { id: "kids", label: "Kids", tagline: "Play hard", accent: "#BCD5EC", tint: "#EEF4FA", image: "/gateway/kids.webp" },
+  // v2: cut-out photos on the brand's sticker colours (the card is the colour, the disc is white)
+  { id: "women", label: "Women", tagline: "Insanely soft", accent: "#FFFFFF", tint: "#FF8AD8", image: "/v2/gateway-women.webp" },
+  { id: "men", label: "Men", tagline: "Zero nonsense", accent: "#FFFFFF", tint: "#3DFF52", image: "/v2/gateway-men.webp" },
+  { id: "kids", label: "Kids", tagline: "Play hard", accent: "#FFFFFF", tint: "#FFE500", image: "/v2/gateway-kids.webp" },
 ];
 
 const spring = { type: "spring", stiffness: 240, damping: 22 } as const;

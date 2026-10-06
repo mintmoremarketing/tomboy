@@ -34,6 +34,7 @@ import { openFitFinder } from "@/components/fit/fit-finder";
 import { nudge, type Nudge } from "@/components/assistant/nudges";
 import { useSectionNudges } from "@/components/assistant/section-nudges";
 import { AssistantPanel } from "@/components/assistant/assistant-panel";
+import { TrackOrder } from "@/components/track-order";
 import {
   audienceContent,
   brandCards,
@@ -222,11 +223,18 @@ export default function Home() {
       <Hero audience={audience} ready={audienceReady} onSelectAudience={switchAudience} />
       <ComfortBand />
       <Essentials audience={audience} />
+      {/* v2: products stuck on the wavy edges between sections, spinning as you scroll */}
+      <EdgeSticker src="/v2/boxerbrief.webp" place="right" sp={0.11} tilt="10deg" />
       <CraftStorySection audience={audience} />
+      <EdgeSticker src="/v2/boxer-checks.webp" place="center" sp={-0.13} tilt="-8deg" />
       <ProductCarousel products={products} audience={audience} />
       <ActionStrip />
       <BrandStory />
-      <ReviewTemplates />
+      <TrackOrder />
+      <div className="v2-band v2-wave-top">
+        <ReviewTemplates />
+      </div>
+      <EdgeSticker src="/v2/boxer-grey.webp" place="right" sp={0.14} tilt="12deg" />
       <StayUpdated />
 
       <StartingGateway
@@ -536,6 +544,24 @@ function HighlightedText({
   );
 }
 
+// v2 hero: boxers cut out of the store's product photos, floating around the pixel wordmark
+// (positions per screen size live in app/v2.css)
+// sp = how fast (and which way) each one spins as the page scrolls, in degrees per pixel
+const FLOATING_BOXERS = [
+  { src: "/v2/brief.webp", w: "clamp(110px, 13vw, 210px)", r: "-12deg", delay: "0s", sp: 0.12 },
+  { src: "/v2/boxer-printed.webp", w: "clamp(100px, 12vw, 190px)", r: "10deg", delay: "-1.4s", sp: -0.18 },
+];
+
+// v2: a product cut-out sitting on the wavy line where two sections meet. Zero-height, so it
+// doesn't move the layout; the image straddles the line and spins with the page scroll.
+function EdgeSticker({ src, place, sp, tilt }: { src: string; place: "left" | "center" | "right"; sp: number; tilt: string }) {
+  return (
+    <div className={`edge-sticker edge-sticker--${place}`} aria-hidden="true">
+      <img src={src} alt="" draggable={false} style={{ "--sp": sp, "--br": tilt } as React.CSSProperties} />
+    </div>
+  );
+}
+
 // Phone swipe order matches the welcome lineup: women · men · kids
 const swipeOrder: Audience[] = ["women", "men", "kids"];
 
@@ -557,6 +583,24 @@ function Hero({
   const pointerStart = useRef<{ x: number; y: number } | null>(null);
 
   const actionsRef = useRef<HTMLDivElement>(null);
+
+  // v2: the floating products (hero + EdgeStickers) spin as the page scrolls, each at its own speed;
+  // --scroll on <html> drives them all
+  const stageRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const stage = stageRef.current;
+    if (!stage || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    let frame = 0;
+    const onScroll = () => {
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => document.documentElement.style.setProperty("--scroll", String(window.scrollY)));
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      cancelAnimationFrame(frame);
+    };
+  }, []);
   const [showStickyShop, setShowStickyShop] = useState(false);
 
   function goTo(target: Audience) {
@@ -617,109 +661,43 @@ function Hero({
   return (
     <section
       className="hero-section-wrapper"
-      onClick={() => setSelectedStickerId(null)}
     >
-      <div className="hero">
-        {/* Free-floating stickers spread across the entire hero (desktop);
-            on phones this is the swipeable character stage */}
-        <div
-          className="hero-stickers-layer"
-          aria-label="Draggable Stickers"
-          onPointerDown={onStagePointerDown}
-          onPointerUp={onStagePointerUp}
-          onPointerCancel={() => (pointerStart.current = null)}
-          style={{ "--stage-bg": heroStageColor[audience] } as React.CSSProperties}
-        >
-          {/* phones: big watermark behind the character on the coloured poster card */}
-          <span className="hero-stage-word" aria-hidden="true">
-            TOMBOY
-          </span>
-          <HeroCharacter audience={audience} ready={ready} direction={direction} />
-          {initialStickers.map((sticker) => (
-            <DraggableSticker
-              key={sticker.id}
-              sticker={sticker}
-              isSelected={selectedStickerId === sticker.id}
-              onSelect={(id) => setSelectedStickerId(id)}
+      {/* v2 hero: just the giant pixel TOMBOY with products floating around it,
+          one line of copy and the two buttons (the busy character + sticker board is gone) */}
+      <div className="hero v2-hero">
+        <div className="v2-hero__stage" ref={stageRef}>
+          {/* phones get the word stacked TOM / BOY so it can be big */}
+          <picture>
+            <source media="(max-width: 768px)" srcSet="/v2/tomboy-pixel-stack.svg" />
+            <img className="v2-hero__word" src="/v2/tomboy-pixel.svg" alt="Tomboy" draggable={false} />
+          </picture>
+          {FLOATING_BOXERS.map((b) => (
+            <img
+              key={b.src}
+              src={b.src}
+              alt=""
+              aria-hidden="true"
+              draggable={false}
+              className="hero-boxer"
+              style={{ "--bw": b.w, "--br": b.r, "--bd": b.delay, "--sp": b.sp } as React.CSSProperties}
             />
           ))}
-          <div className="hero-swipe-dots" role="tablist" aria-label="Choose lineup">
-            {swipeOrder.map((option) => (
-              <button
-                key={option}
-                role="tab"
-                aria-selected={option === audience}
-                aria-label={`Show ${audienceContent[option].label}`}
-                className={`hero-swipe-dot ${option === audience ? "is-active" : ""}`}
-                style={{ "--dot": heroHighlightColor[option] } as React.CSSProperties}
-                onClick={() => goTo(option)}
-              />
-            ))}
-          </div>
         </div>
 
-        {/* Phones: the stickers roll by in a strip instead of covering the character */}
-        <div className="hero-sticker-strip" aria-hidden="true">
-          <div className="hero-sticker-strip__track">
-            {[...initialStickers, ...initialStickers].map((sticker, i) => (
-              <span
-                key={`${sticker.id}-${i}`}
-                className="hero-strip-sticker"
-                tabIndex={-1}
-                style={{
-                  background: sticker.bgColor,
-                  color: sticker.textColor,
-                  boxShadow: `3px 3px 0 ${sticker.shadowColor}`,
-                  rotate: `${i % 2 ? 3 : -3}deg`,
-                }}
-              >
-                {sticker.emoji && <span>{sticker.emoji}</span>}
-                {sticker.content}
-              </span>
-            ))}
-          </div>
-        </div>
+        <h1 className="v2-hero__tag">
+          {content.headline.split("\n").map((line) => (
+            <span key={line}>{line}</span>
+          ))}
+        </h1>
 
-        <div className="hero__copy">
-          <div className="hero__pill">
-            <span aria-hidden="true">⚡</span>
-            100% Unisex Energy
-          </div>
-          <p className="eyebrow">{content.kicker}</p>
-          {ready ? (
-            <StretchHeadline
-              text={content.headline}
-              mood={headlineMood[audience]}
-              accent={heroHighlightColor[audience]}
-            />
-          ) : (
-            // holds the space (and keeps the heading in the server HTML) until the audience is known
-            <h1 className="stretch-headline" style={{ visibility: "hidden" }}>
-              {content.headline.split("\n").map((line) => (
-                <span className="sh-line" key={line}>{line}</span>
-              ))}
-              <span className="sh-band" />
-            </h1>
-          )}
-          <div className="hero__body-text">
-            {/* key replays the draw + drag when the audience toggles */}
-            <HighlightedText
-              key={audience}
-              text={content.body}
-              phrase={content.highlight}
-              color={heroHighlightColor[audience]}
-            />
-          </div>
-
-          <div className="hero__actions" ref={actionsRef}>
-            <Link className="button button--dark" href={`/collections/${content.collectionHandle}`}>
-              Shop {content.label} <ArrowRight size={18} />
-            </Link>
-            {/* opens the Fit Finder: sizes from a photo or measurements, saved for Scout */}
-            <button type="button" className="button button--light" onClick={() => openFitFinder(audience)}>
-              Know the Fit
-            </button>
-          </div>
+        <div className="hero__actions v2-hero__actions" ref={actionsRef}>
+          <Link className="button button--dark" href={`/collections/${content.collectionHandle}`}>
+            Shop {content.label} <ArrowRight size={18} />
+          </Link>
+          {/* opens the Fit Finder: sizes from a photo or measurements, saved for Scout */}
+          <button type="button" className="button button--light" onClick={() => openFitFinder(audience)}>
+            Know the Fit
+          </button>
         </div>
       </div>
 

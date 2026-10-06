@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { SITE_DESCRIPTION, SITE_NAME, SITE_URL } from "@/lib/site";
 import "./globals.css";
+import "./v2.css";
 import { CartDrawer } from "@/components/cart/cart-drawer";
 import { ResumePill } from "@/components/cart/resume-pill";
 import { FitFinder } from "@/components/fit/fit-finder";

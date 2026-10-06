@@ -20,6 +20,7 @@ const SHOP = [
 ];
 
 const HELP = [
+  { label: "Track your order", href: "/track-order" },
   { label: "Contact us", href: "/info/contact" },
   { label: "Shipping", href: "/info/shipping-policy" },
   { label: "Refunds & returns", href: "/info/refunds-returns-policy" },

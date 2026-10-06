@@ -1,0 +1,845 @@
+/* ====================================================
+   TOMBOY V2 THEME (v2 branch)
+   Sky backdrop, pixel TOMBOY wordmark, floating boxers, scalloped section
+   edges, thick-outline sticker cards and neon green buttons. Loaded after
+   globals.css and only restyles: every section and feature stays the same.
+   ==================================================== */
+
+:root {
+  --v2-sky: #2A78DC;
+  --v2-green: #3DFF52;
+  --v2-yellow: #FFE500;
+  --v2-pink: #FF3399;
+  --v2-ink: #0A0A0A;
+}
+
+/* ---- sky backdrop: a fixed layer so it works on phones too (background-attachment: fixed doesn't) ---- */
+body {
+  background: var(--v2-sky);
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background: var(--v2-sky) url("/v2/sky.webp") center / cover no-repeat;
+  pointer-events: none;
+}
+
+/* ---- wavy edges ----
+   The element itself is masked with a smooth sine wave along its top and/or bottom
+   edge (an SVG tile repeated across), solid in between, so it works even on sections
+   with overflow: hidden. One period = --v2-wave-w, depth = --v2-wave-h. */
+:root {
+  --v2-wave-w: 56px;
+  --v2-wave-h: 14px;
+  --v2-wave-up: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 56 14' preserveAspectRatio='none'%3E%3Cpath d='M0 7C9.33 -1.5 18.67 -1.5 28 7S46.67 15.5 56 7V14H0Z'/%3E%3C/svg%3E");
+  --v2-wave-down: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 56 14' preserveAspectRatio='none'%3E%3Cpath d='M0 7C9.33 15.5 18.67 15.5 28 7S46.67 -1.5 56 7V0H0Z'/%3E%3C/svg%3E");
+}
+
+.v2-wave,
+.scroll-story-section,
+.action-strip-section {
+  -webkit-mask: var(--v2-wave-up) top left / var(--v2-wave-w) var(--v2-wave-h) repeat-x,
+    var(--v2-wave-down) bottom left / var(--v2-wave-w) var(--v2-wave-h) repeat-x,
+    linear-gradient(#000 0 0) center / 100% calc(100% - 2 * var(--v2-wave-h) + 2px) no-repeat;
+  mask: var(--v2-wave-up) top left / var(--v2-wave-w) var(--v2-wave-h) repeat-x,
+    var(--v2-wave-down) bottom left / var(--v2-wave-w) var(--v2-wave-h) repeat-x,
+    linear-gradient(#000 0 0) center / 100% calc(100% - 2 * var(--v2-wave-h) + 2px) no-repeat;
+}
+
+.v2-wave-top,
+.tomboy-list,
+.site-footer {
+  -webkit-mask: var(--v2-wave-up) top left / var(--v2-wave-w) var(--v2-wave-h) repeat-x,
+    linear-gradient(#000 0 0) bottom / 100% calc(100% - var(--v2-wave-h) + 2px) no-repeat;
+  mask: var(--v2-wave-up) top left / var(--v2-wave-w) var(--v2-wave-h) repeat-x,
+    linear-gradient(#000 0 0) bottom / 100% calc(100% - var(--v2-wave-h) + 2px) no-repeat;
+}
+
+/* where two coloured bands meet, the lower one's wave overlaps the band above,
+   so the wave reads as yellow-into-black instead of showing sky in the dips */
+.site-footer {
+  position: relative;
+  margin-top: calc(-1 * var(--v2-wave-h));
+}
+
+/* ---- header: white bar with a thick ink edge ---- */
+.site-header {
+  background: #fff;
+  border-bottom: 3px solid var(--v2-ink);
+}
+
+/* ---- section headings sit straight on the sky: white type with a hard ink shadow ---- */
+.section {
+  border-top: 0;
+}
+
+.section-heading h2,
+.action-strip-heading h2,
+.hero .stretch-headline {
+  text-transform: uppercase;
+}
+
+.section-heading h2 {
+  color: #fff;
+  text-shadow: 3px 3px 0 var(--v2-ink);
+  -webkit-text-stroke: 1.5px var(--v2-ink);
+  paint-order: stroke fill;
+  letter-spacing: -0.01em;
+}
+
+.section-heading p {
+  color: #fff;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.35);
+}
+
+.section-heading .eyebrow,
+.hero .eyebrow {
+  display: inline-block;
+  padding: 5px 12px;
+  border: 2px solid var(--v2-ink);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--v2-ink);
+  box-shadow: 3px 3px 0 var(--v2-ink);
+}
+
+.text-link {
+  padding: 8px 14px;
+  border: 2.5px solid var(--v2-ink);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--v2-ink);
+  box-shadow: 3px 3px 0 var(--v2-ink);
+}
+
+/* ---- buttons: neon green pills ---- */
+.hero .button--dark,
+.sticky-shop__pill {
+  background: var(--v2-green);
+  color: var(--v2-ink);
+  border: 3px solid var(--v2-ink);
+  box-shadow: 4px 4px 0 var(--v2-ink);
+  text-transform: uppercase;
+  font-weight: 900;
+}
+
+.hero .button--dark:hover {
+  background: var(--v2-yellow);
+  color: var(--v2-ink);
+}
+
+.hero .button--light {
+  background: #fff;
+  color: var(--v2-ink);
+  border: 3px solid var(--v2-ink);
+  box-shadow: 4px 4px 0 var(--v2-ink);
+}
+
+/* ====================================================
+   HERO: giant pixel TOMBOY in the middle, products floating around it,
+   one headline and the two buttons underneath
+   ==================================================== */
+.hero.v2-hero {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: clamp(20px, 3vw, 36px);
+  min-height: calc(100vh / var(--page-zoom, 1) - 93px);
+  padding: clamp(32px, 6vw, 72px) 0 clamp(48px, 7vw, 88px);
+  text-align: center;
+}
+
+.v2-hero__stage {
+  position: relative;
+  width: min(820px, 64%);
+  padding: clamp(36px, 7vw, 90px) 0;
+}
+
+.v2-hero__word {
+  display: block;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(6px 6px 0 #fff);
+  user-select: none;
+}
+
+/* floating products: drift up and down, tilted, with a white sticker edge.
+   Spread around the wordmark, a few overlapping its edges like stickers. */
+.v2-hero__stage .hero-boxer {
+  position: absolute;
+  z-index: 2;
+  width: var(--bw);
+  height: auto;
+  /* base tilt + spin from scrolling (--scroll is set on the stage by the Hero) */
+  rotate: calc(var(--br) + var(--scroll, 0) * var(--sp, 0) * 1deg);
+  pointer-events: none;
+  /* the images already carry a white die-cut edge; this is just the drop shadow */
+  filter: drop-shadow(5px 7px 0 rgba(10, 10, 10, 0.3));
+  animation: v2-float 5.5s ease-in-out infinite;
+  animation-delay: var(--bd);
+}
+
+/* desktop: two of them, out on the sides clear of the letters */
+.v2-hero__stage .hero-boxer:nth-child(2) { left: -24%; top: -14%; }
+.v2-hero__stage .hero-boxer:nth-child(3) { right: -22%; bottom: -30%; }
+
+@keyframes v2-float {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 -14px;
+  }
+}
+
+.v2-hero__tag {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  color: #fff;
+  font-size: clamp(2rem, 5.2vw, 4rem);
+  font-weight: 900;
+  line-height: 1.02;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  -webkit-text-stroke: 2px var(--v2-ink);
+  paint-order: stroke fill;
+  text-shadow: 4px 4px 0 var(--v2-ink);
+}
+
+.v2-hero__actions {
+  justify-content: center;
+  margin: 0;
+}
+
+/* phones: wordmark fills the width, products tuck into the corners */
+@media (max-width: 768px) {
+  .hero.v2-hero {
+    min-height: auto;
+    padding: 28px 0 40px;
+  }
+
+  .v2-hero__stage {
+    width: 78%;
+    padding: 26px 0 30px;
+  }
+
+  .v2-hero__stage .hero-boxer {
+    width: calc(var(--bw) * 0.72);
+  }
+
+  .v2-hero__stage .hero-boxer:nth-child(2) { left: -16%; top: -6%; }
+  .v2-hero__stage .hero-boxer:nth-child(3) { left: auto; right: -16%; top: auto; bottom: -6%; }
+
+  /* the phone layout reorders hero children; keep the v2 order */
+  .v2-hero > * {
+    order: 0 !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .v2-hero__stage .hero-boxer {
+    animation: none;
+  }
+}
+
+/* ====================================================
+   CARDS: white, thick ink outline, hard shadow
+   ==================================================== */
+.essential-card,
+.product-card,
+.pop-story-card,
+.review-card {
+  border: 3px solid var(--v2-ink);
+  box-shadow: 5px 5px 0 var(--v2-ink);
+  background: #fff;
+}
+
+/* hover = pressing a button: the card sinks into its shadow instead of lifting */
+.essential-card,
+.product-card,
+.pop-story-card,
+.review-card,
+.hero .button,
+.text-link,
+.sticky-shop__pill {
+  transition: transform 0.12s ease, box-shadow 0.12s ease, background-color 0.2s ease;
+}
+
+.essential-card:hover,
+.product-card:hover,
+.pop-story-card:hover,
+.review-card:hover {
+  border-color: var(--v2-ink);
+  box-shadow: 1px 1px 0 var(--v2-ink);
+  transform: translate(4px, 4px);
+}
+
+.hero .button:hover,
+.text-link:hover,
+.sticky-shop__pill:hover {
+  box-shadow: 0 0 0 var(--v2-ink);
+  transform: translate(4px, 4px);
+}
+
+.essential-card:active,
+.product-card:active,
+.pop-story-card:active,
+.hero .button:active,
+.text-link:active {
+  box-shadow: 0 0 0 var(--v2-ink);
+  transform: translate(5px, 5px);
+}
+
+/* no zoom on the photo either: the press is the whole effect */
+.product-card:hover .product-card__art {
+  transform: none;
+}
+
+.product-card__art {
+  border-bottom: 3px solid var(--v2-ink);
+}
+
+.product-card h3 {
+  text-transform: uppercase;
+  font-weight: 900;
+}
+
+.product-card p {
+  color: var(--v2-pink);
+  font-weight: 900;
+}
+
+.pop-story-card::before {
+  height: 8px;
+  border-bottom: 3px solid var(--v2-ink);
+}
+
+/* ====================================================
+   BANDS: solid colour sections with scalloped edges
+   ==================================================== */
+.scroll-story-section {
+  background: var(--v2-yellow);
+  border: 0;
+  padding: calc(80px + var(--v2-wave-h)) 0;
+}
+
+.action-strip-section {
+  background: #fff;
+  padding: calc(64px + var(--v2-wave-h)) 0 calc(72px + var(--v2-wave-h));
+}
+
+.action-strip-heading h2 {
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
+}
+
+/* "Word on the street": reviews on a neon green band */
+.v2-band {
+  background: var(--v2-green);
+  padding: var(--v2-wave-h) 0;
+  margin: 32px 0;
+}
+
+.v2-band .section {
+  padding: 64px 0;
+}
+
+.v2-band .section-heading h2 {
+  color: var(--v2-ink);
+  -webkit-text-stroke: 0;
+  text-shadow: 3px 3px 0 #fff;
+}
+
+.v2-band .section-heading p {
+  color: var(--v2-ink);
+  text-shadow: none;
+}
+
+.v2-band .review-card h3 {
+  text-transform: uppercase;
+  font-weight: 900;
+  font-size: 1.25rem;
+}
+
+.v2-band .review-card p {
+  color: #1F2937;
+  font-weight: 600;
+}
+
+/* newsletter + footer: wavy top edge, overlapping the band above slightly */
+.tomboy-list {
+  border-top: 0;
+  padding-top: calc(clamp(64px, 9vw, 112px) + var(--v2-wave-h));
+}
+
+.site-footer {
+  padding-top: var(--v2-wave-h);
+}
+
+/* bands are full-width, so the sky shows between them without extra white */
+main {
+  background: transparent;
+}
+
+/* ---- products stuck on the section edges (EdgeSticker in app/page.tsx) ---- */
+.edge-sticker {
+  position: relative;
+  z-index: 20;
+  height: 0;
+  width: min(var(--max), calc(100% - 48px));
+  margin: 0 auto;
+  pointer-events: none;
+}
+
+.edge-sticker img {
+  position: absolute;
+  top: 0;
+  width: clamp(96px, 11vw, 170px);
+  height: auto;
+  translate: 0 -50%;
+  rotate: calc(var(--br) + var(--scroll, 0) * var(--sp, 0) * 1deg);
+  filter: drop-shadow(5px 7px 0 rgba(10, 10, 10, 0.3));
+}
+
+.edge-sticker--right img { right: 2%; }
+.edge-sticker--left img { left: 2%; }
+.edge-sticker--center img { left: 50%; margin-left: calc(clamp(96px, 11vw, 170px) / -2); }
+
+/* the craft story band has a 32px margin: sit the sticker on its wavy edge, not in the gap */
+.edge-sticker + .scroll-story-section { margin-top: 0; }
+.scroll-story-section + .edge-sticker { margin-top: -32px; }
+.scroll-story-section + .edge-sticker + .section { margin-top: 32px; }
+/* green reviews band runs straight into the yellow sign-up: the yellow wave overlaps
+   the green (no sky between them) */
+.v2-band { margin-bottom: 0; }
+.v2-band + .edge-sticker + .tomboy-list,
+.v2-band + .tomboy-list {
+  position: relative;
+  margin-top: calc(-1 * var(--v2-wave-h));
+}
+
+@media (max-width: 768px) {
+  .edge-sticker img { width: 88px; }
+  .edge-sticker--center img { margin-left: -44px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .edge-sticker img { rotate: var(--br); }
+}
+
+/* ====================================================
+   WELCOME GATEWAY (components/block/starting-gateway.tsx)
+   Sky backdrop, pixel wordmark, cut-out photos on bright sticker cards
+   ==================================================== */
+.gateway-screen.gw-full {
+  background: var(--v2-sky) url("/v2/sky.webp") center / cover no-repeat;
+}
+
+
+.gw-full__copy h1 {
+  color: #fff;
+  -webkit-text-stroke: 2px var(--v2-ink);
+  paint-order: stroke fill;
+  text-shadow: 4px 4px 0 var(--v2-ink);
+}
+
+.gw-full__copy > p:not(.eyebrow) {
+  padding: 14px 16px;
+  border: 2.5px solid var(--v2-ink);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 4px 4px 0 var(--v2-ink);
+  font-weight: 600;
+}
+
+.gw-full__copy .eyebrow {
+  display: inline-block;
+  padding: 5px 12px;
+  border: 2px solid var(--v2-ink);
+  border-radius: 999px;
+  background: var(--v2-yellow);
+  color: var(--v2-ink);
+  box-shadow: 3px 3px 0 var(--v2-ink);
+}
+
+.gw-full .lineup-card {
+  border-width: 3px;
+  box-shadow: 5px 5px 0 var(--v2-ink);
+  transition:
+    flex-grow 0.55s cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 0.12s ease,
+    transform 0.12s ease;
+}
+
+/* pressed in, like the rest of v2 */
+.gw-full .lineup-card.is-active {
+  box-shadow: 1px 1px 0 var(--v2-ink);
+  transform: translate(4px, 4px);
+}
+
+/* photos are cropped (not full-body drawings): fill the card height, anchored to the bottom */
+.gw-full .lineup-card__figure img {
+  object-fit: contain;
+  object-position: bottom center;
+}
+
+.gw-full .lineup-card__spot {
+  opacity: 0.9;
+}
+
+.gw-full .lineup-sticker {
+  border: 2.5px solid var(--v2-ink);
+  box-shadow: 3px 3px 0 var(--v2-ink);
+}
+
+/* phones: three cards side by side instead of the overlapping drawn "family"
+   (that layout only works with full-body illustrations) */
+@media (max-width: 860px) {
+  .gw-full .lineup {
+    display: flex;
+    height: clamp(280px, calc(100svh - 480px), 400px);
+    margin: 16px 0 24px;
+  }
+
+  .gw-full .lineup::before {
+    display: none;
+  }
+
+  .gw-full .lineup-card,
+  .gw-full .lineup-card.is-active {
+    position: relative;
+    left: auto;
+    right: auto;
+    bottom: auto;
+    width: auto;
+    height: auto;
+    padding: 10px 8px 0;
+    border: 3px solid var(--v2-ink);
+    border-radius: 16px;
+    background: var(--tint);
+    overflow: hidden;
+    flex: 1 1 0;
+    box-shadow: 4px 4px 0 var(--v2-ink);
+  }
+
+  .gw-full .lineup-card.is-active {
+    flex-grow: 1.5;
+    box-shadow: 1px 1px 0 var(--v2-ink);
+  }
+
+  .gw-full .lineup-card__label,
+  .gw-full .lineup-card--women .lineup-card__label,
+  .gw-full .lineup-card--men .lineup-card__label,
+  .gw-full .lineup-card--kids .lineup-card__label {
+    position: relative;
+    left: auto;
+    bottom: auto;
+    transform: none;
+    margin: 4px 0 0;
+    padding: 0;
+    border: 0;
+    background: none;
+    box-shadow: none;
+    font-size: 0.95rem;
+  }
+
+  .gw-full .lineup-card__figure {
+    height: calc(100% - 40px);
+  }
+
+  /* narrow cards: the photo fills the card, cropped from the top so faces stay in */
+  .gw-full .lineup-card__figure img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: top center;
+  }
+}
+
+/* ====================================================
+   TRACK YOUR ORDER (components/track-order.tsx: homepage section + /track-order)
+   ==================================================== */
+.track-order {
+  width: min(760px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: clamp(48px, 7vw, 80px) 0;
+}
+
+.track-order__card {
+  position: relative;
+  padding: clamp(28px, 5vw, 44px);
+  border: 3px solid var(--v2-ink);
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 8px 8px 0 var(--v2-ink);
+  text-align: center;
+  color: var(--v2-ink);
+}
+
+.track-order__icon {
+  display: inline-grid;
+  place-items: center;
+  width: 56px;
+  height: 56px;
+  margin-bottom: 14px;
+  border: 3px solid var(--v2-ink);
+  border-radius: 16px;
+  background: var(--v2-yellow);
+  box-shadow: 3px 3px 0 var(--v2-ink);
+  rotate: -6deg;
+}
+
+.track-order h1,
+.track-order h2 {
+  margin: 0 0 10px;
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.track-order__lead {
+  max-width: 520px;
+  margin: 0 auto 24px;
+  color: #374151;
+  font-weight: 600;
+  line-height: 1.5;
+}
+
+.track-order__form {
+  display: grid;
+  grid-template-columns: 0.7fr 1.3fr auto;
+  gap: 12px;
+  align-items: end;
+  text-align: left;
+}
+
+.track-order__form label {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.track-order__form label span {
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.track-order__form input {
+  min-width: 0;
+  padding: 13px 16px;
+  border: 2.5px solid var(--v2-ink);
+  border-radius: 14px;
+  background: #fff;
+  color: var(--v2-ink);
+  font-size: 1rem;
+  font-weight: 600;
+  outline: none;
+}
+
+.track-order__form input:focus {
+  background: #FFFBD6;
+}
+
+.track-order__form button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 13px 20px;
+  border: 3px solid var(--v2-ink);
+  border-radius: 999px;
+  background: var(--v2-green);
+  color: var(--v2-ink);
+  font-weight: 900;
+  text-transform: uppercase;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: 4px 4px 0 var(--v2-ink);
+  transition: transform 0.12s ease, box-shadow 0.12s ease;
+}
+
+.track-order__form button:hover {
+  box-shadow: 0 0 0 var(--v2-ink);
+  transform: translate(4px, 4px);
+}
+
+.track-order__form button:disabled {
+  opacity: 0.7;
+  cursor: progress;
+}
+
+.track-order__error {
+  margin: 18px 0 0;
+  color: #B42318;
+  font-weight: 700;
+}
+
+.track-order__error a,
+.track-order__cancelled a {
+  color: inherit;
+  text-decoration: underline;
+}
+
+.track-order__result {
+  margin-top: 26px;
+  padding-top: 22px;
+  border-top: 2.5px dashed var(--v2-ink);
+  text-align: left;
+}
+
+.track-order__result-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 22px;
+  font-size: 1.05rem;
+}
+
+.track-order__result-head span {
+  color: #6B7280;
+  font-weight: 600;
+}
+
+/* 5-step progress bar */
+.track-order__steps {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  margin: 0 0 20px;
+  padding: 0;
+  list-style: none;
+  font-size: 0.78rem;
+  font-weight: 800;
+  text-align: center;
+}
+
+.track-order__steps::before,
+.track-order__steps::after {
+  content: "";
+  position: absolute;
+  top: 10px;
+  left: 10%;
+  height: 4px;
+  border-radius: 4px;
+}
+
+.track-order__steps::before {
+  right: 10%;
+  background: #E5E7EB;
+}
+
+.track-order__steps::after {
+  width: calc(80% * var(--progress, 0));
+  background: var(--v2-green);
+  outline: 1.5px solid var(--v2-ink);
+}
+
+.track-order__steps li {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  color: #9CA3AF;
+}
+
+.track-order__steps li.is-done {
+  color: var(--v2-ink);
+}
+
+.track-order__dot {
+  width: 24px;
+  height: 24px;
+  border: 3px solid #D1D5DB;
+  border-radius: 50%;
+  background: #fff;
+}
+
+.track-order__steps li.is-done .track-order__dot {
+  border-color: var(--v2-ink);
+  background: var(--v2-green);
+}
+
+.track-order__steps li[aria-current="step"] .track-order__dot {
+  background: var(--v2-yellow);
+  box-shadow: 0 0 0 4px rgba(255, 229, 0, 0.45);
+}
+
+.track-order__tracking {
+  display: grid;
+  gap: 8px;
+  margin: 0 0 14px;
+  padding: 0;
+  list-style: none;
+  font-weight: 700;
+}
+
+.track-order__tracking li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 10px;
+  padding: 10px 14px;
+  border: 2px solid var(--v2-ink);
+  border-radius: 12px;
+  background: #F0FFF2;
+}
+
+.track-order__tracking a,
+.track-order__more {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--v2-ink);
+  font-weight: 900;
+  text-decoration: underline;
+}
+
+.track-order__tracking a {
+  margin-left: auto;
+}
+
+.track-order__items {
+  margin: 0 0 12px;
+  color: #4B5563;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+.track-order__cancelled {
+  margin: 0;
+  font-weight: 700;
+}
+
+.track-order-page {
+  min-height: 60vh;
+  padding: 24px 0 40px;
+}
+
+@media (max-width: 640px) {
+  .track-order__form {
+    grid-template-columns: 1fr;
+  }
+
+  .track-order__steps {
+    font-size: 0.66rem;
+  }
+
+  .track-order__result-head {
+    flex-direction: column;
+    gap: 2px;
+  }
+}
