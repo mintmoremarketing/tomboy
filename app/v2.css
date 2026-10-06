@@ -889,14 +889,16 @@ html[data-first-visit] .gateway-screen.gw-pending {
    they drop a little, so the grow never reveals the cropped legs. */
 @media (min-width: 861px) {
   .gw-full .lineup-card--women .lineup-card__figure,
-  .gw-full .lineup-card--men .lineup-card__figure {
+  .gw-full .lineup-card--men .lineup-card__figure,
+  .gw-full .lineup-card--kids .lineup-card__figure {
     height: calc(100% - var(--top) * 0.85);
   }
 
   /* whole photo, head to thighs (no zoom/crop), standing on the card's bottom edge so the
      cut at the thighs lines up with it */
   .gw-full .lineup-card--women .lineup-card__figure img,
-  .gw-full .lineup-card--men .lineup-card__figure img {
+  .gw-full .lineup-card--men .lineup-card__figure img,
+  .gw-full .lineup-card--kids .lineup-card__figure img {
     width: 100%;
     height: 100%;
     max-height: none;
@@ -905,23 +907,12 @@ html[data-first-visit] .gateway-screen.gw-pending {
   }
 
   .gw-full .lineup-card--women.is-active .lineup-card__figure,
-  .gw-full .lineup-card--men.is-active .lineup-card__figure {
+  .gw-full .lineup-card--men.is-active .lineup-card__figure,
+  .gw-full .lineup-card--kids.is-active .lineup-card__figure {
     bottom: -4%;
   }
 }
 
-/* the kid's photo is full-body (feet included): stand him on the card's bottom edge and
-   never crop him, on phones too */
-@media (min-width: 861px) {
-  .gw-full .lineup-card--kids .lineup-card__figure {
-    bottom: 2%;
-  }
-
-  .gw-full .lineup-card--kids .lineup-card__figure img {
-    object-fit: contain;
-    object-position: bottom center;
-  }
-}
 
 /* StretchHeadline "settle" entrance in CSS (cssEntrance prop): same motion as the Motion
    version (letters stretched wide and slightly low, floating back one by one, then the
@@ -975,7 +966,8 @@ html[data-first-visit] .gateway-screen.gw-pending {
   }
 
   .gw-full .lineup-card--women .lineup-card__figure img,
-  .gw-full .lineup-card--men .lineup-card__figure img {
+  .gw-full .lineup-card--men .lineup-card__figure img,
+  .gw-full .lineup-card--kids .lineup-card__figure img {
     -webkit-mask-image: linear-gradient(to bottom, #000 82%, transparent 100%);
     mask-image: linear-gradient(to bottom, #000 82%, transparent 100%);
   }
@@ -1048,5 +1040,257 @@ html[data-first-visit] .gateway-screen.gw-pending {
     width: 30px;
     opacity: 1;
     transform: rotate(45deg) scale(1.1);
+  }
+}
+
+
+/* ====================================================
+   WELCOME: full-length photos for all three
+   Everyone stands on the card's bottom edge (desktop) / the group's baseline (phones),
+   whole and uncropped, in proportion: woman and man the same height, the kid shorter.
+   This overrides the earlier crop workarounds (legs fade, drop-on-hover).
+   ==================================================== */
+.gw-full .lineup-card--women .lineup-card__figure img,
+.gw-full .lineup-card--men .lineup-card__figure img,
+.gw-full .lineup-card--kids .lineup-card__figure img {
+  -webkit-mask-image: none;
+  mask-image: none;
+  object-fit: contain;
+  object-position: center bottom;
+}
+
+@media (min-width: 861px) {
+  .gw-full .lineup-card--women .lineup-card__figure,
+  .gw-full .lineup-card--men .lineup-card__figure,
+  .gw-full .lineup-card--women.is-active .lineup-card__figure,
+  .gw-full .lineup-card--men.is-active .lineup-card__figure {
+    bottom: 3%;
+    height: calc(97% - var(--top) * 0.85);
+  }
+
+  /* the kid is about three quarters of an adult's height */
+  .gw-full .lineup-card--kids .lineup-card__figure,
+  .gw-full .lineup-card--kids.is-active .lineup-card__figure {
+    bottom: 3%;
+    height: calc((97% - var(--top) * 0.85) * 0.74);
+  }
+}
+
+@media (max-width: 860px) {
+  .gw-full .lineup-card--women,
+  .gw-full .lineup-card--men {
+    height: 100%;
+  }
+
+  .gw-full .lineup-card--kids {
+    height: 74%;
+  }
+}
+
+/* phones + tablets: symmetrical family group. Three equal slots with even gaps (centres at
+   18% / 50% / 82%), each person centred in theirs, name pill centred under each person */
+@media (max-width: 860px) {
+  .gw-full .lineup-card--women,
+  .gw-full .lineup-card--men,
+  .gw-full .lineup-card--kids {
+    width: 30%;
+    right: auto;
+  }
+
+  .gw-full .lineup-card--women { left: 3%; }
+  .gw-full .lineup-card--kids { left: 35%; }
+  .gw-full .lineup-card--men { left: 67%; }
+
+  .gw-full .lineup-card--women .lineup-card__label,
+  .gw-full .lineup-card--men .lineup-card__label,
+  .gw-full .lineup-card--kids .lineup-card__label {
+    left: 50%;
+  }
+
+  .gw-full .lineup-card--women .lineup-card__figure img,
+  .gw-full .lineup-card--men .lineup-card__figure img,
+  .gw-full .lineup-card--kids .lineup-card__figure img {
+    object-position: center bottom;
+  }
+}
+
+/* phones + tablets: less "heaven" — a solid sticker-style disc instead of the soft white
+   halo, and a shadow under each person so they stand on something instead of floating */
+@media (max-width: 860px) {
+  .gw-full .lineup::before {
+    top: 4%;
+    width: 78%;
+    background: var(--v2-yellow);
+    border: 3px solid var(--v2-ink);
+    box-shadow: 6px 6px 0 var(--v2-ink);
+    opacity: 1;
+  }
+
+  .gw-full .lineup-card__figure::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    bottom: -6px;
+    z-index: -1;
+    width: 70%;
+    height: 14px;
+    border-radius: 50%;
+    background: radial-gradient(closest-side, rgba(10, 10, 10, 0.45), rgba(10, 10, 10, 0));
+    transform: translateX(-50%);
+  }
+}
+
+/* the disc behind the family: a slow, flowing blend of the brand colours instead of flat yellow */
+@media (max-width: 860px) {
+  .gw-full .lineup::before {
+    background: linear-gradient(120deg, #FF8AD8, #FFE500, #3DFF52, #00F5D4, #FF8AD8, #FFE500);
+    background-size: 300% 300%;
+    animation: v2-disc-flow 12s ease-in-out infinite alternate;
+  }
+}
+
+@keyframes v2-disc-flow {
+  from { background-position: 0% 50%; }
+  to { background-position: 100% 50%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gw-full .lineup::before {
+    animation: none;
+  }
+}
+
+/* keep the animated disc behind the people (an animated layer can otherwise be drawn on top) */
+@media (max-width: 860px) {
+  .gw-full .lineup {
+    isolation: isolate;
+  }
+
+  .gw-full .lineup::before {
+    z-index: 0;
+  }
+
+  .gw-full .lineup-card {
+    z-index: 1;
+  }
+
+  .gw-full .lineup-card--kids {
+    z-index: 2;
+  }
+}
+
+/* ====================================================
+   WELCOME on phones/tablets, tightened: no intro text (the headline + three choices say
+   enough), people ~40% bigger and overlapping like a family photo, all inside one centred
+   circle, and a calmer pastel gradient so the people carry the colour.
+   ==================================================== */
+@media (max-width: 860px) {
+  .gw-full__copy > p:not(.eyebrow) {
+    display: none;
+  }
+
+  .gw-full .lineup {
+    height: clamp(380px, calc(100svh - 300px), 580px);
+    margin: 8px 0 60px;
+  }
+
+  /* three overlapping slots: woman left, kid in front in the middle, man right */
+  .gw-full .lineup-card--women,
+  .gw-full .lineup-card--men,
+  .gw-full .lineup-card--kids {
+    width: 40%;
+  }
+
+  .gw-full .lineup-card--women { left: 6%; }
+  .gw-full .lineup-card--kids { left: 30%; }
+  .gw-full .lineup-card--men { left: 54%; }
+
+  /* name pills stay evenly spread (18% / 50% / 82% of the group) even though the people
+     overlap: offset from each person's slot centre, in % of the 40%-wide slot */
+  .gw-full .lineup-card--women .lineup-card__label { left: 30%; }
+  .gw-full .lineup-card--kids .lineup-card__label { left: 50%; }
+  .gw-full .lineup-card--men .lineup-card__label { left: 70%; }
+
+  /* one centred circle behind everyone */
+  .gw-full .lineup::before {
+    top: 10%;
+    width: 74%;
+    background: linear-gradient(120deg, #FFD3F0, #FFF4A8, #C8FFD0, #BDF8EF, #FFD3F0, #FFF4A8);
+    background-size: 300% 300%;
+  }
+}
+
+/* ====================================================
+   WELCOME on phones/tablets: the family stands in front of a Polaroid (instead of a
+   circle): white instant-photo frame, slight tilt, ink outline + hard shadow, a soft
+   pastel "photo" behind them and a handwritten caption on the thick bottom strip.
+   ==================================================== */
+@media (max-width: 860px) {
+  .gw-full .lineup {
+    height: clamp(360px, calc(100svh - 340px), 560px);
+    margin: 8px 0 92px;
+  }
+
+  .gw-full .lineup::before {
+    top: 4%;
+    bottom: -40px;
+    left: 5%;
+    width: auto;
+    right: 5%;
+    height: auto;
+    aspect-ratio: auto;
+    margin: 0;
+    border-radius: 6px;
+    border: 10px solid #fff;
+    border-bottom-width: 48px;
+    outline: 3px solid var(--v2-ink);
+    box-shadow: 7px 7px 0 3px var(--v2-ink);
+    transform: rotate(-3deg);
+  }
+
+  /* caption on the frame's bottom strip */
+  .gw-full .lineup::after {
+    content: "the Tomboy fam ♥";
+    position: absolute;
+    left: 50%;
+    bottom: -36px;
+    z-index: 0;
+    color: var(--v2-ink);
+    font-family: "Caveat", "Comic Sans MS", cursive;
+    font-size: 1.6rem;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+    transform: translateX(-50%) rotate(-3deg);
+    pointer-events: none;
+  }
+
+  /* name pills sit below the Polaroid */
+  .gw-full .lineup-card__label,
+  .gw-full .lineup-card--women .lineup-card__label,
+  .gw-full .lineup-card--men .lineup-card__label,
+  .gw-full .lineup-card--kids .lineup-card__label {
+    bottom: -84px;
+  }
+}
+
+/* phones/tablets: the tapped person's name pill pops (the person steps forward slightly,
+   the others soften in place; see isGroup in starting-gateway.tsx) */
+@media (max-width: 860px) {
+  .gw-full .lineup-card__label {
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease;
+  }
+
+  .gw-full .lineup-card.is-active .lineup-card__label {
+    transform: translateX(-50%) scale(1.12);
+  }
+
+  .gw-full .lineup-card.is-dimmed .lineup-card__label {
+    opacity: 0.6;
+  }
+
+  /* the person steps forward from their feet, not their middle */
+  .gw-full .lineup-card__figure {
+    transform-origin: center bottom;
   }
 }

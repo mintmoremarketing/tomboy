@@ -19,9 +19,9 @@ const lineups: {
   art: string;
 }[] = [
   // v2: cut-out photos on the brand's sticker colours (the card is the colour, the disc is white)
-  { id: "women", label: "Women", tagline: "Insanely soft", accent: "#FFFFFF", tint: "#FF8AD8", image: "/v2/gateway-women.webp", art: "/v2/gateway-women.webp" },
-  { id: "men", label: "Men", tagline: "Zero nonsense", accent: "#FFFFFF", tint: "#3DFF52", image: "/v2/gateway-men.webp", art: "/v2/gateway-men.webp" },
-  { id: "kids", label: "Kids", tagline: "Play hard", accent: "#FFFFFF", tint: "#FFE500", image: "/v2/gateway-kids.webp", art: "/v2/gateway-kids.webp" },
+  { id: "women", label: "Women", tagline: "Insanely soft", accent: "#FFFFFF", tint: "#FF8AD8", image: "/v2/gateway-women-full.webp", art: "/v2/gateway-women-full.webp" },
+  { id: "men", label: "Men", tagline: "Zero nonsense", accent: "#FFFFFF", tint: "#3DFF52", image: "/v2/gateway-men-full.webp", art: "/v2/gateway-men-full.webp" },
+  { id: "kids", label: "Kids", tagline: "Play hard", accent: "#FFFFFF", tint: "#FFE500", image: "/v2/gateway-kids-full.webp", art: "/v2/gateway-kids-full.webp" },
 ];
 
 const spring = { type: "spring", stiffness: 240, damping: 22 } as const;
@@ -42,6 +42,16 @@ export function StartingGateway({
   onSelectAudience: (val: Audience) => void;
 }) {
   const [active, setActive] = useState<Audience | null>(null);
+  // phones/tablets show the three together as one family photo (not separate cards), so a
+  // tap highlights one person in place instead of sinking the other two out of the picture
+  const [isGroup, setIsGroup] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 860px)");
+    const update = () => setIsGroup(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
   // the staggered entrance delay only applies to the first pop-up
   const [interacted, setInteracted] = useState(false);
 
@@ -143,9 +153,9 @@ export function StartingGateway({
                           : {
                               // photos are cropped at the legs, so they never lift off the card's
                               // bottom edge: the active one grows from the bottom instead
-                              y: isDimmed ? "62%" : "0%",
-                              opacity: isDimmed ? 0.35 : 1,
-                              scale: isActive ? 1.05 : 1,
+                              y: isDimmed && !isGroup ? "62%" : "0%",
+                              opacity: isDimmed ? (isGroup ? 0.5 : 0.35) : 1,
+                              scale: isActive ? (isGroup ? 1.04 : 1.05) : 1,
                             }
                       }
                       transition={

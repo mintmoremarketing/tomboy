@@ -60,9 +60,13 @@ export default function RootLayout({
         <script
           dangerouslySetInnerHTML={{
             // first visit: also start downloading the welcome photos right away (returning visitors skip them)
-            __html: `try{if(!localStorage.getItem("tomboy-audience")){document.documentElement.setAttribute("data-first-visit","");["women","men","kids"].forEach(function(n){var l=document.createElement("link");l.rel="preload";l.as="image";l.href="/v2/gateway-"+n+".webp";l.fetchPriority="high";document.head.appendChild(l)})}}catch(e){}`,
+            __html: `try{if(!localStorage.getItem("tomboy-audience")){document.documentElement.setAttribute("data-first-visit","");["women","men","kids"].forEach(function(n){var l=document.createElement("link");l.rel="preload";l.as="image";l.href="/v2/gateway-"+n+"-full.webp";l.fetchPriority="high";document.head.appendChild(l)})}}catch(e){}`,
           }}
         />
+        {/* handwriting font for the welcome Polaroid caption ("the Tomboy fam") */}
+        <link rel="preconnect" href="https://fonts.googleapis.com" />
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
+        <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap" rel="stylesheet" />
       </head>
       {/* Browser extensions (e.g. ColorZilla's cz-shortcut-listen) add attributes to <body>
           before React loads; this ignores those on <body> only, not on anything inside it. */}
