@@ -469,25 +469,28 @@ main {
   box-shadow: 3px 3px 0 var(--v2-ink);
 }
 
-.gw-full .lineup-card {
-  border-width: 3px;
-  box-shadow: 5px 5px 0 var(--v2-ink);
-  transition:
-    flex-grow 0.55s cubic-bezier(0.2, 0.8, 0.2, 1),
-    box-shadow 0.12s ease,
-    transform 0.12s ease;
-}
+/* desktop cards only (phones/tablets use the borderless family group) */
+@media (min-width: 861px) {
+  .gw-full .lineup-card {
+    border-width: 3px;
+    box-shadow: 5px 5px 0 var(--v2-ink);
+    transition:
+      flex-grow 0.55s cubic-bezier(0.2, 0.8, 0.2, 1),
+      box-shadow 0.12s ease,
+      transform 0.12s ease;
+  }
 
-/* pressed in, like the rest of v2 */
-.gw-full .lineup-card.is-active {
-  box-shadow: 1px 1px 0 var(--v2-ink);
-  transform: translate(4px, 4px);
-}
+  /* pressed in, like the rest of v2 */
+  .gw-full .lineup-card.is-active {
+    box-shadow: 1px 1px 0 var(--v2-ink);
+    transform: translate(4px, 4px);
+  }
 
-/* photos are cropped (not full-body drawings): fill the card height, anchored to the bottom */
-.gw-full .lineup-card__figure img {
-  object-fit: contain;
-  object-position: bottom center;
+  /* photos are cropped (not full-body drawings): fill the card height, anchored to the bottom */
+  .gw-full .lineup-card__figure img {
+    object-fit: contain;
+    object-position: bottom center;
+  }
 }
 
 .gw-full .lineup-card__spot {
@@ -499,67 +502,20 @@ main {
   box-shadow: 3px 3px 0 var(--v2-ink);
 }
 
-/* phones: three cards side by side instead of the overlapping drawn "family"
-   (that layout only works with full-body illustrations) */
+/* phones + tablets keep the overlapping illustrated "family" group from globals.css
+   (the cropped photos only work on the desktop cards); v2 colours for it below */
 @media (max-width: 860px) {
-  .gw-full .lineup {
-    display: flex;
-    height: clamp(280px, calc(100svh - 480px), 400px);
-    margin: 16px 0 24px;
-  }
-
+  /* white glow behind the family instead of the old pastel gradient */
   .gw-full .lineup::before {
-    display: none;
+    background: radial-gradient(circle, #fff 0%, rgba(255, 255, 255, 0.75) 55%, rgba(255, 255, 255, 0) 72%);
+    opacity: 0.9;
   }
 
-  .gw-full .lineup-card,
-  .gw-full .lineup-card.is-active {
-    position: relative;
-    left: auto;
-    right: auto;
-    bottom: auto;
-    width: auto;
-    height: auto;
-    padding: 10px 8px 0;
-    border: 3px solid var(--v2-ink);
-    border-radius: 16px;
+  /* label pills in each lineup's sticker colour */
+  .gw-full .lineup-card__label {
+    border: 2.5px solid var(--v2-ink);
     background: var(--tint);
-    overflow: hidden;
-    flex: 1 1 0;
-    box-shadow: 4px 4px 0 var(--v2-ink);
-  }
-
-  .gw-full .lineup-card.is-active {
-    flex-grow: 1.5;
-    box-shadow: 1px 1px 0 var(--v2-ink);
-  }
-
-  .gw-full .lineup-card__label,
-  .gw-full .lineup-card--women .lineup-card__label,
-  .gw-full .lineup-card--men .lineup-card__label,
-  .gw-full .lineup-card--kids .lineup-card__label {
-    position: relative;
-    left: auto;
-    bottom: auto;
-    transform: none;
-    margin: 4px 0 0;
-    padding: 0;
-    border: 0;
-    background: none;
-    box-shadow: none;
-    font-size: 0.95rem;
-  }
-
-  .gw-full .lineup-card__figure {
-    height: calc(100% - 40px);
-  }
-
-  /* narrow cards: the photo fills the card, cropped from the top so faces stay in */
-  .gw-full .lineup-card__figure img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    object-position: top center;
+    box-shadow: 3px 3px 0 var(--v2-ink);
   }
 }
 
@@ -954,13 +910,15 @@ html[data-first-visit] .gateway-screen.gw-pending {
 
 /* the kid's photo is full-body (feet included): stand him on the card's bottom edge and
    never crop him, on phones too */
-.gw-full .lineup-card--kids .lineup-card__figure {
-  bottom: 2%;
-}
+@media (min-width: 861px) {
+  .gw-full .lineup-card--kids .lineup-card__figure {
+    bottom: 2%;
+  }
 
-.gw-full .lineup-card--kids .lineup-card__figure img {
-  object-fit: contain;
-  object-position: bottom center;
+  .gw-full .lineup-card--kids .lineup-card__figure img {
+    object-fit: contain;
+    object-position: bottom center;
+  }
 }
 
 /* StretchHeadline "settle" entrance in CSS (cssEntrance prop): same motion as the Motion
@@ -998,4 +956,10 @@ html[data-first-visit] .gateway-screen.gw-pending {
   .sh-css--settle .sh-band {
     animation: none;
   }
+}
+
+/* the welcome figure's <picture> wrapper (photo on desktop, illustration on phones) must not
+   become its own box, or the img's height: 100% has nothing to measure against */
+.lineup-card__figure picture {
+  display: contents;
 }

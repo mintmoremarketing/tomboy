@@ -60,7 +60,7 @@ export default function RootLayout({
         <script
           dangerouslySetInnerHTML={{
             // first visit: also start downloading the welcome photos right away (returning visitors skip them)
-            __html: `try{if(!localStorage.getItem("tomboy-audience")){document.documentElement.setAttribute("data-first-visit","");["women","men","kids"].forEach(function(n){var l=document.createElement("link");l.rel="preload";l.as="image";l.href="/v2/gateway-"+n+".webp";l.fetchPriority="high";document.head.appendChild(l)})}}catch(e){}`,
+            __html: `try{if(!localStorage.getItem("tomboy-audience")){document.documentElement.setAttribute("data-first-visit","");["women","men","kids"].forEach(function(n){var l=document.createElement("link");l.rel="preload";l.as="image";l.href=(n!=="kids"&&matchMedia("(max-width: 860px)").matches?"/gateway/"+n:"/v2/gateway-"+n)+".webp";l.fetchPriority="high";document.head.appendChild(l)})}}catch(e){}`,
           }}
         />
       </head>

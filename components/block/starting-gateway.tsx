@@ -13,12 +13,15 @@ const lineups: {
   tagline: string;
   accent: string;
   tint: string;
+  /** cut-out photo, shown on the desktop cards */
   image: string;
+  /** full-body illustration, for the overlapping "family" group on phones and tablets */
+  art: string;
 }[] = [
   // v2: cut-out photos on the brand's sticker colours (the card is the colour, the disc is white)
-  { id: "women", label: "Women", tagline: "Insanely soft", accent: "#FFFFFF", tint: "#FF8AD8", image: "/v2/gateway-women.webp" },
-  { id: "men", label: "Men", tagline: "Zero nonsense", accent: "#FFFFFF", tint: "#3DFF52", image: "/v2/gateway-men.webp" },
-  { id: "kids", label: "Kids", tagline: "Play hard", accent: "#FFFFFF", tint: "#FFE500", image: "/v2/gateway-kids.webp" },
+  { id: "women", label: "Women", tagline: "Insanely soft", accent: "#FFFFFF", tint: "#FF8AD8", image: "/v2/gateway-women.webp", art: "/gateway/women.webp" },
+  { id: "men", label: "Men", tagline: "Zero nonsense", accent: "#FFFFFF", tint: "#3DFF52", image: "/v2/gateway-men.webp", art: "/gateway/men.webp" },
+  { id: "kids", label: "Kids", tagline: "Play hard", accent: "#FFFFFF", tint: "#FFE500", image: "/v2/gateway-kids.webp", art: "/v2/gateway-kids.webp" },
 ];
 
 const spring = { type: "spring", stiffness: 240, damping: 22 } as const;
@@ -89,7 +92,7 @@ export function StartingGateway({
             </span>
 
             <div className="lineup" onMouseLeave={() => highlight(null)}>
-              {lineups.map(({ id, label, tagline, accent, tint, image }, i) => {
+              {lineups.map(({ id, label, tagline, accent, tint, image, art }, i) => {
                 const isChosen = chosen === id;
                 const isLeaving = chosen !== null && !isChosen;
                 const isActive = chosen ? isChosen : active === id;
@@ -151,7 +154,11 @@ export function StartingGateway({
                           : spring
                       }
                     >
-                      <img src={image} alt="" draggable={false} fetchPriority="high" decoding="async" />
+                      {/* the browser downloads only the one it shows */}
+                      <picture>
+                        <source media="(max-width: 860px)" srcSet={art} />
+                        <img src={image} alt="" draggable={false} fetchPriority="high" decoding="async" />
+                      </picture>
                     </motion.span>
                   </button>
                 );
