@@ -912,26 +912,30 @@ function ActionStrip() {
           </p>
         </div>
 
-        <div className="creator-story-rail">
-          {creatorPlaceholders.map((creator) => (
-            <a
-              href="https://instagram.com/houseoftomboy"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="creator-story-item"
-              key={creator.name}
-            >
-              <div className="creator-story-ring">
-                <img
-                  src={creator.imageUrl}
-                  alt={creator.name}
-                  className="creator-story-img"
-                  loading="lazy"
-                />
-              </div>
-              <span className="creator-story-name">{creator.name}</span>
-            </a>
-          ))}
+      </div>
+
+      {/* endless strip: the creators repeat so it fills any screen width (even 4K) and loops
+          seamlessly; the copies are hidden from screen readers and keyboard */}
+      <div className="creator-marquee">
+        <div className="creator-marquee__track">
+          {Array.from({ length: 4 }).flatMap((_, copy) =>
+            creatorPlaceholders.map((creator) => (
+              <a
+                href="https://instagram.com/houseoftomboy"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="creator-story-item"
+                key={`${copy}-${creator.name}`}
+                aria-hidden={copy > 0 || undefined}
+                tabIndex={copy > 0 ? -1 : undefined}
+              >
+                <div className="creator-story-ring">
+                  <img src={creator.imageUrl} alt={copy > 0 ? "" : creator.name} className="creator-story-img" loading="lazy" />
+                </div>
+                <span className="creator-story-name">{creator.name}</span>
+              </a>
+            )),
+          )}
         </div>
       </div>
     </section>

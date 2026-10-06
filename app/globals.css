@@ -8695,3 +8695,143 @@ a.info-contact__item:hover {
     rotate: 0deg;
   }
 }
+
+/* ---- Very large screens (QHD / 4K at 100% scaling) ----
+   The layout is designed around a ~1280px content width with fixed text sizes, so on a
+   3840px-wide screen everything looked tiny in the middle. Scale the whole page up so these
+   screens see what a normal desktop sees (4K at 2x ≈ a 1920px desktop). Screens already using
+   OS scaling (most 4K laptops at 150–200%) report a smaller width and are unaffected. */
+:root {
+  --page-zoom: 1;
+}
+
+@media (min-width: 2200px) {
+  :root {
+    zoom: 1.25;
+    --page-zoom: 1.25;
+  }
+}
+
+@media (min-width: 2560px) {
+  :root {
+    zoom: 1.5;
+    --page-zoom: 1.5;
+  }
+}
+
+@media (min-width: 3200px) {
+  :root {
+    zoom: 2;
+    --page-zoom: 2;
+  }
+}
+
+/* zoom also multiplies screen-height units, so divide them back for things sized to the screen */
+@media (min-width: 2200px) {
+  .site-footer {
+    min-height: calc(100vh / var(--page-zoom));
+  }
+
+  .pdp-sheet__panel {
+    max-height: calc(86vh / var(--page-zoom));
+  }
+
+  .size-chart__panel {
+    max-height: calc(84vh / var(--page-zoom));
+  }
+
+  .fit-finder__panel {
+    max-height: calc(88vh / var(--page-zoom));
+  }
+
+  .ap-menu {
+    max-height: min(440px, calc(70vh / var(--page-zoom)));
+  }
+
+  .to {
+    max-height: calc((100vh - 32px * var(--page-zoom)) / var(--page-zoom));
+  }
+}
+
+/* Large screens (1920px desktops, and QHD/4K after the zoom above): use more of the width
+   instead of a 1240px column with big empty sides */
+@media (min-width: 1700px) {
+  :root {
+    --max: 1520px;
+  }
+
+  .pdp-container {
+    width: min(1440px, calc(100% - 64px));
+  }
+}
+
+/* Offers ticker stays pinned at the top while scrolling, with the header right under it */
+:root {
+  --ticker-h: 34px;
+}
+
+.ticker {
+  position: sticky;
+  top: 0;
+  z-index: 42;
+  display: flex;
+  align-items: center;
+  height: var(--ticker-h);
+  padding: 0;
+}
+
+.ticker ~ .site-header {
+  top: var(--ticker-h);
+}
+
+/* phone menu drawer opens below both */
+.ticker ~ .mobile-nav-drawer {
+  top: calc(65px + var(--ticker-h));
+}
+
+/* "Watch Tomboy in action": creators scroll in an endless strip across the full width */
+.creator-marquee {
+  overflow: hidden;
+  width: 100%;
+  margin-top: 8px;
+  padding: 6px 0 4px;
+  /* soft fade at both edges */
+  -webkit-mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+  mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+}
+
+.creator-marquee__track {
+  display: flex;
+  width: max-content;
+  animation: creator-marquee 40s linear infinite;
+}
+
+/* spacing on the items (not a flex gap) so half the track is exactly two copies: seamless loop */
+.creator-marquee .creator-story-item {
+  flex: 0 0 auto;
+  margin-right: clamp(20px, 2.6vw, 40px);
+}
+
+.creator-marquee:hover .creator-marquee__track,
+.creator-marquee:focus-within .creator-marquee__track {
+  animation-play-state: paused;
+}
+
+@keyframes creator-marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .creator-marquee__track {
+    animation: none;
+  }
+
+  .creator-marquee {
+    overflow-x: auto;
+  }
+}
