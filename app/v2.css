@@ -843,3 +843,46 @@ main {
     gap: 2px;
   }
 }
+
+/* welcome on big screens (2K/4K): the lineup was capped at 760px tall, leaving the cards
+   floating in a sea of sky with the bottom sticker stranded in the corner. Let the cards
+   fill the height, keep the whole layout in a centred column and scale type/logo up. */
+@media (min-width: 861px) {
+  .gw-full__bar,
+  .gw-full__grid {
+    width: 100%;
+    max-width: 1800px;
+    margin: 0 auto;
+  }
+
+  .gw-full__grid {
+    align-items: stretch;
+    padding-bottom: clamp(32px, 5vh, 72px);
+  }
+
+  .gw-full__copy {
+    align-self: center;
+  }
+
+  .gw-full__stage {
+    position: relative;
+  }
+
+  .gw-full .lineup {
+    max-height: none;
+    height: 100%;
+  }
+
+  .gw-full__bar .gateway-logo {
+    height: clamp(32px, 2.2vw, 52px);
+    max-width: none;
+  }
+
+  .gw-full__copy h1 {
+    font-size: clamp(2.8rem, 5vw, 7.5rem);
+  }
+
+  .gw-full__copy > p:not(.eyebrow) {
+    font-size: clamp(1rem, 1vw, 1.35rem);
+  }
+}
