@@ -893,13 +893,15 @@ html[data-first-visit] .gateway-screen.gw-pending {
     height: calc(100% - var(--top) * 0.85);
   }
 
+  /* whole photo, head to thighs (no zoom/crop), standing on the card's bottom edge so the
+     cut at the thighs lines up with it */
   .gw-full .lineup-card--women .lineup-card__figure img,
   .gw-full .lineup-card--men .lineup-card__figure img {
     width: 100%;
     height: 100%;
     max-height: none;
-    object-fit: cover;
-    object-position: center top;
+    object-fit: contain;
+    object-position: center bottom;
   }
 
   .gw-full .lineup-card--women.is-active .lineup-card__figure,
@@ -962,4 +964,89 @@ html[data-first-visit] .gateway-screen.gw-pending {
    become its own box, or the img's height: 100% has nothing to measure against */
 .lineup-card__figure picture {
   display: contents;
+}
+
+/* phones + tablets: the family group is all photos now. The woman and man are cut off at the
+   thighs and there's no card edge to hide it, so their legs fade out at the bottom; they're
+   drawn the same height (the old 109% was for the illustrated woman's raised fist). */
+@media (max-width: 860px) {
+  .gw-full .lineup-card--women {
+    height: 100%;
+  }
+
+  .gw-full .lineup-card--women .lineup-card__figure img,
+  .gw-full .lineup-card--men .lineup-card__figure img {
+    -webkit-mask-image: linear-gradient(to bottom, #000 82%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 82%, transparent 100%);
+  }
+}
+
+/* desktop cards: the lineup name sits in the top row (where 01/02/03 was) and the separate
+   big label below it is gone, so the photo gets that space */
+.lineup-card__name {
+  font-size: clamp(1.3rem, 2.2vw, 2.1rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+}
+
+@media (min-width: 861px) {
+  .gw-full .lineup {
+    --top: 72px;
+  }
+
+  .gw-full .lineup-card__label {
+    display: none;
+  }
+
+  /* the tagline pill shows under the name when a card is active */
+  .gw-full .lineup-card__tagline {
+    margin-top: 10px;
+  }
+}
+
+/* desktop card header: at rest the name sits centred and the arrow is hidden; when a card is
+   active (hover/focus/chosen) the name slides to the left and the arrow pops in on the right,
+   so a long name like WOMEN never crowds the arrow */
+@media (min-width: 861px) {
+  .gw-full .lineup-card__top {
+    justify-content: flex-start;
+  }
+
+  .gw-full .lineup-card__name {
+    flex: 1 1 auto;
+    min-width: 0;
+    white-space: nowrap;
+  }
+
+  /* centred at rest: the name box fills the row (a size container), and the word inside is
+     shifted to its middle (50cqw = half the row, minus half the word) */
+  .gw-full .lineup-card__name {
+    container-type: inline-size;
+  }
+
+  .gw-full .lineup-card__name > span {
+    display: inline-block;
+    transform: translateX(calc(50cqw - 50%));
+    transition: transform 0.4s cubic-bezier(0.34, 1.3, 0.64, 1);
+  }
+
+  .gw-full .lineup-card__arrow {
+    width: 0;
+    opacity: 0;
+    transform: scale(0.4);
+    overflow: hidden;
+    transition: width 0.3s ease, opacity 0.2s ease, transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  .gw-full .lineup-card.is-active .lineup-card__name > span {
+    transform: none;
+  }
+
+  .gw-full .lineup-card.is-active .lineup-card__arrow {
+    width: 30px;
+    opacity: 1;
+    transform: rotate(45deg) scale(1.1);
+  }
 }

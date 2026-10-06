@@ -19,8 +19,8 @@ const lineups: {
   art: string;
 }[] = [
   // v2: cut-out photos on the brand's sticker colours (the card is the colour, the disc is white)
-  { id: "women", label: "Women", tagline: "Insanely soft", accent: "#FFFFFF", tint: "#FF8AD8", image: "/v2/gateway-women.webp", art: "/gateway/women.webp" },
-  { id: "men", label: "Men", tagline: "Zero nonsense", accent: "#FFFFFF", tint: "#3DFF52", image: "/v2/gateway-men.webp", art: "/gateway/men.webp" },
+  { id: "women", label: "Women", tagline: "Insanely soft", accent: "#FFFFFF", tint: "#FF8AD8", image: "/v2/gateway-women.webp", art: "/v2/gateway-women.webp" },
+  { id: "men", label: "Men", tagline: "Zero nonsense", accent: "#FFFFFF", tint: "#3DFF52", image: "/v2/gateway-men.webp", art: "/v2/gateway-men.webp" },
   { id: "kids", label: "Kids", tagline: "Play hard", accent: "#FFFFFF", tint: "#FFE500", image: "/v2/gateway-kids.webp", art: "/v2/gateway-kids.webp" },
 ];
 
@@ -109,7 +109,7 @@ export function StartingGateway({
                     aria-label={`Shop ${label}`}
                   >
                     <span className="lineup-card__top">
-                      <span className="lineup-card__num">0{i + 1}</span>
+                      <span className="lineup-card__name"><span>{label}</span></span>
                       <span className="lineup-card__arrow">
                         <ArrowUpRight size={16} strokeWidth={2.5} />
                       </span>
