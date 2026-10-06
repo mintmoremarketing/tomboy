@@ -3,6 +3,7 @@
 import { ArrowUpRight } from "lucide-react";
 import { AnimatePresence, MotionConfig, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
+import { StretchHeadline } from "@/components/block/stretch-headline";
 
 export type Audience = "men" | "women" | "kids";
 
@@ -74,12 +75,7 @@ export function StartingGateway({
         <div className="gw-full__grid">
           <div className="welcome-copy gw-full__copy">
             <p className="eyebrow">Tomboy India</p>
-            {/* plain CSS entrance (not JS), so it plays the instant the page paints */}
-            <h1 className="stretch-headline gw-title">
-              <span className="gw-title__line">TOO SOFT</span>
-              <span className="gw-title__line">TO TAKE OFF.</span>
-              <span className="gw-title__band" aria-hidden="true" />
-            </h1>
+            <StretchHeadline text={"TOO SOFT\nTO TAKE OFF."} mood="settle" accent="#FFE500" />
             <p>
               100% Super Combed Cotton essentials designed for all-day freedom. Pick your fit to explore:
             </p>
