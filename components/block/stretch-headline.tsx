@@ -75,13 +75,18 @@ export function StretchHeadline({
   mood,
   accent,
   className,
+  cssEntrance = false,
 }: {
   text: string;
   mood: HeadlineMood;
   accent: string;
   className?: string;
+  /** play the letter entrance as a CSS animation (starts on first paint, before the
+   *  JavaScript loads) instead of with Motion. Used on the welcome screen. */
+  cssEntrance?: boolean;
 }) {
   const reduceMotion = useReducedMotion();
+  const jsEntrance = !reduceMotion && !cssEntrance;
   const lines = text.split("\n");
   let wordIndex = 0;
 
@@ -89,7 +94,9 @@ export function StretchHeadline({
   const bandSpring = mood === "bounce" ? springs.bounce : springs[mood];
 
   return (
-    <h1 className={className ? `stretch-headline ${className}` : "stretch-headline"}>
+    <h1
+      className={`stretch-headline${cssEntrance ? ` sh-css sh-css--${mood}` : ""}${className ? ` ${className}` : ""}`}
+    >
       <span className="sh-sr">{lines.join(" ")}</span>
       <AnimatePresence mode="wait">
         <motion.span
@@ -134,12 +141,14 @@ export function StretchHeadline({
                     <span key={w}>
                       <span className="sh-word">
                         {chars.map((char, c) => {
-                          const entrance = letterEntrance(mood, lineIndex, letterIndex++, letterCount);
+                          const n = letterIndex++;
+                          const entrance = letterEntrance(mood, lineIndex, n, letterCount);
                           return (
                             <motion.span
                               key={c}
                               className="sh-unit"
-                              initial={reduceMotion ? false : entrance.initial}
+                              style={cssEntrance ? ({ "--i": n } as React.CSSProperties) : undefined}
+                              initial={jsEntrance ? entrance.initial : false}
                               animate={entrance.animate}
                               transition={entrance.transition}
                             >
@@ -160,7 +169,7 @@ export function StretchHeadline({
           <motion.span
             className="sh-band"
             style={{ background: accent }}
-            initial={reduceMotion ? false : { scaleX: 0 }}
+            initial={jsEntrance ? { scaleX: 0 } : false}
             animate={{ scaleX: 1 }}
             transition={{ ...bandSpring, delay: bandDelay }}
           />

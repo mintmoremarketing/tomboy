@@ -962,3 +962,40 @@ html[data-first-visit] .gateway-screen.gw-pending {
   object-fit: contain;
   object-position: bottom center;
 }
+
+/* StretchHeadline "settle" entrance in CSS (cssEntrance prop): same motion as the Motion
+   version (letters stretched wide and slightly low, floating back one by one, then the
+   underline), but it starts on first paint instead of after the JavaScript loads */
+.sh-css--settle .sh-unit {
+  animation:
+    sh-settle-in 0.9s cubic-bezier(0.22, 1.18, 0.36, 1) both,
+    sh-fade-in 0.4s ease-out both;
+  animation-delay: calc(var(--i, 0) * 35ms);
+}
+
+.sh-css--settle .sh-band {
+  transform-origin: left center;
+  animation: sh-band-in 0.8s 0.4s cubic-bezier(0.22, 1.18, 0.36, 1) both;
+}
+
+@keyframes sh-settle-in {
+  from { transform: translateY(10px) scaleX(1.4); }
+  to { transform: none; }
+}
+
+@keyframes sh-fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes sh-band-in {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sh-css--settle .sh-unit,
+  .sh-css--settle .sh-band {
+    animation: none;
+  }
+}

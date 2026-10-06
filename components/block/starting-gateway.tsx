@@ -75,7 +75,7 @@ export function StartingGateway({
         <div className="gw-full__grid">
           <div className="welcome-copy gw-full__copy">
             <p className="eyebrow">Tomboy India</p>
-            <StretchHeadline text={"TOO SOFT\nTO TAKE OFF."} mood="settle" accent="#FFE500" />
+            <StretchHeadline text={"TOO SOFT\nTO TAKE OFF."} mood="settle" accent="#FFE500" cssEntrance />
             <p>
               100% Super Combed Cotton essentials designed for all-day freedom. Pick your fit to explore:
             </p>
