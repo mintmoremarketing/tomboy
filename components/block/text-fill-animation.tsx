@@ -136,21 +136,30 @@ const STORY: Record<StoryAudience, { kicker: string; text: string; perks: [strin
   },
 };
 
+const firstPhoto = (data: Record<string, string | null> | undefined) =>
+  data ? ((Object.values(data).find((v) => typeof v === "string") as string | undefined) ?? null) : undefined;
+
 export function CraftStorySection({
   audience = "men",
+  initialPhotos = {},
 }: {
   audience?: StoryAudience;
+  /** Shop Essentials photos per audience, already fetched by the homepage on the server */
+  initialPhotos?: Partial<Record<StoryAudience, Record<string, string | null>>>;
 }) {
   const story = STORY[audience];
   // a real product photo for this audience (first one from the essentials collections)
-  const [photos, setPhotos] = useState<Partial<Record<StoryAudience, string | null>>>({});
+  const [photos, setPhotos] = useState<Partial<Record<StoryAudience, string | null>>>(() => {
+    const seeded: Partial<Record<StoryAudience, string | null>> = {};
+    for (const [a, data] of Object.entries(initialPhotos)) seeded[a as StoryAudience] = firstPhoto(data) ?? null;
+    return seeded;
+  });
   useEffect(() => {
     if (audience in photos) return;
     fetch(`/api/essentials?audience=${audience}`)
       .then((res) => res.json())
       .then((data) => {
-        const first = data && !data.error ? (Object.values(data).find((v) => typeof v === "string") as string | undefined) : undefined;
-        setPhotos((prev) => ({ ...prev, [audience]: first ?? null }));
+        setPhotos((prev) => ({ ...prev, [audience]: data && !data.error ? firstPhoto(data) ?? null : null }));
       })
       .catch(() => setPhotos((prev) => ({ ...prev, [audience]: null })));
   }, [audience, photos]);

@@ -886,3 +886,96 @@ main {
     font-size: clamp(1rem, 1vw, 1.35rem);
   }
 }
+
+/* welcome screen rendered on the server before we know if it's a first visit:
+   hidden for returning visitors, shown at once for first-timers (app/layout.tsx script) */
+.gateway-screen.gw-pending {
+  display: none;
+}
+
+html[data-first-visit] .gateway-screen.gw-pending {
+  display: flex;
+}
+
+/* welcome entrances in CSS: they start on first paint instead of after React loads */
+.gw-title {
+  display: flex;
+  flex-direction: column;
+  margin: 12px 0 18px;
+  font-weight: 900;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+
+.gw-title__line {
+  display: block;
+  transform-origin: left bottom;
+  animation: gw-line-in 0.6s cubic-bezier(0.34, 1.4, 0.64, 1) both;
+}
+
+.gw-title__line:nth-child(2) {
+  animation-delay: 0.08s;
+}
+
+.gw-title__band {
+  display: block;
+  width: 34%;
+  height: 8px;
+  margin-top: 14px;
+  border-radius: 8px;
+  background: var(--v2-yellow);
+  transform-origin: left center;
+  animation: gw-band-in 0.5s 0.25s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes gw-line-in {
+  from { opacity: 0; transform: translateY(30px) scaleY(1.4) scaleX(0.85); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes gw-band-in {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
+/* cards: the photos fade in and settle, one after another. They're cropped at the legs, so
+   they stay planted on the card's bottom edge the whole time (no slide-up that would show
+   the cut edge rising into view). */
+.gw-full .lineup-card__figure img {
+  transform-origin: center bottom;
+  animation: gw-figure-in 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.gw-full .lineup-card:nth-child(2) .lineup-card__figure img { animation-delay: 0.07s; }
+.gw-full .lineup-card:nth-child(3) .lineup-card__figure img { animation-delay: 0.14s; }
+
+@keyframes gw-figure-in {
+  from { opacity: 0; transform: scale(1.06); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gw-title__line,
+  .gw-title__band,
+  .gw-full .lineup-card__figure img {
+    animation: none;
+  }
+}
+
+/* the photos are cut off at the legs: sit them a little below the card's bottom edge
+   (the card clips them), so the cut line is always hidden, even mid-animation or when a
+   card grows on hover */
+.gw-full .lineup-card__figure {
+  bottom: -3%;
+}
+
+/* the kid's photo is full-body (feet included): stand him on the card's bottom edge and
+   never crop him, on phones too */
+.gw-full .lineup-card--kids .lineup-card__figure {
+  bottom: 2%;
+}
+
+.gw-full .lineup-card--kids .lineup-card__figure img {
+  object-fit: contain;
+  object-position: bottom center;
+}

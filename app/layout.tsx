@@ -53,7 +53,17 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Runs before the first paint: marks first-time visitors (no lineup saved yet) so the
+            welcome screen in the server HTML shows immediately, without waiting for React. */}
+        <script
+          dangerouslySetInnerHTML={{
+            // first visit: also start downloading the welcome photos right away (returning visitors skip them)
+            __html: `try{if(!localStorage.getItem("tomboy-audience")){document.documentElement.setAttribute("data-first-visit","");["women","men","kids"].forEach(function(n){var l=document.createElement("link");l.rel="preload";l.as="image";l.href="/v2/gateway-"+n+".webp";l.fetchPriority="high";document.head.appendChild(l)})}}catch(e){}`,
+          }}
+        />
+      </head>
       {/* Browser extensions (e.g. ColorZilla's cz-shortcut-listen) add attributes to <body>
           before React loads; this ignores those on <body> only, not on anything inside it. */}
       <body suppressHydrationWarning>

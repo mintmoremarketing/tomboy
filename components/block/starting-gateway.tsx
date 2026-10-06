@@ -3,7 +3,6 @@
 import { ArrowUpRight } from "lucide-react";
 import { AnimatePresence, MotionConfig, motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
-import { StretchHeadline } from "@/components/block/stretch-headline";
 
 export type Audience = "men" | "women" | "kids";
 
@@ -30,9 +29,12 @@ const spring = { type: "spring", stiffness: 240, damping: 22 } as const;
 // its character; the other two characters sink out of view.
 export function StartingGateway({
   isOpen,
+  pending = false,
   onSelectAudience,
 }: {
   isOpen: boolean;
+  /** rendered before we know if this is a first visit: CSS shows it only when <html data-first-visit> */
+  pending?: boolean;
   onSelectAudience: (val: Audience) => void;
 }) {
   const [active, setActive] = useState<Audience | null>(null);
@@ -64,7 +66,7 @@ export function StartingGateway({
 
   return (
     <MotionConfig reducedMotion="user">
-      <div className="gateway-screen gw-full">
+      <div className={`gateway-screen gw-full${pending ? " gw-pending" : ""}`}>
         <header className="gw-full__bar">
           <img src="/logo.webp" alt="Tomboy India" className="gateway-logo" />
         </header>
@@ -72,7 +74,12 @@ export function StartingGateway({
         <div className="gw-full__grid">
           <div className="welcome-copy gw-full__copy">
             <p className="eyebrow">Tomboy India</p>
-            <StretchHeadline text={"TOO SOFT\nTO TAKE OFF."} mood="settle" accent="#FFE500" />
+            {/* plain CSS entrance (not JS), so it plays the instant the page paints */}
+            <h1 className="stretch-headline gw-title">
+              <span className="gw-title__line">TOO SOFT</span>
+              <span className="gw-title__line">TO TAKE OFF.</span>
+              <span className="gw-title__band" aria-hidden="true" />
+            </h1>
             <p>
               100% Super Combed Cotton essentials designed for all-day freedom. Pick your fit to explore:
             </p>
@@ -129,23 +136,27 @@ export function StartingGateway({
                     <motion.span
                       className="lineup-card__figure"
                       aria-hidden="true"
-                      initial={{ y: "100%" }}
+                      // entrance is a CSS animation (.gw-full .lineup-card__figure), so the photos
+                      // are visible from the first paint; motion only handles hover/choose
+                      initial={false}
                       animate={
                         isLeaving
                           ? { opacity: 0, scale: 0.94 }
                           : {
-                              y: isDimmed ? "62%" : isActive ? "-5%" : "0%",
+                              // photos are cropped at the legs, so they never lift off the card's
+                              // bottom edge: the active one grows from the bottom instead
+                              y: isDimmed ? "62%" : "0%",
                               opacity: isDimmed ? 0.35 : 1,
-                              scale: 1,
+                              scale: isActive ? 1.05 : 1,
                             }
                       }
                       transition={
                         isLeaving
                           ? { duration: 0.35, ease: "easeOut" }
-                          : { ...spring, delay: interacted ? 0 : 0.2 + i * 0.08 }
+                          : spring
                       }
                     >
-                      <img src={image} alt="" draggable={false} />
+                      <img src={image} alt="" draggable={false} fetchPriority="high" decoding="async" />
                     </motion.span>
                   </button>
                 );

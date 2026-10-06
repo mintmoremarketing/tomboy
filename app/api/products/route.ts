@@ -27,7 +27,9 @@ export async function GET(request: Request) {
     const products = collection
       ? (await getCollectionByHandle(collection, 20))?.products?.edges ?? []
       : await getProducts();
-    return NextResponse.json(products);
+    return NextResponse.json(products, {
+      headers: { 'Cache-Control': 'public, s-maxage=60, stale-while-revalidate=600' },
+    });
   } catch (error) {
     console.error("API route error:", error);
     return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 });
