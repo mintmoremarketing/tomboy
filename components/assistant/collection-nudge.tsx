@@ -14,7 +14,7 @@ export function CollectionNudge({ handle, title }: { handle: string; title: stri
           { label: "Pick for me", ask: `Help me choose from ${title}. Ask me my size and what I'm looking for.` },
           { label: "What's popular?", ask: `What are the most popular picks in ${title} right now?` },
         ],
-      });
+      }, { arrival: true });
     }, 1200);
     return () => window.clearTimeout(timer);
   }, [handle, title]);

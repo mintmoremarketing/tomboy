@@ -1,5 +1,7 @@
 "use client";
 
+import { BambooPill } from "@/components/kids/bamboo";
+import { isBamboo } from "@/lib/bamboo";
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Check, ChevronDown, ShieldCheck, X, Truck, RefreshCw, ShoppingBag, Sparkles } from "lucide-react";
 import { recordRecentlyViewed } from "@/components/assistant/client";
@@ -63,12 +65,36 @@ const colorSwatchMap: Record<string, string> = {
   mint: "#A0E1BE",
   cyan: "#00F5D4",
   blue: "#2E7CF6",
+  // missing names that fell back to sampling the photo (mostly the pale studio background)
+  aqua: "#2EC4D3",
+  turquoise: "#30C5C8",
+  "sea green": "#2E8B57",
+  "light blue": "#9CC9F0",
+  "dk melange": "#565A62",
+  "dark melange": "#565A62",
+  "lt melange": "#C3C6CC",
+  "light melange": "#C3C6CC",
+  "grey melange": "#9A9DA4",
+  melange: "#9A9DA4",
+  indigo: "#3B3F8F",
+  denim: "#4A6FA5",
+  lilac: "#C8A2C8",
+  lemon: "#FFF176",
+  lime: "#A3E635",
+  magenta: "#D6247F",
+  rust: "#B7472A",
+  sand: "#D9C7A0",
+  stone: "#A8A29E",
+  "off white": "#F4F1EA",
+  ivory: "#F6F1E1",
+  orange: "#F97316",
+  violet: "#7C3AED",
 };
 const SWATCH_KEYS = Object.keys(colorSwatchMap).sort((a, b) => b.length - a.length);
 
 // The colour names inside an option: "Burgundy Red Dark-Grey" -> ["Burgundy", "Red", "Dark Grey"]
 function colorParts(name: string): string[] {
-  let rest = ` ${name.toLowerCase().replace(/[-_/&,+]/g, " ").replace(/\s+/g, " ")} `;
+  let rest = ` ${name.toLowerCase().replace(/[-_/&,+.]/g, " ").replace(/\s+/g, " ")} `;
   const found: { at: number; key: string }[] = [];
   for (const key of SWATCH_KEYS) {
     let i = rest.indexOf(` ${key} `);
@@ -182,6 +208,15 @@ export default function ProductView({ product }: { product: any }) {
   const [selectedImage, setSelectedImage] = useState<string>(
     (selectedColor && colorImages[selectedColor]) || images[0]?.url || ""
   );
+
+  // ?color=… (from the homepage clothes line) opens the page on that colour (after mount, so
+  // the server and first client render match)
+  useEffect(() => {
+    const want = new URLSearchParams(window.location.search).get("color");
+    const hit = want && colors.find((c) => c.toLowerCase() === want.toLowerCase());
+    if (hit) handleColorSelect(hit);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [product.handle]);
 
   // Find exact matching variant
   const currentVariant = useMemo(() => {
@@ -452,7 +487,7 @@ export default function ProductView({ product }: { product: any }) {
             { label: "Find my size", fit: true },
             { label: "Which size fits me?", ask: "What size of {this} should I get? Ask me anything you need to know." },
           ],
-        });
+        }, { arrival: true });
         return;
       }
       const mine = matchSize(saved.value, sizes);
@@ -462,7 +497,7 @@ export default function ProductView({ product }: { product: any }) {
           id,
           text: `This one doesn't come in ${saved.value}, your usual size in ${saved.says}. Want help picking the closest fit?`,
           actions: [{ label: "Find my closest size", ask: `I usually wear ${saved.value} in ${saved.says}. Which size of {this} is closest?` }],
-        });
+        }, { arrival: true });
       } else if (isSizeAvailable(mine)) {
         if (!pickedByHand.current && selectedSize !== mine) setSelectedSize(mine);
         nudge({
@@ -474,7 +509,7 @@ export default function ProductView({ product }: { product: any }) {
             { label: "How does it fit?", ask: `I usually wear ${mine} in ${saved.says}. How does {this} fit, should I size up or down?` },
             { label: "Will it suit me?", ask: "How would {this} look on me? What would you wear it with?" },
           ],
-        });
+        }, { arrival: true });
       } else {
         const inStock = colors.filter((c) => variants.some((v: any) => v.availableForSale !== false && v.title?.includes(c) && v.title?.includes(mine)));
         nudge({
@@ -483,7 +518,7 @@ export default function ProductView({ product }: { product: any }) {
             ? `Your size ${mine} is sold out in ${colour || "this colour"}, but it's in stock in ${inStock.slice(0, 3).map(colorName).join(", ")}.`
             : `Your size ${mine} is sold out right now. Want me to suggest something similar?`,
           actions: [{ label: inStock.length ? "Which colour suits me?" : "Show similar", ask: inStock.length ? `My size is ${mine}. Which colour of {this} would suit me best?` : `{this} is sold out in my size ${mine}. What's similar?` }],
-        });
+        }, { arrival: true });
       }
     }, 1200);
     return () => window.clearTimeout(timer);
@@ -804,6 +839,7 @@ export default function ProductView({ product }: { product: any }) {
         <div className="pdp-info">
 
 
+          {isBamboo(product) && <BambooPill size="md" />}
           <h1 className="pdp-title">{product.title}</h1>
           <div className="pdp-price">
             <Price amount={price} compareAt={compareAt} size="lg" />
@@ -835,7 +871,7 @@ export default function ProductView({ product }: { product: any }) {
               }}
             >
               {justAdded ? <Check size={18} /> : <ShoppingBag size={18} />}
-              {!isAvailable ? "Out of Stock for this Selection" : justAdded ? "Added to Cart" : "Add to Cart"}
+              {!isAvailable ? "Out of Stock" : justAdded ? "Added to Cart" : "Add to Cart"}
             </button>
             <button
               className="button button--light button--full"

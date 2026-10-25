@@ -57,6 +57,7 @@ export async function getProducts(first = 20) {
             handle
             description
             productType
+            tags
             priceRange {
               minVariantPrice {
                 amount
@@ -117,6 +118,7 @@ export async function getProductByHandle(handle: string) {
         description
         descriptionHtml
         productType
+        tags
         vendor
         availableForSale
         updatedAt
@@ -223,6 +225,7 @@ export async function getCollectionByHandle(handle: string, first = 50) {
               title
               handle
               productType
+              tags
               priceRange {
                 minVariantPrice {
                   amount

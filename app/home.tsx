@@ -1,5 +1,6 @@
 "use client";
 
+import { saveAudience } from "@/lib/audience";
 import {
   ArrowRight,
   BellRing,
@@ -32,9 +33,11 @@ import { CartButton } from "@/components/cart/cart-drawer";
 import { SiteHeader, heroHighlightColor } from "@/components/layout/site-header";
 import { openFitFinder } from "@/components/fit/fit-finder";
 import { nudge, type Nudge } from "@/components/assistant/nudges";
-import { useSectionNudges } from "@/components/assistant/section-nudges";
 import { AssistantPanel } from "@/components/assistant/assistant-panel";
 import { TrackOrder } from "@/components/track-order";
+import { ClothesRail } from "@/components/home/clothes-rail";
+import { BambooBand, BambooPill, BambooSeal } from "@/components/kids/bamboo";
+import { isBamboo } from "@/lib/bamboo";
 import {
   audienceContent,
   brandCards,
@@ -47,49 +50,21 @@ import {
 
 type Audience = "men" | "women" | "kids";
 
-// Scout's hello on the homepage, per lineup
+// Scout's one message on the homepage: a few seconds after landing, for the chosen lineup
 const GREETING: Record<Audience, Nudge> = {
   men: {
     id: "home-hello-men",
-    text: "Hey! I'm Scout. Shopping men's today? Tell me your size once and I'll pick the right fit on every product.",
-    actions: [
-      { label: "Find my size", fit: true },
-      { label: "What's popular?", ask: "What are the most popular men's picks right now?" },
-    ],
+    text: "Hey, I'm Scout. Need a hand finding your size?",
+    actions: [{ label: "Find my size", fit: true }],
   },
   women: {
     id: "home-hello-women",
-    text: "Hi! I'm Scout. Looking for comfy everyday innerwear? I can find your panty and bra size in under a minute.",
-    actions: [
-      { label: "Find my size", fit: true },
-      { label: "What's popular?", ask: "What are the most popular women's picks right now?" },
-    ],
+    text: "Hi, I'm Scout. Need a hand finding your size?",
+    actions: [{ label: "Find my size", fit: true }],
   },
   kids: {
     id: "home-hello-kids",
-    text: "Hi! I'm Scout. Shopping for a little one? Tell me their age and I'll pick sizes that fit.",
-    actions: [
-      { label: "Size by age", fit: true },
-      { label: "What's popular?", ask: "What are the most popular kids' picks right now?" },
-    ],
-  },
-};
-
-// Scout's reaction to switching Men / Women / Kids
-const SWITCH_NUDGE: Record<Audience, Nudge> = {
-  men: {
-    id: "home-switch-men",
-    text: "Men's it is. Briefs, trunks, boxers, tees and joggers: want me to find your size first?",
-    actions: [{ label: "Find my size", fit: true }],
-  },
-  women: {
-    id: "home-switch-women",
-    text: "Switched to women's. Want help finding your panty or bra size?",
-    actions: [{ label: "Find my size", fit: true }],
-  },
-  kids: {
-    id: "home-switch-kids",
-    text: "Kids' it is! Tell me their age and I'll suggest the right size.",
+    text: "Hi, I'm Scout. Tell me their age and I'll pick the right size.",
     actions: [{ label: "Size by age", fit: true }],
   },
 };
@@ -105,14 +80,14 @@ export type HomeData = {
   photos: Partial<Record<Audience, Record<string, string | null>>>;
 };
 
-export default function Home({ initial }: { initial: HomeData }) {
-  const [audience, setAudience] = useState<Audience>("men");
+export default function Home({ initial, initialAudience }: { initial: HomeData; initialAudience?: Audience | null }) {
+  const [audience, setAudience] = useState<Audience>(initialAudience ?? "men");
   // false until the saved audience is read, so the hero doesn't flash Men first
-  const [audienceReady, setAudienceReady] = useState(false);
+  const [audienceReady, setAudienceReady] = useState(!!initialAudience);
   // null = not known yet (server render / before localStorage is read). The welcome screen is
   // in the server HTML then, shown instantly by CSS for first-time visitors only (see the
   // inline script in app/layout.tsx), instead of popping up after the JavaScript loads.
-  const [showGateway, setShowGateway] = useState<boolean | null>(null);
+  const [showGateway, setShowGateway] = useState<boolean | null>(initialAudience ? false : null);
   // Live Shopify products, fetched per audience collection and cached
   const [realProducts, setRealProducts] = useState<Partial<Record<Audience, any[]>>>(initial.products);
 
@@ -121,6 +96,8 @@ export default function Home({ initial }: { initial: HomeData }) {
     if (saved === "men" || saved === "women" || saved === "kids") {
       setAudience(saved);
       setShowGateway(false);
+      // older visits only stored it locally: mirror it into the cookie for next time
+      if (saved !== initialAudience) saveAudience(saved);
     } else {
       setShowGateway(true);
     }
@@ -142,72 +119,23 @@ export default function Home({ initial }: { initial: HomeData }) {
 
   function switchAudience(value: Audience) {
     setAudience(value);
-    window.localStorage.setItem("tomboy-audience", value);
-    nudge(SWITCH_NUDGE[value]);
+    saveAudience(value);
   }
 
-  // ---- Scout speaks up: on arrival, and as each section scrolls into view ----
+  // ---- Scout: one short message, a few seconds after landing (not on scroll) ----
   useEffect(() => {
     if (!audienceReady || showGateway) return;
-    const t = window.setTimeout(() => nudge(GREETING[audience]), 1000);
+    const t = window.setTimeout(() => nudge(GREETING[audience], { arrival: true }), 4000);
     return () => window.clearTimeout(t);
     // greet once, in the lineup they arrived in
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [audienceReady, showGateway]);
 
-  useSectionNudges(
-    [
-      {
-        selector: ".comfort-band",
-        nudge: {
-          id: "home-comfort",
-          text: "Everything here is soft cotton with waistbands that don't dig in. Ask me how any piece fits before you buy.",
-          actions: [{ label: "How does Tomboy fit?", ask: "How does Tomboy sizing fit compared to other brands?" }],
-        },
-      },
-      {
-        selector: "#essentials",
-        nudge: {
-          id: `home-essentials-${audience}`,
-          text: `Not sure where to start with ${audience === "kids" ? "kids'" : audience === "women" ? "women's" : "men's"} essentials? Tell me what you wear most and I'll pick the right ones.`,
-          actions: [{ label: "Pick for me", ask: `Help me pick everyday ${audience} essentials. Ask me what I need.` }],
-        },
-      },
-      {
-        selector: ".scroll-story-section",
-        nudge: {
-          id: "home-story",
-          text: "Want to know what makes the cotton feel different? Ask me anything about the fabric or how to wash it.",
-          actions: [{ label: "Tell me about the fabric", ask: "What makes Tomboy's cotton different, and how should I wash it?" }],
-        },
-      },
-      {
-        selector: "#live-products",
-        nudge: {
-          id: `home-products-${audience}`,
-          text: "These are live from the store. Want me to show only what's in your size?",
-          actions: [
-            { label: "Show my size", ask: `Show me ${audience} products available in my size.` },
-            { label: "Find my size", fit: true },
-          ],
-        },
-      },
-      {
-        selector: "#reviews",
-        nudge: {
-          id: "home-reviews",
-          text: "Any questions before you buy? I can help with sizing, delivery or returns.",
-          actions: [{ label: "Returns & delivery", ask: "How do returns, exchanges and delivery work?" }],
-        },
-      },
-    ],
-    [audience, audienceReady],
-  );
 
   function handleGatewayChoice(value: Audience) {
     setAudience(value);
     setShowGateway(false);
-    window.localStorage.setItem("tomboy-audience", value);
+    saveAudience(value);
   }
 
   const products = useMemo(() => {
@@ -223,6 +151,7 @@ export default function Home({ initial }: { initial: HomeData }) {
         compareAt: p.node.compareAtPriceRange?.minVariantPrice?.amount,
         color: "cream",
         imageUrl: sized(p.node.images.edges[0]?.node.url, 600),
+        bamboo: isBamboo(p.node),
       }));
     }
     return productPlaceholders.filter(
@@ -236,19 +165,19 @@ export default function Home({ initial }: { initial: HomeData }) {
       <SiteHeader audience={audience} onSelectAudience={switchAudience} products={products} />
       <Hero audience={audience} ready={audienceReady} onSelectAudience={switchAudience} />
       <ComfortBand />
+      {/* Kids only: the bamboo story */}
+      {audience === "kids" && <BambooBand />}
       <Essentials audience={audience} initialPhotos={initial.photos} />
       {/* v2: products stuck on the wavy edges between sections, spinning as you scroll */}
-      <EdgeSticker src="/v2/boxerbrief.webp" place="right" sp={0.11} tilt="10deg" />
+      <EdgeSticker src={EDGE_STICKERS[audience][0]} place="right" sp={0.11} tilt="10deg" />
       <CraftStorySection audience={audience} initialPhotos={initial.photos} />
-      <EdgeSticker src="/v2/boxer-checks.webp" place="center" sp={-0.13} tilt="-8deg" />
-      <ProductCarousel products={products} audience={audience} />
       <ActionStrip />
       <BrandStory />
       <TrackOrder />
       <div className="v2-band v2-wave-top">
         <ReviewTemplates />
       </div>
-      <EdgeSticker src="/v2/boxer-grey.webp" place="right" sp={0.14} tilt="12deg" />
+      <EdgeSticker src={EDGE_STICKERS[audience][2]} place="right" sp={0.14} tilt="12deg" />
       <StayUpdated />
 
       <StartingGateway
@@ -559,13 +488,46 @@ function HighlightedText({
   );
 }
 
-// v2 hero: boxers cut out of the store's product photos, floating around the pixel wordmark
+// v2 hero: underwear cut out of the store's product photos, floating around the pixel wordmark,
+// matching the chosen lineup (men's / women's / kids')
 // (positions per screen size live in app/v2.css)
 // sp = how fast (and which way) each one spins as the page scrolls, in degrees per pixel
-const FLOATING_BOXERS = [
-  { src: "/v2/brief.webp", w: "clamp(110px, 13vw, 210px)", r: "-12deg", delay: "0s", sp: 0.12 },
-  { src: "/v2/boxer-printed.webp", w: "clamp(100px, 12vw, 190px)", r: "10deg", delay: "-1.4s", sp: -0.18 },
-];
+// Illustrated underwear (flat "men's underwear" pattern, cut into stickers, /public/v2/uw).
+// x/y = position in the hero stage (desktop), mx/my = on phones; w = width; r = tilt;
+// sp = spin per scrolled pixel.
+type Floater = { src: string; x: string; y: string; mx: string; my: string; w: string; r: string; delay: string; sp: number };
+const uw = (n: string) => `/v2/uw/${n}.webp`;
+const FLOATING_BOXERS: Record<Audience, Floater[]> = {
+  men: [
+    { src: uw("boxer-lips"), x: "-24%", y: "-6%", mx: "-6%", my: "2%", w: "clamp(92px, 10vw, 170px)", r: "-14deg", delay: "0s", sp: 0.1 },
+    { src: uw("brief-blueprint"), x: "24%", y: "-16%", mx: "64%", my: "0%", w: "clamp(78px, 8vw, 130px)", r: "10deg", delay: "-1.2s", sp: -0.14 },
+    { src: uw("boxer-triangles"), x: "96%", y: "-10%", mx: "70%", my: "70%", w: "clamp(92px, 10vw, 170px)", r: "12deg", delay: "-2.4s", sp: 0.12 },
+    { src: uw("brief-navy"), x: "104%", y: "40%", mx: "-4%", my: "74%", w: "clamp(76px, 8vw, 128px)", r: "-10deg", delay: "-0.6s", sp: -0.1 },
+    { src: uw("boxer-chilli"), x: "-26%", y: "58%", mx: "76%", my: "36%", w: "clamp(88px, 9vw, 150px)", r: "8deg", delay: "-3.1s", sp: 0.16 },
+    { src: uw("brief-white"), x: "84%", y: "104%", mx: "-8%", my: "40%", w: "clamp(70px, 7vw, 116px)", r: "-6deg", delay: "-1.8s", sp: -0.12 },
+  ],
+  women: [
+    { src: uw("boxer-hearts"), x: "-24%", y: "-6%", mx: "-6%", my: "2%", w: "clamp(92px, 10vw, 170px)", r: "-12deg", delay: "0s", sp: 0.1 },
+    { src: uw("brief-pink"), x: "24%", y: "-16%", mx: "64%", my: "0%", w: "clamp(80px, 8vw, 132px)", r: "10deg", delay: "-1.2s", sp: -0.14 },
+    { src: uw("thong-orange"), x: "96%", y: "-10%", mx: "70%", my: "70%", w: "clamp(80px, 8.5vw, 140px)", r: "14deg", delay: "-2.4s", sp: 0.12 },
+    { src: uw("bikini-green"), x: "104%", y: "40%", mx: "-4%", my: "74%", w: "clamp(76px, 8vw, 128px)", r: "-10deg", delay: "-0.6s", sp: -0.1 },
+    { src: uw("brief-cream"), x: "-26%", y: "58%", mx: "76%", my: "36%", w: "clamp(76px, 8vw, 128px)", r: "8deg", delay: "-3.1s", sp: 0.16 },
+    { src: uw("brief-grey"), x: "84%", y: "104%", mx: "-8%", my: "40%", w: "clamp(70px, 7vw, 116px)", r: "-6deg", delay: "-1.8s", sp: -0.12 },
+  ],
+  kids: [
+    { src: uw("boxer-triangles"), x: "-24%", y: "-6%", mx: "-6%", my: "2%", w: "clamp(92px, 10vw, 170px)", r: "-12deg", delay: "0s", sp: 0.1 },
+    { src: uw("brief-blueprint"), x: "24%", y: "-16%", mx: "68%", my: "2%", w: "clamp(78px, 8vw, 130px)", r: "10deg", delay: "-1.2s", sp: -0.14 },
+    { src: uw("boxer-chilli"), x: "104%", y: "40%", mx: "-4%", my: "74%", w: "clamp(88px, 9vw, 150px)", r: "-8deg", delay: "-0.6s", sp: 0.12 },
+    { src: uw("brief-white"), x: "-26%", y: "58%", mx: "76%", my: "36%", w: "clamp(70px, 7vw, 116px)", r: "8deg", delay: "-3.1s", sp: -0.1 },
+  ],
+};
+
+// products stuck on the section edges, per lineup (right edge, centre, right edge)
+const EDGE_STICKERS: Record<Audience, [string, string, string]> = {
+  men: ["/v2/boxerbrief.webp", "/v2/boxer-checks.webp", "/v2/boxer-grey.webp"],
+  women: ["/v2/w-brief-blue.webp", "/v2/w-bra.webp", "/v2/w-brief-red.webp"],
+  kids: ["/v2/k-boxer-aqua.webp", "/v2/k-brief-print.webp", "/v2/k-boxer-stripe.webp"],
+};
 
 // v2: a product cut-out sitting on the wavy line where two sections meet. Zero-height, so it
 // doesn't move the layout; the image straddles the line and spins with the page scroll.
@@ -576,6 +538,13 @@ function EdgeSticker({ src, place, sp, tilt }: { src: string; place: "left" | "c
     </div>
   );
 }
+
+// v2 hero: the person for each lineup (same cut-outs as the welcome screen)
+const HERO_PEOPLE: Record<Audience, string> = {
+  men: "/v2/gateway-men-full.webp",
+  women: "/v2/gateway-women-full.webp",
+  kids: "/v2/gateway-kids-full.webp",
+};
 
 // Phone swipe order matches the welcome lineup: women · men · kids
 const swipeOrder: Audience[] = ["women", "men", "kids"];
@@ -675,45 +644,111 @@ function Hero({
 
   return (
     <section
-      className="hero-section-wrapper"
+      // Kids gets the Tomboy Junior poster colours (cyan over pink) instead of the sky
+      className={`hero-section-wrapper${audience === "kids" ? " hero--bamboo" : ` hero--pants hero--pants-${audience}`}`}
     >
       {/* v2 hero: just the giant pixel TOMBOY with products floating around it,
           one line of copy and the two buttons (the busy character + sticker board is gone) */}
-      <div className="hero v2-hero">
-        <div className="v2-hero__stage" ref={stageRef}>
-          {/* phones get the word stacked TOM / BOY so it can be big */}
-          <picture>
-            <source media="(max-width: 768px)" srcSet="/v2/tomboy-pixel-stack.svg" />
-            <img className="v2-hero__word" src="/v2/tomboy-pixel.svg" alt="Tomboy" draggable={false} />
-          </picture>
-          {FLOATING_BOXERS.map((b) => (
-            <img
-              key={b.src}
-              src={b.src}
+      {/* hero: a bento grid on the lineup's pattern. Copy card (tagline, buttons, lineup dots),
+          the lineup's person, the clothes line with its products, and one highlight card.
+          Swipe left/right (phones) or tap the dots to switch Men / Women / Kids. */}
+      <div
+        className={`hero v2-hero bento-hero bento-hero--${audience}`}
+        ref={stageRef}
+        onPointerDown={onStagePointerDown}
+        onPointerUp={onStagePointerUp}
+        onPointerCancel={() => (pointerStart.current = null)}
+      >
+        {/* the big tile: the lineup's person on its pattern, with the tagline and buttons inside */}
+        <div className="bento-card bento-card--person">
+          {/* the copy sits inside the photo tile, the person stands beside it */}
+          <div className="bento-person__copy">
+            <AnimatePresence mode="wait" initial={false}>
+              <motion.div
+                key={audience}
+                className="bento-copy"
+                initial={{ opacity: 0, y: 14 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+              >
+                <p className="bento-copy__eyebrow">{audience === "kids" ? "Tomboy Junior" : content.kicker}</p>
+                <h1 className="bento-copy__tag">
+                  {content.headline.split("\n").map((line) => (
+                    <span key={line}>{line}</span>
+                  ))}
+                </h1>
+                <p className="bento-copy__body">{content.body}</p>
+              </motion.div>
+            </AnimatePresence>
+
+            <div className="hero__actions v2-hero__actions" ref={actionsRef}>
+              <Link className="button button--dark" href={`/collections/${content.collectionHandle}`}>
+                Shop {content.label} <ArrowRight size={18} />
+              </Link>
+              {/* opens the Fit Finder: sizes from a photo or measurements, saved for Scout */}
+              <button type="button" className="button button--light" onClick={() => openFitFinder(audience)}>
+                Know the Fit
+              </button>
+            </div>
+
+            <div className="hero-swipe-dots v2-hero__dots" role="tablist" aria-label="Choose lineup">
+              {swipeOrder.map((option) => (
+                <button
+                  key={option}
+                  role="tab"
+                  aria-selected={option === audience}
+                  aria-label={`Show ${audienceContent[option].label}`}
+                  className={`hero-swipe-dot ${option === audience ? "is-active" : ""}`}
+                  style={{ "--dot": heroHighlightColor[option] } as React.CSSProperties}
+                  onClick={() => goTo(option)}
+                />
+              ))}
+            </div>
+          </div>
+          <AnimatePresence initial={false} mode="popLayout">
+            <motion.img
+              key={audience}
+              src={HERO_PEOPLE[audience]}
               alt=""
               aria-hidden="true"
+              className="bento-person__img"
               draggable={false}
-              className="hero-boxer"
-              style={{ "--bw": b.w, "--br": b.r, "--bd": b.delay, "--sp": b.sp } as React.CSSProperties}
+              fetchPriority="high"
+              loading="eager"
+              initial={{ opacity: 0, y: 30 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0 }}
+              transition={{ type: "spring", stiffness: 240, damping: 26 }}
             />
-          ))}
+          </AnimatePresence>
         </div>
 
-        <h1 className="v2-hero__tag">
-          {content.headline.split("\n").map((line) => (
-            <span key={line}>{line}</span>
-          ))}
-        </h1>
-
-        <div className="hero__actions v2-hero__actions" ref={actionsRef}>
-          <Link className="button button--dark" href={`/collections/${content.collectionHandle}`}>
-            Shop {content.label} <ArrowRight size={18} />
-          </Link>
-          {/* opens the Fit Finder: sizes from a photo or measurements, saved for Scout */}
-          <button type="button" className="button button--light" onClick={() => openFitFinder(audience)}>
-            Know the Fit
-          </button>
+        {/* the clothes line with this lineup's products */}
+        <div className="bento-card bento-card--line">
+          <p className="bento-card__label">On the line</p>
+          <ClothesRail audience={audience} viewAllHref={`/collections/${content.collectionHandle}`} embedded />
         </div>
+
+        {/* one highlight per lineup */}
+        <Link className="bento-card bento-card--fact" href={`/collections/${content.collectionHandle}`}>
+          {audience === "kids" ? (
+            <>
+              <strong className="bento-fact__big">100%</strong>
+              <span className="bento-fact__text">
+                Bamboo kids&apos; innerwear
+                <em className="bento-fact__tag">India&apos;s first</em>
+              </span>
+            </>
+          ) : (
+            <>
+              <strong className="bento-fact__big">{audience === "men" ? "100%" : "7-day"}</strong>
+              <span className="bento-fact__text">
+                {audience === "men" ? "Super combed cotton, anti-pinch waistband" : "Easy returns & exchanges, no questions"}
+              </span>
+            </>
+          )}
+        </Link>
       </div>
 
       <AnimatePresence>
@@ -838,55 +873,6 @@ function Essentials({
             </span>
           </Link>
         ))}
-      </div>
-    </section>
-  );
-}
-
-function ProductCarousel({
-  products,
-  audience,
-}: {
-  products: any[];
-  audience: Audience;
-}) {
-  return (
-    <section className="section section--cream" id="live-products">
-      <div className="section-heading section-heading--inline">
-        <div>
-          <p className="eyebrow">Shopify Live Collection</p>
-          <h2>
-            {audience === "men"
-              ? "Men’s Lineup"
-              : audience === "women"
-              ? "Women’s Lineup"
-              : "Kids’ Lineup"}
-          </h2>
-        </div>
-        <Link href={`/collections/${audience}`} className="text-link">
-          View all <ArrowRight size={16} aria-hidden />
-        </Link>
-      </div>
-      <div className="product-rail">
-        {products.map((product) => {
-          const productHref = product.handle ? `/products/${product.handle}` : `/collections/${audience}`;
-          return (
-            <Link href={productHref} className="product-card" key={product.handle ?? product.title}>
-              <div
-                className={`product-card__art product-card__art--${product.color}`}
-                style={
-                  product.imageUrl
-                    ? { backgroundImage: `url(${product.imageUrl})` }
-                    : {}
-                }
-              >
-                {!product.imageUrl && <span>{product.type}</span>}
-              </div>
-              <h3>{product.title}</h3>
-              <p>{product.amount ? <Price amount={product.amount} compareAt={product.compareAt} size="sm" /> : product.price}</p>
-            </Link>
-          );
-        })}
       </div>
     </section>
   );

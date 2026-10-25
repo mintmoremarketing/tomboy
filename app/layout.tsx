@@ -66,7 +66,7 @@ export default function RootLayout({
         {/* handwriting font for the welcome Polaroid caption ("the Tomboy fam") */}
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-        <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@700&family=Teko:wght@500;600&display=swap" rel="stylesheet" />
       </head>
       {/* Browser extensions (e.g. ColorZilla's cz-shortcut-listen) add attributes to <body>
           before React loads; this ignores those on <body> only, not on anything inside it. */}

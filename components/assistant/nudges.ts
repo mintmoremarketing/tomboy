@@ -3,9 +3,12 @@
 // Scout nudges: short, useful messages Scout volunteers while someone shops ("You usually
 // wear L in tees, and it's in stock"), each with one-tap replies that open Scout.
 //
-// Pages call nudge() the moment something happens (page opened, section scrolled into view,
-// colour picked…); the bubble under the Scout orb (scout-nudge.tsx) shows it straight away,
-// replacing the previous one. Each message shows once per page view; "×" closes it.
+// Scout stays quiet unless spoken to: at most ONE message per page view, and only the page's
+// arrival message (nudge(n, { arrival: true })), i.e. after the shopper clicked through to a
+// page. Everything else pages still call (section scrolled into view, colour/size picked,
+// low stock, cart tips, "welcome back"…) is dropped here while QUIET is on, so it can all
+// be switched back on in one place. The bubble under the Scout orb (scout-nudge.tsx) shows
+// it; "×" closes it.
 
 export type NudgeAction =
   | { label: string; ask: string } // open Scout and ask this ("{this}" = the product on screen)
@@ -30,15 +33,18 @@ const EVENT = "tomboy-scout-nudge";
 let seenOnPage = new Set<string>();
 let seenPath = "";
 
-/** Show a nudge now, unless it was already shown on this page view. */
-export function nudge(n: Nudge, _options?: { urgent?: boolean }) {
-  void _options;
+/** Only the one arrival message per page; flip to false to bring back the in-page nudges. */
+const QUIET = true;
+
+/** Show a nudge now, unless it was already shown on this page view (or QUIET drops it). */
+export function nudge(n: Nudge, options?: { urgent?: boolean; arrival?: boolean }) {
   if (typeof window === "undefined") return false;
   const path = window.location.pathname;
   if (path !== seenPath) {
     seenPath = path;
     seenOnPage = new Set();
   }
+  if (QUIET && (!options?.arrival || seenOnPage.size > 0)) return false;
   if (seenOnPage.has(n.id)) return false;
   seenOnPage.add(n.id);
   window.dispatchEvent(new CustomEvent<Nudge>(EVENT, { detail: n }));

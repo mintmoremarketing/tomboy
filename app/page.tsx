@@ -1,4 +1,6 @@
+import { cookies } from "next/headers";
 import Home, { type HomeData } from "./home";
+import { AUDIENCE_KEY, isAudience } from "@/lib/audience";
 import { getCollectionByHandle } from "@/lib/shopify";
 import { getEssentialPhotos } from "@/lib/essentials";
 import { audienceContent } from "@/data/homepage";
@@ -11,6 +13,10 @@ export const revalidate = 60;
 const AUDIENCES = ["men", "women", "kids"] as const;
 
 export default async function Page() {
+  // the saved lineup (cookie), so the page renders in it straight away
+  const saved = (await cookies()).get(AUDIENCE_KEY)?.value;
+  const initialAudience = isAudience(saved) ? saved : null;
+
   const [products, photos] = await Promise.all([
     Promise.all(
       AUDIENCES.map(async (a) => {
@@ -30,5 +36,5 @@ export default async function Page() {
     if (photos[i]) initial.photos[a] = photos[i]!;
   });
 
-  return <Home initial={initial} />;
+  return <Home initial={initial} initialAudience={initialAudience} />;
 }

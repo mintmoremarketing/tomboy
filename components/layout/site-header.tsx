@@ -1,5 +1,6 @@
 "use client";
 
+import { saveAudience } from "@/lib/audience";
 import { ChevronDown, Menu, Search, X } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -122,7 +123,7 @@ export function SiteHeader({
   function selectAudience(value: Audience) {
     if (onSelectAudience) return onSelectAudience(value);
     // away from the homepage: remember the choice and go to that lineup
-    window.localStorage.setItem("tomboy-audience", value);
+    saveAudience(value);
     setSavedAudience(value);
     router.push(`/collections/${value}`);
   }

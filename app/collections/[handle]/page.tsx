@@ -1,3 +1,5 @@
+import { BambooPill } from "@/components/kids/bamboo";
+import { isBamboo } from "@/lib/bamboo";
 import { cache } from "react";
 import type { Metadata } from "next";
 import { getCollectionByHandle } from "@/lib/shopify";
@@ -94,6 +96,7 @@ export default async function CollectionPage({ params }: Props) {
                     {!imageUrl && <span>{node.productType || "Essential"}</span>}
                   </div>
                   <div className="product-card__details">
+                    {isBamboo(node) && <BambooPill />}
                     <h3>{node.title}</h3>
                     <p>
                       <Price
