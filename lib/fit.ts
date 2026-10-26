@@ -40,6 +40,18 @@ function sizeFrom(chart: SizeChart, column: number, value: number, fit: Fit): st
   return rows[rows.length - 1].size; // above the chart: largest size
 }
 
+// typical tallest height for each kids' age size (standard growth ranges; the catalogue only
+// gives waist and chest), used when the shopper gives a height instead of an age
+const KID_MAX_HEIGHT_CM: Record<string, number> = {
+  "1-2 years": 92,
+  "3-4 years": 104,
+  "5-6 years": 116,
+  "7-8 years": 128,
+  "9-10 years": 140,
+  "11-12 years": 152,
+  "13-14 years": 164,
+};
+
 // Kids: by age first, else by height
 function kidSize(m: Measurements): { size: string; basis: string } | null {
   const rows = Object.keys(SIZE_CHARTS.kids.rows);
@@ -52,10 +64,9 @@ function kidSize(m: Measurements): { size: string; basis: string } | null {
     if (m.kidAge < 1) return { size: rows[0], basis: `age ${m.kidAge}` };
   }
   if (m.heightCm) {
-    for (const [size, values] of Object.entries(SIZE_CHARTS.kids.rows)) {
-      const [lo, hi] = String(values[0]).split(/[–-]/).map(Number);
-      if (m.heightCm <= hi || !hi) return { size, basis: `height ${Math.round(m.heightCm)} cm` };
-      void lo;
+    for (const size of rows) {
+      const hi = KID_MAX_HEIGHT_CM[size];
+      if (!hi || m.heightCm <= hi) return { size, basis: `height ${Math.round(m.heightCm)} cm` };
     }
     return { size: rows[rows.length - 1], basis: `height ${Math.round(m.heightCm)} cm` };
   }

@@ -3170,3 +3170,503 @@ html[data-first-visit] .gateway-screen.gw-pending {
 }
 
 .bento-fact__text { display: flex; flex-direction: column; align-items: flex-start; }
+
+/* ---- hero highlight: a bestseller card ---- */
+.bento-card--fact.featured-card {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-rows: 1fr auto;
+  align-items: center;
+  gap: 4px 16px;
+  padding: clamp(12px, 1.4vw, 18px) clamp(14px, 1.6vw, 22px) 10px;
+  background: var(--v2-ink);
+  color: #fff;
+}
+
+.featured-card__media {
+  display: grid;
+  place-items: center;
+  width: clamp(84px, 7.5vw, 128px);
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: var(--bento-accent);
+  border: 2.5px solid #fff;
+}
+
+.featured-card__media img {
+  width: 82%;
+  height: 82%;
+  object-fit: contain;
+  transform: rotate(-8deg);
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.featured-card:hover .featured-card__media img {
+  transform: rotate(0deg) scale(1.08);
+}
+
+.featured-card__info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+  min-width: 0;
+}
+
+.featured-card__tag {
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--bento-accent);
+  color: var(--v2-ink);
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.featured-card__name {
+  font-size: clamp(0.92rem, 1.15vw, 1.15rem);
+  font-weight: 900;
+  line-height: 1.15;
+  text-transform: uppercase;
+}
+
+.featured-card__price,
+.featured-card__price * {
+  color: #fff;
+}
+
+.featured-card__cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 2px;
+  color: var(--bento-accent);
+  font-size: 0.78rem;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.featured-card__points {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(255, 255, 255, 0.25);
+}
+
+.featured-card__points span {
+  padding: 3px 9px;
+  border: 1.5px solid rgba(255, 255, 255, 0.4);
+  border-radius: 999px;
+  font-size: 0.68rem;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+@media (max-width: 768px) {
+  .bento-card--fact.featured-card {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto auto;
+    justify-items: start;
+    gap: 6px;
+    padding: 10px;
+  }
+
+  .featured-card__media { width: 56px; border-width: 2px; }
+  .featured-card__name { font-size: 0.74rem; }
+  .featured-card__cta { font-size: 0.68rem; }
+  .featured-card__points { display: none; }
+  .featured-card__info { gap: 2px; }
+}
+
+/* ====================================================
+   KIDS MASCOTS (components/kids/mascot.tsx): a Tomboy Family character standing on the
+   edge between two sections, with a speech bubble. Zero-height, so the layout doesn't move.
+   They sway gently with the page scroll (sine of the scroll), never spin.
+   ==================================================== */
+.mascot {
+  position: relative;
+  z-index: 20;
+  height: 0;
+  width: min(var(--max), calc(100% - 48px));
+  margin: 0 auto;
+  pointer-events: none;
+}
+
+.mascot__inner {
+  position: absolute;
+  bottom: -40px; /* feet just over the edge line */
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+  transform-origin: 50% 100%;
+  rotate: calc(sin(var(--scroll, 0) * 0.9deg + var(--phase, 0) * 1rad) * 3deg);
+}
+
+.mascot--right .mascot__inner { right: 0; flex-direction: row; }
+.mascot--left .mascot__inner { left: 0; flex-direction: row-reverse; }
+
+.mascot__img {
+  display: block;
+  height: clamp(130px, 15vw, 210px);
+  width: auto;
+  filter: drop-shadow(4px 6px 0 rgba(10, 10, 10, 0.25));
+  user-select: none;
+}
+
+.mascot--fido .mascot__img { height: clamp(96px, 10vw, 150px); }
+
+.mascot__bubble {
+  position: relative;
+  max-width: 220px;
+  margin: 0 0 clamp(70px, 8vw, 120px);
+  padding: 10px 14px;
+  border: 2.5px solid var(--v2-ink);
+  border-radius: 16px;
+  background: #fff;
+  color: var(--v2-ink);
+  font-size: 0.85rem;
+  font-weight: 700;
+  line-height: 1.35;
+  box-shadow: 3px 3px 0 var(--v2-ink);
+  pointer-events: auto;
+}
+
+.mascot__bubble strong {
+  font-weight: 900;
+}
+
+/* tail pointing at the character */
+.mascot__bubble::after {
+  content: "";
+  position: absolute;
+  bottom: 14px;
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  border: 2.5px solid var(--v2-ink);
+  border-top: 0;
+  border-left: 0;
+}
+
+.mascot--right .mascot__bubble::after { right: -9px; rotate: -45deg; }
+.mascot--left .mascot__bubble::after { left: -9px; rotate: 135deg; }
+
+@media (max-width: 768px) {
+  .mascot { width: calc(100% - 24px); }
+  .mascot__img { height: 112px; }
+  .mascot--fido .mascot__img { height: 86px; }
+  .mascot__bubble { max-width: 170px; margin-bottom: 64px; padding: 8px 10px; font-size: 0.74rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mascot__inner { rotate: none; }
+}
+
+/* mascots get their own room between sections (no longer floating over the content above):
+   they stand on the sky with their feet on the next section's edge */
+.mascot {
+  height: auto;
+  display: flex;
+  margin: 8px auto calc(-1 * var(--v2-wave-h) - 2px);
+}
+
+.mascot--right { justify-content: flex-end; }
+.mascot--left { justify-content: flex-start; }
+
+.mascot__inner {
+  position: relative;
+  bottom: auto;
+  left: auto;
+  right: auto;
+}
+
+.mascot__img { height: clamp(150px, 17vw, 240px); }
+.mascot--fido .mascot__img { height: clamp(110px, 11vw, 160px); }
+.mascot--grandparents .mascot__img { height: clamp(170px, 19vw, 260px); }
+
+.mascot__bubble {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 250px;
+  margin-bottom: clamp(60px, 7vw, 110px);
+}
+
+@media (max-width: 768px) {
+  .mascot__img { height: 140px; }
+  .mascot--fido .mascot__img { height: 96px; }
+  .mascot--grandparents .mascot__img { height: 150px; }
+  .mascot__bubble { max-width: 180px; margin-bottom: 46px; }
+}
+
+@media (max-width: 768px) {
+  .mascot--dad-tomboy .mascot__img,
+  .mascot--betty .mascot__img { height: 190px; }
+}
+
+/* Tomboy + Dad in the bamboo band, bottom right, feet on the band's bottom edge */
+.bamboo-band__family {
+  position: absolute;
+  right: clamp(8px, 3vw, 60px);
+  bottom: 0;
+  z-index: 2;
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  pointer-events: none;
+  transform-origin: 50% 100%;
+  rotate: calc(sin(var(--scroll, 0) * 0.9deg) * 2deg);
+}
+
+.bamboo-band__family img {
+  display: block;
+  height: clamp(300px, 34vw, 500px);
+  width: auto;
+  filter: drop-shadow(6px 8px 0 rgba(10, 10, 10, 0.25));
+}
+
+.bamboo-band__bubble {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  max-width: 230px;
+  margin: 0 0 clamp(150px, 18vw, 260px);
+  padding: 12px 14px;
+  border: 2.5px solid var(--v2-ink);
+  border-radius: 16px;
+  background: #fff;
+  color: var(--v2-ink);
+  font-size: 0.88rem;
+  font-weight: 700;
+  line-height: 1.35;
+  text-align: left;
+  box-shadow: 3px 3px 0 var(--v2-ink);
+}
+
+.bamboo-band__bubble strong { font-weight: 900; }
+
+/* keep the centred copy clear of the family on narrower desktops */
+@media (max-width: 1400px) and (min-width: 769px) {
+  .bamboo-band__inner { margin-right: clamp(200px, 26vw, 380px); margin-left: 0; text-align: left; }
+  .bamboo-band__perks { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+}
+
+@media (max-width: 768px) {
+  .bamboo-band { padding-bottom: calc(300px + var(--v2-wave-h)); }
+  .bamboo-band__family { right: 8px; }
+  .bamboo-band__family img { height: 280px; }
+  .bamboo-band__bubble { max-width: 180px; margin-bottom: 150px; font-size: 0.76rem; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bamboo-band__family { rotate: none; }
+}
+
+/* family a bit smaller, the speech bubble sits on top of them (not beside, over the cards) */
+.bamboo-band__family {
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 6px;
+}
+
+.bamboo-band__family img { height: clamp(230px, 24vw, 360px); }
+
+.bamboo-band__bubble {
+  margin: 0;
+  max-width: 240px;
+}
+
+/* tail pointing down at the family */
+.bamboo-band__bubble { position: relative; }
+.bamboo-band__bubble::after {
+  content: "";
+  position: absolute;
+  right: 30%;
+  bottom: -9px;
+  width: 14px;
+  height: 14px;
+  background: #fff;
+  border: 2.5px solid var(--v2-ink);
+  border-top: 0;
+  border-left: 0;
+  rotate: 45deg;
+}
+
+@media (max-width: 1400px) and (min-width: 769px) {
+  .bamboo-band__inner { margin-right: clamp(200px, 22vw, 320px); }
+}
+
+@media (max-width: 768px) {
+  .bamboo-band { padding-bottom: calc(330px + var(--v2-wave-h)); }
+  .bamboo-band__family { right: 50%; translate: 50% 0; align-items: center; }
+  .bamboo-band__family img { height: 220px; }
+  .bamboo-band__bubble { max-width: 260px; margin: 0; }
+  .bamboo-band__bubble::after { right: 46%; }
+}
+
+/* mascots stand still (no scroll sway); their speech bubble pops in when they scroll into
+   view, then each line types in after it */
+.mascot__inner,
+.bamboo-band__family {
+  rotate: none;
+}
+
+.mascot__bubble,
+.bamboo-band__bubble {
+  opacity: 0;
+  scale: 0.6;
+  transform-origin: 85% 100%;
+  transition: opacity 0.25s ease, scale 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.mascot--left .mascot__bubble { transform-origin: 15% 100%; }
+
+.mascot__bubble > span,
+.bamboo-band__bubble > span {
+  opacity: 0;
+  clip-path: inset(0 100% 0 0);
+  transition: opacity 0.2s ease, clip-path 0.9s steps(28, end);
+  transition-delay: calc(0.35s + var(--line, 0) * 1s);
+}
+
+.is-seen .mascot__bubble,
+.is-seen .bamboo-band__bubble {
+  opacity: 1;
+  scale: 1;
+}
+
+.is-seen .mascot__bubble > span,
+.is-seen .bamboo-band__bubble > span {
+  opacity: 1;
+  clip-path: inset(0 0 0 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mascot__bubble, .bamboo-band__bubble, .mascot__bubble > span, .bamboo-band__bubble > span {
+    opacity: 1; scale: 1; clip-path: none; transition: none;
+  }
+}
+
+/* lift Tomboy + Dad clear of the wavy bottom edge */
+.bamboo-band__family { bottom: calc(var(--v2-wave-h) + 22px); }
+@media (max-width: 768px) {
+  .bamboo-band { padding-bottom: calc(360px + var(--v2-wave-h)); }
+}
+
+/* Kids: the retro pink/blue dither wave replaces the sky behind the whole page */
+:root[data-lineup="kids"] body::before {
+  background: #2E7CF6 url("/v2/dither-kids-blue.webp") center / cover no-repeat;
+  image-rendering: pixelated;
+}
+
+/* Kids hero: no solid yellow behind the bento, the pink/blue dither wave shows through */
+.hero-section-wrapper.hero--bamboo {
+  --lineup-bg: transparent;
+  background: transparent;
+  -webkit-mask: none;
+  mask: none;
+  padding-bottom: 0;
+}
+
+/* Kids hero tile: green bamboo leaves on a pink-to-blue wash (was green on yellow) */
+.bento-hero--kids .bento-card--person {
+  background:
+    url("/v2/bamboo-leaves.webp") 0 0 / 380px repeat,
+    linear-gradient(135deg, #FFB3E6 0%, #FF8AD8 38%, #9CC4FF 72%, #5E9BFF 100%);
+}
+
+/* Kids hero tile, tone-on-tone: soft pink with white bamboo leaves at low strength, so the
+   kid, the headline and the buttons carry the contrast */
+.bento-hero--kids .bento-card--person {
+  position: relative;
+  background: #FF9FDC;
+}
+
+.bento-hero--kids .bento-card--person::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("/v2/bamboo-leaves-white.webp") 0 0 / 380px repeat;
+  opacity: 0.3;
+  pointer-events: none;
+}
+
+/* Kids, gender-neutral: blue-led dither wave behind the page (pink only as a highlight),
+   and a playground-blue hero tile with soft white bamboo */
+:root[data-lineup="kids"] body::before {
+  background: #2E7CF6 url("/v2/dither-kids-blue.webp") center / cover no-repeat;
+}
+
+.bento-hero--kids .bento-card--person {
+  background: #5EB8FF;
+}
+
+.bento-hero--kids .bento-card--person::before {
+  opacity: 0.28;
+}
+
+/* phones: the clothes line gets the full width under the big tile; no highlight card */
+@media (max-width: 768px) {
+  .hero.v2-hero.bento-hero {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 230px;
+    grid-template-areas:
+      "person"
+      "line";
+  }
+
+  .bento-card--fact { display: none; }
+}
+
+@media (max-width: 768px) {
+  .bento-card--fact.featured-card { display: none; }
+}
+
+/* Men / Women: duotone halftone backdrop behind the whole page (green / pink), the hero sits
+   straight on it like Kids does */
+:root[data-lineup="men"] body::before {
+  background: #3DFF52 url("/v2/halftone-men.webp?v=2") center / auto no-repeat;
+}
+
+:root[data-lineup="women"] body::before {
+  background: #FF8AD8 url("/v2/halftone-women.webp?v=2") center / auto no-repeat;
+}
+
+.hero-section-wrapper.hero--pants {
+  background: transparent;
+  -webkit-mask: none;
+  mask: none;
+  padding-bottom: 0;
+}
+
+/* Kids bamboo band, livelier: a punchy lime-to-emerald green with a bright spotlight behind the
+   headline, brighter leaves and a yellow "100% bamboo" */
+.bamboo-band {
+  background:
+    radial-gradient(ellipse 60% 70% at 50% 45%, rgba(190, 255, 80, 0.75), transparent 70%),
+    linear-gradient(160deg, #2BD95B 0%, #12B84A 55%, #0A9A47 100%);
+}
+
+.bamboo-band::before {
+  opacity: 0.32;
+}
+
+.bamboo-band__hl {
+  color: #FFE733;
+}
+
+
+/* drift exactly one tile per loop, so the leaves never jump when the animation restarts */
+.bamboo-band::before {
+  --tile: clamp(420px, 45vw, 700px);
+  background-size: var(--tile);
+  animation-name: bamboo-pattern-drift-tile;
+}
+
+@keyframes bamboo-pattern-drift-tile {
+  to { background-position: var(--tile) var(--tile); }
+}

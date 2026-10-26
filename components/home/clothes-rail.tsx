@@ -34,15 +34,15 @@ const RAIL: Record<"men" | "women" | "kids", RailItem[]> = {
   // Kids: the clean product renders from the Boys InnerWear / Socks catalogues
   kids: [
     { handle: "boy-s-printed-briefs", variant: "B NAVY STAR", img: "/v2/rail/k-brief-stars.webp", name: "Inner Elastic AOP Brief", colour: "Stars" },
-    { handle: "", href: "/collections/kids", img: "/v2/rail/k-socks-striper.webp", name: "Striper Socks", colour: "Royal Blue" },
+    { handle: "kids-striper-socks", variant: "Royal Blue", img: "/v2/rail/k-socks-striper.webp", name: "Striper Socks", colour: "Royal Blue" },
     { handle: "boy-s-all-over-printed-striped-boxers", variant: "B BLACK STRIPE", img: "/v2/rail/k-boxer-blackstripe.webp", name: "Striped Boxer", colour: "Black" },
     { handle: "boys-character-pants-copy", variant: "Black", img: "/v2/rail/k-pants-black.webp", name: "Plain Cuff Pants", colour: "Black" },
     { handle: "boy-s-all-over-printed-performance-striped-boxer-copy", img: "/v2/rail/k-vest-white.webp", name: "White Vest", colour: "White" },
-    { handle: "", href: "/collections/kids", img: "/v2/rail/k-socks-maskot.webp", name: "Maskot Socks", colour: "Red" },
+    { handle: "kids-maskot-socks", variant: "Red", img: "/v2/rail/k-socks-maskot.webp", name: "Maskot Socks", colour: "Red" },
     { handle: "boy-s-all-over-print-edition-copy", variant: "B LEMON-YELLOW STRIPE", img: "/v2/rail/k-brief-lime.webp", name: "Inner Elastic Striped Brief", colour: "Lemonade" },
-    { handle: "", href: "/collections/kids", img: "/v2/rail/k-socks-striker.webp", name: "Striker Socks", colour: "Black" },
+    { handle: "kids-striker-socks", variant: "Black", img: "/v2/rail/k-socks-striker.webp", name: "Striker Socks", colour: "Black" },
     { handle: "boy-s-comfort-stretch-boxer", variant: "Red", img: "/v2/rail/k-boxer-red.webp", name: "Outer Elastic Boxer", colour: "Red" },
-    { handle: "", href: "/collections/kids", img: "/v2/rail/k-socks-star.webp", name: "Star Socks", colour: "Black / White" },
+    { handle: "kids-star-socks", variant: "Black / White", img: "/v2/rail/k-socks-star.webp", name: "Star Socks", colour: "Black / White" },
   ],
 };
 

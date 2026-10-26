@@ -1,7 +1,7 @@
 // Size charts shown from the product page's "Size chart" link.
 //
-// ⚠️ PLACEHOLDER MEASUREMENTS: these are standard Indian sizing ranges, not Tomboy's own
-// pattern measurements. Replace them with the brand's real numbers before launch (or add a
+// ⚠️ PLACEHOLDER MEASUREMENTS (adult charts): these are standard Indian sizing ranges, not
+// Tomboy's own pattern measurements; the kids charts are the catalogue's real numbers. Replace them with the brand's real numbers before launch (or add a
 // size chart to the product in Shopify: custom.size_chart, which the site shows instead).
 //
 // All body measurements in inches; the chart shows centimetres alongside.
@@ -10,8 +10,9 @@ export type SizeChart = {
   title: string;
   /** what each column measures, e.g. "Chest", "Waist" */
   columns: string[];
-  /** size label -> one [min, max] inch range per column (or a plain string, e.g. height in cm) */
-  rows: Record<string, ([number, number] | string)[]>;
+  /** size label -> one [min, max] inch range per column, an exact catalogue measurement
+   *  ({ in, cm }), or a plain string (e.g. height in cm) */
+  rows: Record<string, ([number, number] | { in: number; cm: number } | string)[]>;
   howToMeasure: string[];
 };
 
@@ -88,22 +89,70 @@ export const SIZE_CHARTS: Record<string, SizeChart> = {
       "Bust: measure loosely around the fullest part of your bust.",
     ],
   },
+  // Kids charts: Tomboy Junior's own measurements, from the Boys Innerwear and Boys Shorts &
+  // Pants catalogues (March 2025). Catalogue sizes 2-14 are ages 1-2 to 13-14 years.
   kids: {
-    title: "Kids (by age)",
-    columns: ["Height (cm)", "Waist"],
+    title: "Kids innerwear (briefs & boxers)",
+    columns: ["Waist"],
     rows: {
-      "1-2 years": ["80–92", [19, 20]],
-      "3-4 years": ["92–104", [20, 21]],
-      "5-6 years": ["104–116", [21, 22]],
-      "7-8 years": ["116–128", [22, 23]],
-      "9-10 years": ["128–140", [23, 24]],
-      "11-12 years": ["140–152", [24, 26]],
-      "13-14 years": ["152–164", [26, 28]],
+      "1-2 years": [{ in: 20, cm: 50 }],
+      "3-4 years": [{ in: 22, cm: 55 }],
+      "5-6 years": [{ in: 24, cm: 60 }],
+      "7-8 years": [{ in: 26, cm: 65 }],
+      "9-10 years": [{ in: 28, cm: 70 }],
+      "11-12 years": [{ in: 30, cm: 75 }],
+      "13-14 years": [{ in: 32, cm: 80 }],
     },
     howToMeasure: [
-      "Height: measure standing straight against a wall, without shoes.",
+      "Waist: measure around your child's natural waist, where the waistband sits. Keep the tape snug, not tight.",
       "Kids grow fast. If they're between sizes, go one size up.",
     ],
+  },
+  kidsVests: {
+    title: "Kids vests",
+    columns: ["Chest"],
+    rows: {
+      "1-2 years": [{ in: 20, cm: 50 }],
+      "3-4 years": [{ in: 22, cm: 55 }],
+      "5-6 years": [{ in: 24, cm: 60 }],
+      "7-8 years": [{ in: 26, cm: 65 }],
+      "9-10 years": [{ in: 28, cm: 70 }],
+      "11-12 years": [{ in: 30, cm: 75 }],
+      "13-14 years": [{ in: 32, cm: 80 }],
+    },
+    howToMeasure: [
+      "Chest: wrap the tape around the fullest part of the chest, under the arms, keeping it level.",
+      "Kids grow fast. If they're between sizes, go one size up.",
+    ],
+  },
+  kidsBottoms: {
+    title: "Kids shorts & pants",
+    columns: ["Waist"],
+    rows: {
+      "1-2 years": [{ in: 22, cm: 55 }],
+      "3-4 years": [{ in: 24, cm: 60 }],
+      "5-6 years": [{ in: 26, cm: 65 }],
+      "7-8 years": [{ in: 28, cm: 70 }],
+      "9-10 years": [{ in: 30, cm: 75 }],
+      "11-12 years": [{ in: 32, cm: 80 }],
+      "13-14 years": [{ in: 34, cm: 85 }],
+    },
+    howToMeasure: [
+      "Waist: measure around your child's natural waist, where the waistband sits. Keep the tape snug, not tight.",
+      "Kids grow fast. If they're between sizes, go one size up.",
+    ],
+  },
+  kidsSocks: {
+    title: "Kids socks (by age)",
+    columns: ["Age"],
+    rows: {
+      "3-4 years": ["3–4 years"],
+      "5-6 years": ["5–6 years"],
+      "7-8 years": ["7–8 years"],
+      "9-10 years": ["9–10 years"],
+      "11-12 years": ["11–12 years"],
+    },
+    howToMeasure: ["Pick your child's age. If they have big feet for their age, go one size up."],
   },
   socks: {
     title: "Socks",
@@ -121,7 +170,12 @@ export const SIZE_CHARTS: Record<string, SizeChart> = {
 // Which chart fits a product, from its title and Shopify product type
 export function chartFor(title: string, productType?: string | null): SizeChart | null {
   const t = `${title} ${productType ?? ""}`.toLowerCase();
-  if (/\b(kids?|boys?|girls?)\b|boy[’']s|girl[’']s/.test(t)) return SIZE_CHARTS.kids;
+  if (/\b(kids?|boys?|girls?)\b|boy[’']s|girl[’']s/.test(t)) {
+    if (/\bsocks?\b/.test(t)) return SIZE_CHARTS.kidsSocks;
+    if (/\bvests?\b/.test(t)) return SIZE_CHARTS.kidsVests;
+    if (/\b(shorts?|pants?|joggers?|track|pyjamas?|lounge)\b/.test(t)) return SIZE_CHARTS.kidsBottoms;
+    return SIZE_CHARTS.kids;
+  }
   if (/\bsocks?\b/.test(t)) return SIZE_CHARTS.socks;
   if (/\bbras?\b/.test(t)) return SIZE_CHARTS.bra;
   if (/\b(panty|panties|bikini|hipster)\b/.test(t)) return SIZE_CHARTS.womensBottoms;

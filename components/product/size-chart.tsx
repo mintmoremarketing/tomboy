@@ -89,6 +89,11 @@ export function SizeChartLink({
                                 <td key={i}>
                                   {typeof v === "string" ? (
                                     v
+                                  ) : !Array.isArray(v) ? (
+                                    <>
+                                      {v.in}
+                                      <small> ({v.cm})</small>
+                                    </>
                                   ) : (
                                     <>
                                       {v[0]}–{v[1]}

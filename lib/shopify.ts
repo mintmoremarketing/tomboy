@@ -167,7 +167,7 @@ export async function getProductByHandle(handle: string) {
             }
           }
         }
-        variants(first: 100) {
+        variants(first: 250) {
           edges {
             node {
               id

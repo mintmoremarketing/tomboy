@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
+import { useSeen } from "@/components/kids/mascot";
 
 // The kids' bamboo story (Kids lineup only):
 //   BambooSeal — rotating "India's first · 100% bamboo" sticker in the hero
@@ -52,14 +53,28 @@ const PERKS = [
 ];
 
 export function BambooBand() {
+  const family = useSeen<HTMLDivElement>();
   return (
     <section className="bamboo-band v2-wave" aria-labelledby="bamboo-title">
       {/* hand-drawn bamboo pattern (Summer Bamboo asset), drawn by CSS: .bamboo-band::before */}
 
+      {/* Tomboy and his dad, standing on the right of the band */}
+      <div ref={family.ref} className={`bamboo-band__family${family.seen ? " is-seen" : ""}`}>
+        <p className="bamboo-band__bubble">
+          <span style={{ "--line": 0 } as React.CSSProperties}>
+            <strong>Tomboy:</strong> So comfy I forget I&apos;m even wearing them!
+          </span>
+          <span style={{ "--line": 1 } as React.CSSProperties}>
+            <strong>Dad:</strong> And no tags to cut out. Win-win.
+          </span>
+        </p>
+        <img src="/v2/mascots/dad-tomboy.webp" alt="Tomboy and his dad" draggable={false} loading="lazy" />
+      </div>
+
       <div className="bamboo-band__inner">
         <p className="bamboo-band__eyebrow">🎋 India&apos;s first</p>
         <h2 id="bamboo-title">
-          100% bamboo
+          <span className="bamboo-band__hl">100% bamboo</span>
           <br />
           kids&apos; innerwear.
         </h2>

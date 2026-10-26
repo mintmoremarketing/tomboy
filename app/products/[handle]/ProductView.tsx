@@ -130,14 +130,19 @@ export default function ProductView({ product }: { product: any }) {
   );
 
   // Extract distinct Color and Size options
-  const { colors, sizes, colorImages } = useMemo(() => {
+  const { colors, sizes, colorImages, extraOptions } = useMemo(() => {
     const rawOptions = product.options || [];
-    const colorOpt = rawOptions.find((o: any) =>
-      /colou?r/i.test(o.name)
-    );
+    // the swatch row: a real colour option, else a print/pattern one ("Print 1-6")
+    const colorOpt =
+      rawOptions.find((o: any) => /colou?r/i.test(o.name)) ??
+      rawOptions.find((o: any) => /print|pattern|stripe/i.test(o.name));
     const sizeOpt = rawOptions.find((o: any) =>
       /size|waist|fit/i.test(o.name)
     );
+    // anything else (e.g. "Print: Plain / With print") gets its own row of buttons
+    const extraOptions: { name: string; values: string[] }[] = rawOptions
+      .filter((o: any) => o !== colorOpt && o !== sizeOpt && o.values?.length > 1)
+      .map((o: any) => ({ name: o.name, values: o.values }));
 
     let parsedColors: string[] = colorOpt?.values || [];
     let parsedSizes: string[] = sizeOpt?.values || [];
@@ -151,8 +156,8 @@ export default function ProductView({ product }: { product: any }) {
       let vSize = "";
 
       v.selectedOptions?.forEach((opt: any) => {
-        if (/colou?r/i.test(opt.name)) vColor = opt.value;
-        if (/size|waist|fit/i.test(opt.name)) vSize = opt.value;
+        if (colorOpt && opt.name === colorOpt.name) vColor = opt.value;
+        if (sizeOpt && opt.name === sizeOpt.name) vSize = opt.value;
       });
 
       // Fallback: parse from title "Deep Green / S"
@@ -195,6 +200,7 @@ export default function ProductView({ product }: { product: any }) {
       colors: parsedColors.length > 0 ? parsedColors : [],
       sizes: parsedSizes.length > 0 ? parsedSizes : [],
       colorImages: imgMap,
+      extraOptions,
     };
   }, [product, variants]);
 
@@ -205,6 +211,13 @@ export default function ProductView({ product }: { product: any }) {
   const [selectedSize, setSelectedSize] = useState<string>(
     sizes[0] || ""
   );
+  const [selectedExtras, setSelectedExtras] = useState<Record<string, string>>(() =>
+    Object.fromEntries(extraOptions.map((o) => [o.name, o.values[0]]))
+  );
+  const matchesExtras = (v: any) =>
+    extraOptions.every((o) =>
+      (v.selectedOptions || []).some((opt: any) => opt.name === o.name && opt.value === selectedExtras[o.name])
+    );
   const [selectedImage, setSelectedImage] = useState<string>(
     (selectedColor && colorImages[selectedColor]) || images[0]?.url || ""
   );
@@ -233,7 +246,7 @@ export default function ProductView({ product }: { product: any }) {
         ? opts.some((o: any) => o.value?.toLowerCase() === selectedSize.toLowerCase()) ||
           v.title?.toLowerCase().includes(selectedSize.toLowerCase())
         : true;
-      return matchesColor && matchesSize;
+      return matchesColor && matchesSize && matchesExtras(v);
     });
 
     if (exact) return exact;
@@ -245,7 +258,8 @@ export default function ProductView({ product }: { product: any }) {
         : false
     );
     return colorMatch || variants[0];
-  }, [variants, selectedColor, selectedSize]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [variants, selectedColor, selectedSize, selectedExtras]);
 
   // Check availability of specific size for current color
   function isSizeAvailable(sizeVal: string): boolean {
@@ -258,7 +272,7 @@ export default function ProductView({ product }: { product: any }) {
       const matchesSize =
         opts.some((o: any) => o.value?.toLowerCase() === sizeVal.toLowerCase()) ||
         v.title?.toLowerCase().includes(sizeVal.toLowerCase());
-      return matchesColor && matchesSize;
+      return matchesColor && matchesSize && matchesExtras(v);
     });
     return match ? match.availableForSale !== false : true;
   }
@@ -269,15 +283,23 @@ export default function ProductView({ product }: { product: any }) {
   const colorLabels = useMemo(() => {
     const labels: Record<string, string> = {};
     const used: Record<string, number> = {};
+    // how many colours share each photo: a shared photo says nothing about any one of them
+    const photoUse: Record<string, number> = {};
     for (const color of colors) {
-      // rename only true codes ("B AOP 1"): anything with a colour word we know keeps its name
+      const key = (colorImages[color] ?? "").split("?")[0];
+      if (key) photoUse[key] = (photoUse[key] ?? 0) + 1;
+    }
+    for (const color of colors) {
+      // rename only true codes ("B AOP 1") that have their own photo: anything with a colour
+      // word we know keeps its name, and so does a code whose photo is shared ("Print 3")
       const isCode = looksLikeCode(color) && colorParts(color).length === 0;
-      const name = isCode && swatches[color] ? swatches[color].name : color;
+      const ownPhoto = (photoUse[(colorImages[color] ?? "").split("?")[0]] ?? 0) === 1;
+      const name = isCode && ownPhoto && swatches[color] ? swatches[color].name : color;
       used[name] = (used[name] ?? 0) + 1;
       labels[color] = used[name] > 1 ? `${name} ${used[name]}` : name;
     }
     return labels;
-  }, [colors, swatches]);
+  }, [colors, swatches, colorImages]);
   const colorName = (color: string) => {
     const parts = colorParts(color);
     if (parts.length > 1) return parts.join(" · ");
@@ -292,7 +314,7 @@ export default function ProductView({ product }: { product: any }) {
   const shopifySwatch = useMemo(() => {
     const map: Record<string, string> = {};
     for (const option of product.options ?? []) {
-      if (!/colou?r/i.test(option.name)) continue;
+      if (!/colou?r|print|pattern|stripe/i.test(option.name)) continue;
       for (const value of option.optionValues ?? []) if (value.swatch?.color) map[value.name] = value.swatch.color;
     }
     return map;
@@ -677,6 +699,27 @@ export default function ProductView({ product }: { product: any }) {
         </div>
       )}
 
+      {/* extra options, e.g. Plain / With print (priced differently) */}
+      {extraOptions.map((o) => (
+        <div className="pdp-option-group" key={o.name}>
+          <div className="pdp-variants__label">
+            <span>Choose {o.name}:</span>
+          </div>
+          <div className="pdp-size-grid">
+            {o.values.map((value) => (
+              <button
+                key={value}
+                type="button"
+                className={`pdp-size-btn ${selectedExtras[o.name] === value ? "is-selected" : ""}`}
+                onClick={() => setSelectedExtras((cur) => ({ ...cur, [o.name]: value }))}
+              >
+                {value}
+              </button>
+            ))}
+          </div>
+        </div>
+      ))}
+
       {/* 2. Choose Size */}
       {sizes.length > 0 && (
         <div className="pdp-option-group">
@@ -724,7 +767,7 @@ export default function ProductView({ product }: { product: any }) {
   );
 
   const optionSummary =
-    [selectedColor && colorName(selectedColor).replace(/ · /g, "/"), selectedSize && `Size ${selectedSize}`]
+    [selectedColor && colorName(selectedColor).replace(/ · /g, "/"), ...extraOptions.map((o) => selectedExtras[o.name]), selectedSize && `Size ${selectedSize}`]
       .filter(Boolean)
       .join(" · ") || "Choose options";
 

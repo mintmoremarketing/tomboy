@@ -36,7 +36,9 @@ import { nudge, type Nudge } from "@/components/assistant/nudges";
 import { AssistantPanel } from "@/components/assistant/assistant-panel";
 import { TrackOrder } from "@/components/track-order";
 import { ClothesRail } from "@/components/home/clothes-rail";
+import { FeaturedCard } from "@/components/home/featured-card";
 import { BambooBand, BambooPill, BambooSeal } from "@/components/kids/bamboo";
+import { Mascot } from "@/components/kids/mascot";
 import { isBamboo } from "@/lib/bamboo";
 import {
   audienceContent,
@@ -104,6 +106,11 @@ export default function Home({ initial, initialAudience }: { initial: HomeData; 
     setAudienceReady(true);
   }, []);
 
+  // the page background follows the lineup (Kids: the pink/blue dither wave)
+  useEffect(() => {
+    document.documentElement.setAttribute("data-lineup", audience);
+  }, [audience]);
+
   useEffect(() => {
     if (!audienceReady || realProducts[audience]) return;
     const collection = audienceContent[audience].collectionHandle;
@@ -169,15 +176,20 @@ export default function Home({ initial, initialAudience }: { initial: HomeData; 
       {audience === "kids" && <BambooBand />}
       <Essentials audience={audience} initialPhotos={initial.photos} />
       {/* v2: products stuck on the wavy edges between sections, spinning as you scroll */}
-      <EdgeSticker src={EDGE_STICKERS[audience][0]} place="right" sp={0.11} tilt="10deg" />
+      {audience !== "kids" && <EdgeSticker src={EDGE_STICKERS[audience][0]} place="right" sp={0.11} tilt="10deg" />}
       <CraftStorySection audience={audience} initialPhotos={initial.photos} />
       <ActionStrip />
+      {audience === "kids" && <Mascot name="grandparents" place="right" phase={2.2} />}
       <BrandStory />
+      {audience === "kids" && <Mascot name="betty" place="left" phase={0.7} />}
       <TrackOrder />
+      {audience === "kids" && <Mascot name="fido" place="right" phase={1.4} />}
       <div className="v2-band v2-wave-top">
         <ReviewTemplates />
       </div>
-      <EdgeSticker src={EDGE_STICKERS[audience][2]} place="right" sp={0.14} tilt="12deg" />
+      {audience !== "kids" && (
+        <EdgeSticker src={EDGE_STICKERS[audience][2]} place="right" sp={0.14} tilt="12deg" />
+      )}
       <StayUpdated />
 
       <StartingGateway
@@ -602,6 +614,11 @@ function Hero({
   }
 
   function onStagePointerDown(e: React.PointerEvent) {
+    // swiping the clothes line moves the garments, not the lineup
+    if ((e.target as HTMLElement).closest(".clothes-line")) {
+      pointerStart.current = null;
+      return;
+    }
     pointerStart.current = { x: e.clientX, y: e.clientY };
   }
 
@@ -730,25 +747,8 @@ function Hero({
           <ClothesRail audience={audience} viewAllHref={`/collections/${content.collectionHandle}`} embedded />
         </div>
 
-        {/* one highlight per lineup */}
-        <Link className="bento-card bento-card--fact" href={`/collections/${content.collectionHandle}`}>
-          {audience === "kids" ? (
-            <>
-              <strong className="bento-fact__big">100%</strong>
-              <span className="bento-fact__text">
-                Bamboo kids&apos; innerwear
-                <em className="bento-fact__tag">India&apos;s first</em>
-              </span>
-            </>
-          ) : (
-            <>
-              <strong className="bento-fact__big">{audience === "men" ? "100%" : "7-day"}</strong>
-              <span className="bento-fact__text">
-                {audience === "men" ? "Super combed cotton, anti-pinch waistband" : "Easy returns & exchanges, no questions"}
-              </span>
-            </>
-          )}
-        </Link>
+        {/* a bestseller from this lineup, with its selling points */}
+        <FeaturedCard audience={audience} />
       </div>
 
       <AnimatePresence>
